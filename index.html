@@ -501,7 +501,13 @@
 .founder-insta:hover {
   background: rgba(201,168,76,0.1);
 }
-  </style>
+ body.dark { background:#0d1117; color:#e6edf3; }
+body.dark section { background:#0d1117; }
+body.dark .why-card,
+body.dark .resource-card,
+body.dark .yt-card { background:#161b22; border-color:#30363d; }
+ 
+ </style>
 </head>
 <body>
 
@@ -517,7 +523,12 @@
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
-  </div>
+  </div><button onclick="toggleDark()" id="darkBtn" style="
+  background:none; border:1px solid rgba(201,168,76,0.4);
+  color:var(--gold); padding:0.3rem 0.8rem;
+  border-radius:20px; cursor:pointer;
+  font-size:0.85rem; font-family:'DM Sans',sans-serif;
+">🌙</button>
 </nav>
 
 <!-- ═══ HERO ══════════════════════════════════════════════ -->
@@ -1138,6 +1149,14 @@
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     observer.observe(el);
   });
+
+  function toggleDark() {
+  document.body.classList.toggle('dark');
+  document.getElementById('darkBtn').textContent =
+    document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('dark', document.body.classList.contains('dark'));
+}
+if(localStorage.getItem('dark') === 'true') toggleDark();
 </script>
 
 </body>
