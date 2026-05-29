@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delhi Court Links — Lexbility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy:  #0A1628;
+      --navy2: #0f1f3d;
+      --gold:  #C9A84C;
+      --gold2: #e8c56a;
+      --white: #FFFFFF;
+      --grey:  #F4F6FA;
+      --text:  #1a2340;
+      --muted: #6b7a99;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10,22,40,0.96); backdrop-filter: blur(12px);
+      padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 0.4rem 1.1rem; border-radius: 4px; font-weight: 600 !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; }
+    @media(max-width:768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); padding: 1rem 5%; }
+      .nav-links.open { display: flex; }
+      .nav-links li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    }
+
+    /* ── HERO ── */
+    .page-hero {
+      background: var(--navy); padding: 120px 5% 70px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '🏛️'; position: absolute; font-size: 22rem;
+      opacity: 0.04; top: 50%; right: 5%; transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);
+      background-size: 60px 60px; pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 700px; }
+    .badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.2rem;
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem,5vw,4rem); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1rem; }
+    .page-hero h1 span { color: var(--gold); }
+    .page-hero p { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 300; max-width: 560px; line-height: 1.7; }
+
+    /* ── SECTION ── */
+    section { padding: 64px 5%; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem,3.5vw,2.4rem); font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; line-height: 1.2; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; max-width: 580px; line-height: 1.6; }
+    .bg-grey { background: var(--grey); }
+    .bg-navy { background: var(--navy); }
+
+    /* ── COURT CARDS ── */
+    .court-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1rem;
+    }
+
+    .court-card {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 12px;
+      padding: 1.4rem 1.6rem;
+      text-decoration: none;
+      display: flex; flex-direction: column; gap: 0.4rem;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .court-card::after {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform 0.25s;
+    }
+    .court-card:hover { border-color: var(--gold); background: #fffdf5; transform: translateX(4px); box-shadow: 0 4px 20px rgba(201,168,76,0.09); }
+    .court-card:hover::after { transform: scaleY(1); }
+
+    .court-emoji { font-size: 1.5rem; margin-bottom: 0.2rem; }
+    .court-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+    .court-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .court-url { font-size: 0.75rem; color: var(--gold); font-weight: 600; margin-top: 0.3rem; }
+
+    /* ── ROHINI JUDGE TABLE ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(10,22,40,0.08);
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    thead { background: var(--navy); }
+    thead th {
+      color: var(--gold); font-weight: 700;
+      padding: 0.9rem 1.2rem; text-align: left;
+      font-size: 0.78rem; letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid rgba(10,22,40,0.06); transition: background 0.2s; }
+    tbody tr:hover { background: #fffdf5; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 0.85rem 1.2rem; color: var(--text); vertical-align: middle; }
+    .badge-room {
+      display: inline-block;
+      background: rgba(201,168,76,0.12); color: var(--gold);
+      font-weight: 700; font-size: 0.78rem;
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+    }
+    .vc-link {
+      color: var(--gold); font-size: 0.75rem; font-weight: 600;
+      text-decoration: none;
+    }
+    .vc-link:hover { text-decoration: underline; }
+    .designation-tag {
+      font-size: 0.72rem; color: var(--muted);
+      display: block; margin-top: 0.15rem;
+    }
+
+    /* ── QUICK LINKS BAR ── */
+    .quicklinks {
+      display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .ql-btn {
+      background: var(--navy); color: var(--gold);
+      padding: 0.5rem 1.1rem; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+    .ql-btn:hover { background: var(--gold); color: var(--navy); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy); padding: 3rem 5%; text-align: center; border-top: 1px solid rgba(201,168,76,0.15); }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--white); margin-bottom: 1.5rem; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { list-style: none; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { color: rgba(255,255,255,0.25); font-size: 0.78rem; }
+
+    .anim { opacity: 0; transform: translateY(18px); transition: opacity 0.45s ease, transform 0.45s ease; }
+    .anim.visible { opacity: 1; transform: translateY(0); }
+
+    @media(max-width:600px) {
+      .court-grid { grid-template-columns: 1fr; }
+      thead th, tbody td { padding: 0.7rem 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="extra.html" class="active">Court Links</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html" class="nav-cta">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-content">
+    <div class="badge">⚖️ Lawyer's Daily Toolkit</div>
+    <h1>Delhi <span>Court</span><br>Links</h1>
+    <p>All essential links in one place — from the Supreme Court to Rohini Court. Cause list, case status, e-filing, judge roster — everything in one click.</p>
+  </div>
+</div>
+
+<!-- ══ SECTION 1: QUICK ACCESS ══════════════════════════════ -->
+<section>
+  <div class="section-label">Start Here</div>
+  <div class="section-title">⚡ Most Used — Used Every Day</div>
+  <div class="section-sub">These are the links every lawyer opens at least once a day.</div>
+
+  <div class="court-grid">
+
+    <a href="https://delhihighcourt.nic.in/web/cause-lists" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Delhi HC — Cause List</div>
+      <div class="court-desc">Today's cause list of the Delhi High Court. Available date-wise, bench-wise and as PDF download.</div>
+      <div class="court-url">delhihighcourt.nic.in →</div>
+    </a>
+
+    <a href="https://delhihighcourt.nic.in/app/get-case-type-status" target="_blank" class="court-card anim">
+      <div class="court-emoji">🔍</div>
+      <div class="court-name">Delhi HC — Case Status</div>
+      <div class="court-desc">Check High Court case status by case number, advocate name, or party name.</div>
+      <div class="court-url">delhihighcourt.nic.in →</div>
+    </a>
+
+    <a href="https://delhicourts.nic.in/casestatus" target="_blank" class="court-card anim">
+      <div class="court-emoji">📁</div>
+      <div class="court-name">Delhi District Courts — Case Status</div>
+      <div class="court-desc">Case status for all Delhi district courts — search by CNR number or case number.</div>
+      <div class="court-url">delhicourts.nic.in →</div>
+    </a>
+
+    <a href="https://services.ecourts.gov.in/ecourtindiaHC" target="_blank" class="court-card anim">
+      <div class="court-emoji">⚖️</div>
+      <div class="court-name">eCourts Services Portal</div>
+      <div class="court-desc">National eCourts portal — case status, orders, cause list — for both district and high courts.</div>
+      <div class="court-url">ecourts.gov.in →</div>
+    </a>
+
+    <a href="https://njdg.ecourts.gov.in" target="_blank" class="court-card anim">
+      <div class="court-emoji">📊</div>
+      <div class="court-name">NJDG — National Judicial Data Grid</div>
+      <div class="court-desc">Pendency data for district courts across India. Case status and judge-wise data available.</div>
+      <div class="court-url">njdg.ecourts.gov.in →</div>
+    </a>
+
+    <a href="https://efiling.ecourts.gov.in" target="_blank" class="court-card anim">
+      <div class="court-emoji">📤</div>
+      <div class="court-name">eCourts — e-Filing Portal</div>
+      <div class="court-desc">File cases online in district courts. Petitions, applications, document uploads — all here.</div>
+      <div class="court-url">efiling.ecourts.gov.in →</div>
+    </a>
+
+    <a href="https://sci.gov.in" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Supreme Court of India</div>
+      <div class="court-desc">SC's official portal — case status, cause list, judgments, bench constitution, e-filing.</div>
+      <div class="court-url">sci.gov.in →</div>
+    </a>
+
+    <a href="https://sci.gov.in/coram" target="_blank" class="court-card anim">
+      <div class="court-emoji">👨‍⚖️</div>
+      <div class="court-name">SC — Bench Constitution (Coram)</div>
+      <div class="court-desc">Today's Supreme Court bench composition — which judge sits on which bench, judge-wise roster.</div>
+      <div class="court-url">sci.gov.in/coram →</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 2: DELHI DISTRICT COURTS ═════════════════════ -->
+<section class="bg-grey">
+  <div class="section-label">All District Courts</div>
+  <div class="section-title">🏢 All District Courts of Delhi</div>
+  <div class="section-sub">Cause list and case status directly on each court's official portal.</div>
+
+  <div class="quicklinks">
+    <a href="#rohini" class="ql-btn">Rohini Court</a>
+    <a href="#tishazari" class="ql-btn">Tis Hazari</a>
+    <a href="#patialahouse" class="ql-btn">Patiala House</a>
+    <a href="#karkardooma" class="ql-btn">Karkardooma</a>
+    <a href="#saket" class="ql-btn">Saket</a>
+    <a href="#dwarka" class="ql-btn">Dwarka</a>
+    <a href="#rouseave" class="ql-btn">Rouse Avenue</a>
+    <a href="#shahdara" class="ql-btn">Shahdara</a>
+  </div>
+
+  <div class="court-grid">
+
+    <!-- ROHINI -->
+    <a id="rohini" href="https://rohini.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Rohini Court (North-West)</div>
+      <div class="court-desc">North-West district court — judge roster, duty roster, cause list, notices. RCBA affiliated.</div>
+      <div class="court-url">rohini.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://rohini.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Rohini Court — Cause List</div>
+      <div class="court-desc">Rohini Court's daily cause list / daily board — which case is listed in which court today.</div>
+      <div class="court-url">rohini.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://northdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">North Delhi District Court</div>
+      <div class="court-desc">North Delhi (located within Rohini Complex) — judge roster, duty roster, notices.</div>
+      <div class="court-url">northdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://northdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">North Delhi — Cause List</div>
+      <div class="court-desc">North district's daily cause list — date-wise and court-wise filter available.</div>
+      <div class="court-url">northdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <!-- TIS HAZARI -->
+    <a id="tishazari" href="https://westdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Tis Hazari — West District Court</div>
+      <div class="court-desc">West Delhi district court (Tis Hazari Complex) — case status, cause list, judicial officers list.</div>
+      <div class="court-url">westdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://westdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Tis Hazari — Cause List</div>
+      <div class="court-desc">West district daily board — today's listing for Tis Hazari court complex.</div>
+      <div class="court-url">westdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://centraldelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Tis Hazari — Central District Court</div>
+      <div class="court-desc">Central Delhi district — situated inside Tis Hazari complex, separate district. Judicial officers and notices.</div>
+      <div class="court-url">centraldelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://centraldelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Central Delhi — Cause List</div>
+      <div class="court-desc">Central district's daily cause list — from Tis Hazari complex.</div>
+      <div class="court-url">centraldelhi.dcourts.gov.in →</div>
+    </a>
+
+    <!-- PATIALA HOUSE -->
+    <a id="patialahouse" href="https://newdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Patiala House — New Delhi District</div>
+      <div class="court-desc">New Delhi district court (Patiala House) — near India Gate. Judicial officers, notices, orders.</div>
+      <div class="court-url">newdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://newdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Patiala House — Cause List</div>
+      <div class="court-desc">New Delhi district's daily cause list / board — Patiala House Court Complex.</div>
+      <div class="court-url">newdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <!-- KARKARDOOMA -->
+    <a id="karkardooma" href="https://eastdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Karkardooma — East Delhi District</div>
+      <div class="court-desc">East Delhi district court (Karkardooma Complex) — near Anand Vihar. Judicial data and notices.</div>
+      <div class="court-url">eastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://eastdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Karkardooma — Cause List</div>
+      <div class="court-desc">East district's daily cause list — Karkardooma Court Complex.</div>
+      <div class="court-url">eastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://northeastdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Karkardooma — North-East District</div>
+      <div class="court-desc">North-East Delhi district — located within Karkardooma complex. Judicial officers, orders, notices.</div>
+      <div class="court-url">northeastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://northeastdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">North-East Delhi — Cause List</div>
+      <div class="court-desc">North-East district's daily cause list — from Karkardooma.</div>
+      <div class="court-url">northeastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://shahdara.dcourts.gov.in/" target="_blank" class="court-card anim" id="shahdara">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Shahdara District Court</div>
+      <div class="court-desc">Shahdara district court — judicial officers list, cause list, orders and official notices.</div>
+      <div class="court-url">shahdara.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://shahdara.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Shahdara — Cause List</div>
+      <div class="court-desc">Shahdara district's daily cause list.</div>
+      <div class="court-url">shahdara.dcourts.gov.in →</div>
+    </a>
+
+    <!-- SAKET -->
+    <a id="saket" href="https://southdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Saket — South Delhi District</div>
+      <div class="court-desc">South Delhi district court (Saket) — judicial officers, orders, cause list, official notices.</div>
+      <div class="court-url">southdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://southdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Saket — Cause List</div>
+      <div class="court-desc">South district's daily cause list — Saket Court Complex.</div>
+      <div class="court-url">southdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://southeastdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Saket — South-East District</div>
+      <div class="court-desc">South-East Delhi district court — located within Saket complex. Judicial data and notices.</div>
+      <div class="court-url">southeastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://southeastdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">South-East Delhi — Cause List</div>
+      <div class="court-desc">South-East district's daily cause list — from Saket.</div>
+      <div class="court-url">southeastdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <!-- DWARKA -->
+    <a id="dwarka" href="https://southwestdelhi.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Dwarka — South-West District</div>
+      <div class="court-desc">South-West Delhi district court (Dwarka) — judicial officers, orders, cause list, notices.</div>
+      <div class="court-url">southwestdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://southwestdelhi.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Dwarka — Cause List</div>
+      <div class="court-desc">South-West district's daily cause list — Dwarka Court Complex.</div>
+      <div class="court-url">southwestdelhi.dcourts.gov.in →</div>
+    </a>
+
+    <!-- ROUSE AVENUE -->
+    <a id="rouseave" href="https://rouseavenue.dcourts.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Rouse Avenue Court Complex</div>
+      <div class="court-desc">Special CBI/ED/economic offences court complex — Deen Dayal Upadhyaya Marg, New Delhi.</div>
+      <div class="court-url">rouseavenue.dcourts.gov.in →</div>
+    </a>
+
+    <a href="https://rouseavenue.dcourts.gov.in/cause-list-%E2%81%84-daily-board/" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Rouse Avenue — Cause List</div>
+      <div class="court-desc">Rouse Avenue Court's daily listing — CBI, ED, economic offences cases.</div>
+      <div class="court-url">rouseavenue.dcourts.gov.in →</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 3: ROHINI COURT JUDGE TABLE ══════════════════ -->
+<section>
+  <div class="section-label">Rohini Court — Judge Roster</div>
+  <div class="section-title">👨‍⚖️ Rohini Court: Which Judge, Which Court Room</div>
+  <div class="section-sub">North-West District, Rohini Courts Complex — complete judicial officer list with court room numbers, reader contacts and video conferencing links (April 2024 data).</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Judicial Officer</th>
+          <th>Court Room</th>
+          <th>Reader</th>
+          <th>Mobile</th>
+          <th>Email</th>
+          <th>VC Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Sh. V.K Bansal</strong><span class="designation-tag">Principal District & Sessions Judge</span></td><td><span class="badge-room">401</span></td><td>Sh. Jeet Singh</td><td>9911230168</td><td>pdsj-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest01" target="_blank">Join VC →</a></td></tr>
+        <tr><td>2</td><td><strong>Ms. Preeti Agrawal Gupta</strong><span class="designation-tag">District Judge (Comm.)-01</span></td><td><span class="badge-room">406</span></td><td>Sh. Vijay Anand</td><td>9650625641</td><td>djcomm01-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest02" target="_blank">Join VC →</a></td></tr>
+        <tr><td>3</td><td><strong>Sh. Vinod Yadav</strong><span class="designation-tag">District Judge (Comm.)-02</span></td><td><span class="badge-room">316</span></td><td>Sh. Naveen Kumar</td><td>9212402596</td><td>djcomm02-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtdelhicourt.webex.com/meet/ddc.vc.northwest20" target="_blank">Join VC →</a></td></tr>
+        <tr><td>4</td><td><strong>Sh. Shivaji Anand</strong><span class="designation-tag">District Judge-01 / PO MACT</span></td><td><span class="badge-room">211</span></td><td>Sh. Rajesh</td><td>9891917144</td><td>reader.adj01mactnorthwest@gmail.com</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest10" target="_blank">Join VC →</a></td></tr>
+        <tr><td>5</td><td><strong>Sh. Rakesh Kumar Singh</strong><span class="designation-tag">District Judge-02</span></td><td><span class="badge-room">317</span></td><td>Sh. Bimal Kumar Panwar</td><td>9810403761</td><td>adj02-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest11" target="_blank">Join VC →</a></td></tr>
+        <tr><td>6</td><td><strong>Ms. Ruchika Singla</strong><span class="designation-tag">District Judge-03</span></td><td><span class="badge-room">311</span></td><td>Ms. Alka Rani Dhamija</td><td>8588818015</td><td>adj03-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest12" target="_blank">Join VC →</a></td></tr>
+        <tr><td>7</td><td><strong>Sh. Sunil Chaudhary</strong><span class="designation-tag">District Judge-04</span></td><td><span class="badge-room">212</span></td><td>Sh. Pawan Kumar</td><td>9213420267</td><td>adj04-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest13" target="_blank">Join VC →</a></td></tr>
+        <tr><td>8</td><td><strong>Vacant Court</strong><span class="designation-tag">Additional Sessions Judge</span></td><td><span class="badge-room">201</span></td><td>Ms. Sudesh Verma</td><td>9971967885</td><td>asjsjftc-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest03" target="_blank">Join VC →</a></td></tr>
+        <tr><td>9</td><td><strong>Sh. Virender Singh</strong><span class="designation-tag">Addl. Sessions Judge (FTSC/POCSO)</span></td><td><span class="badge-room">318</span></td><td>Sh. Naveen</td><td>9968384935</td><td>asjftscpocso-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest17" target="_blank">Join VC →</a></td></tr>
+        <tr><td>10</td><td><strong>Sh. Jitendra Singh</strong><span class="designation-tag">Additional Sessions Judge</span></td><td><span class="badge-room">205</span></td><td>Sh. Manesh Rana</td><td>9818831689</td><td>asjelectric-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest04" target="_blank">Join VC →</a></td></tr>
+        <tr><td>11</td><td><strong>Sh. Susheel Bala Dagar</strong><span class="designation-tag">Additional Sessions Judge-01</span></td><td><span class="badge-room">210</span></td><td>Sh. Dheeraj Varma</td><td>9716506992</td><td>asjpocso01-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest05" target="_blank">Join VC →</a></td></tr>
+        <tr><td>12</td><td><strong>Sh. Vikram</strong><span class="designation-tag">Additional Sessions Judge-02</span></td><td><span class="badge-room">409</span></td><td>Sh. Suraj Bhan</td><td>8750124587</td><td>asj02-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/join/ddc.vc.northwest06" target="_blank">Join VC →</a></td></tr>
+        <tr><td>13</td><td><strong>Sh. Babru Bhan</strong><span class="designation-tag">Additional Sessions Judge-03</span></td><td><span class="badge-room">304</span></td><td>Ms. Geeta Gusain</td><td>9891097833</td><td>asj03-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest07" target="_blank">Join VC →</a></td></tr>
+        <tr><td>14</td><td><strong>Ms. Jasjeet Kaur</strong><span class="designation-tag">Additional Sessions Judge-04</span></td><td><span class="badge-room">203</span></td><td>Ms. Seema Mehta</td><td>9999443925</td><td>asjpocso04-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/join/ddc.vc.northwest08" target="_blank">Join VC →</a></td></tr>
+        <tr><td>15</td><td><strong>Ms. Shama Gupta</strong><span class="designation-tag">PO MACT-19</span></td><td><span class="badge-room">19</span></td><td>Sh. Ajay Kumar</td><td>8851855196</td><td>reader.pomact19northwest@gmail.com</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest14" target="_blank">Join VC →</a></td></tr>
+        <tr><td>16</td><td><strong>Sh. Rajinder Kumar</strong><span class="designation-tag">Additional Sessions Judge-05</span></td><td><span class="badge-room">217</span></td><td>Sh. Suresh Pajiyar</td><td>9013445912</td><td>asj05-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest16" target="_blank">Join VC →</a></td></tr>
+        <tr><td>17</td><td><strong>Sh. Deepak Sherawat</strong><span class="designation-tag">Senior Civil Judge</span></td><td><span class="badge-room">410</span></td><td>Sh. Raj Kumar</td><td>8373948316</td><td>scjrc-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ddc.vc.northwest15" target="_blank">Join VC →</a></td></tr>
+        <tr><td>18</td><td><strong>Ms. Neha Mittal</strong><span class="designation-tag">JSCC / ASCJ / GJ</span></td><td><span class="badge-room">309</span></td><td>Sh. Ashok Kumar</td><td>9541046114</td><td>jsccascjgj-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/readerjsccascjgjnorthwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>19</td><td><strong>Ms. Amardeep Kaur</strong><span class="designation-tag">ACJ cum CCJ cum ARC</span></td><td><span class="badge-room">216</span></td><td>Ms. Sangita Chopra</td><td>9911112860</td><td>acj-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.acj.nw" target="_blank">Join VC →</a></td></tr>
+        <tr><td>20</td><td><strong>Ms. Shaina Goyal</strong><span class="designation-tag">Civil Judge</span></td><td><span class="badge-room">310-A</span></td><td>Sh. Manoj</td><td>9599816108</td><td>reader.civiljudgenorthwest@gmail.com</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.civiljudgenorthwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>21</td><td><strong>Ms. Rajani Ranga</strong><span class="designation-tag">Chief Metropolitan Magistrate</span></td><td><span class="badge-room">108</span></td><td>Sh. Mohan Singh</td><td>9899273717</td><td>cmm-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/readercmmnorthwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>22</td><td><strong>Ms. Vasundhra Chhaunkar</strong><span class="designation-tag">Additional Chief Metropolitan Magistrate</span></td><td><span class="badge-room">101</span></td><td>Ms. Kiran Bhatia</td><td>9555552728</td><td>acmm-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.acmmnorthwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>23</td><td><strong>Ms. Sanya Dalal</strong><span class="designation-tag">Metropolitan Magistrate-01</span></td><td><span class="badge-room">102</span></td><td>Sh. Rajesh Saini</td><td>9812564160</td><td>mm01-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/readermm01northwestrohini" target="_blank">Join VC →</a></td></tr>
+        <tr><td>24</td><td><strong>Sh. Apoorv Bhardwaj</strong><span class="designation-tag">Metropolitan Magistrate-02</span></td><td><span class="badge-room">113</span></td><td>Ms. Jyoti Chhabra</td><td>8510011661</td><td>mm02-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm02northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>25</td><td><strong>Ms. Ebbani Aggarwal</strong><span class="designation-tag">Metropolitan Magistrate-03</span></td><td><span class="badge-room">107</span></td><td>Sh. Randhir Singh</td><td>8860359390</td><td>mm03-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm03.northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>26</td><td><strong>Ms. Divya Arora</strong><span class="designation-tag">Metropolitan Magistrate-04</span></td><td><span class="badge-room">112</span></td><td>Sh. Ajay Kumar</td><td>9868500920</td><td>mm04-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm04northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>27</td><td><strong>Sh. Rishabh Kapoor</strong><span class="designation-tag">Metropolitan Magistrate-05</span></td><td><span class="badge-room">105</span></td><td>Ms. Maya Ghosh</td><td>9873600553</td><td>mm05-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm05northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>28</td><td><strong>Sh. Navdeep Gupta</strong><span class="designation-tag">Metropolitan Magistrate-06</span></td><td><span class="badge-room">109</span></td><td>Sh. Rajesh Kumar</td><td>9717812488</td><td>mm06-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm06northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>29</td><td><strong>Ms. Ritika Kansal</strong><span class="designation-tag">Metropolitan Magistrate-07</span></td><td><span class="badge-room">208</span></td><td>Sh. Surender</td><td>9811604603</td><td>mm07-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mm07northwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>30</td><td><strong>Ms. Renu</strong><span class="designation-tag">Metropolitan Magistrate (Mahila Court-01)</span></td><td><span class="badge-room">106</span></td><td>Sh. Anil</td><td>9654080753</td><td>mahilacourt01-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mmmahilacourt106nw" target="_blank">Join VC →</a></td></tr>
+        <tr><td>31</td><td><strong>Ms. Preeti Rajoria</strong><span class="designation-tag">Metropolitan Magistrate (Mahila Court-02)</span></td><td><span class="badge-room">18</span></td><td>Sh. Satish Kumar</td><td>9891217888</td><td>mahilacourt02-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mmmahilacourtno2nw" target="_blank">Join VC →</a></td></tr>
+        <tr><td>32</td><td><strong>Ms. Shivangi Vyas</strong><span class="designation-tag">MM (NI Act)</span></td><td><span class="badge-room">118</span></td><td>Sh. Gopal Chand</td><td>9818013171</td><td>mmniact-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/reader.mmniactnorthwest" target="_blank">Join VC →</a></td></tr>
+        <tr><td>33</td><td><strong>Ms. Shruti Sharma-II</strong><span class="designation-tag">MM (NI Act) Digital Court-01</span></td><td><span class="badge-room">310</span></td><td>Sh. Suresh Chand</td><td>9711709758</td><td>mmniactdc01-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ninorthwest1" target="_blank">Join VC →</a></td></tr>
+        <tr><td>34</td><td><strong>Ms. Shivangi Mangla</strong><span class="designation-tag">MM (NI Act) Digital Court-02</span></td><td><span class="badge-room">310</span></td><td>Sh. Raj Kumar</td><td>7988704113</td><td>mmniactdc02-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ninorthwest2" target="_blank">Join VC →</a></td></tr>
+        <tr><td>35</td><td><strong>Vacant Court</strong><span class="designation-tag">Digital Court-03</span></td><td><span class="badge-room">310</span></td><td>Sh. Kamal Kumar</td><td>9700200257</td><td>mmniactdc03-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ninorthwest3" target="_blank">Join VC →</a></td></tr>
+        <tr><td>36</td><td><strong>Sh. Ajay Singh Parihar</strong><span class="designation-tag">MM (NI Act) Digital Court-04</span></td><td><span class="badge-room">310</span></td><td>Sh. Narender Vats</td><td>7840011015</td><td>mmniactdc04-nw@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtrohini.webex.com/meet/ninorthwest4" target="_blank">Join VC →</a></td></tr>
+        <tr><td>37</td><td><strong>Sh. Dinesh Bhatt</strong><span class="designation-tag">Principal Judge, Family Court</span></td><td><span class="badge-room">4</span></td><td>Sh. Surender</td><td>8800719782</td><td>pjfc-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtdelhi.webex.com/meet/pjfc.northwest.rohini.courtno-4" target="_blank">Join VC →</a></td></tr>
+        <tr><td>38</td><td><strong>Ms. Raj Rani</strong><span class="designation-tag">Judge, Family Court</span></td><td><span class="badge-room">7</span></td><td>Sh. Brahmnand</td><td>9868449306</td><td>jfc-northwest@ddc.nic.in</td><td><a class="vc-link" href="https://districtcourtdelhi.webex.com/meet/jfc.north-west.rohini.courtno-7" target="_blank">Join VC →</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:1rem; font-size:0.78rem; color:var(--muted);">⚠️ This data is from April 2024. It may be updated if transfers or postings change. For the latest roster, check <a href="https://rohini.dcourts.gov.in" target="_blank" style="color:var(--gold);">rohini.dcourts.gov.in</a>.</p>
+</section>
+
+<!-- ══ SECTION 4: OTHER IMPORTANT LINKS ═════════════════════ -->
+<section class="bg-grey">
+  <div class="section-label">More Essential Links</div>
+  <div class="section-title">🔗 Other Must-Have Links</div>
+  <div class="section-sub">E-filing, legal aid, mediation, traffic court, vakalatnama tagging — everything.</div>
+
+  <div class="court-grid">
+
+    <a href="https://delhicourts.nic.in/efiling" target="_blank" class="court-card anim">
+      <div class="court-emoji">🔔</div>
+      <div class="court-name">Vakalatnama Tag — Case Notifications</div>
+      <div class="court-desc">Tag yourself to cases where you have filed vakalatnama — receive SMS/email on mobile for the next date and orders.</div>
+      <div class="court-url">delhicourts.nic.in →</div>
+    </a>
+
+    <a href="https://dslsa.org/" target="_blank" class="court-card anim">
+      <div class="court-emoji">⚖️</div>
+      <div class="court-name">DSLSA — Delhi State Legal Services</div>
+      <div class="court-desc">Lok Adalat dates, panel advocate empanelment, legal aid applications and mediation centre.</div>
+      <div class="court-url">dslsa.org →</div>
+    </a>
+
+    <a href="https://delhi.nalsa.gov.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">NALSA Delhi — Legal Aid</div>
+      <div class="court-desc">Delhi's portal under the National Legal Services Authority — schemes, PLV training, legal aid.</div>
+      <div class="court-url">delhi.nalsa.gov.in →</div>
+    </a>
+
+    <a href="https://delhihighcourt.nic.in/web/e-filing" target="_blank" class="court-card anim">
+      <div class="court-emoji">📤</div>
+      <div class="court-name">Delhi HC — e-Filing</div>
+      <div class="court-desc">File cases online in Delhi High Court — petition, caveat, appeal — all electronically.</div>
+      <div class="court-url">delhihighcourt.nic.in →</div>
+    </a>
+
+    <a href="https://delhihighcourt.nic.in/web/judgments" target="_blank" class="court-card anim">
+      <div class="court-emoji">📜</div>
+      <div class="court-name">Delhi HC — Judgments</div>
+      <div class="court-desc">Search all Delhi High Court judgments — by date, judge, or case number.</div>
+      <div class="court-url">delhihighcourt.nic.in →</div>
+    </a>
+
+    <a href="https://delhihighcourt.nic.in/writereaddata/upload/CourtFees/CourtFeesSchedule.pdf" target="_blank" class="court-card anim">
+      <div class="court-emoji">💰</div>
+      <div class="court-name">Delhi HC — Court Fee Schedule</div>
+      <div class="court-desc">Complete court fee schedule for civil, criminal, writ, and appeals. Available as PDF download.</div>
+      <div class="court-url">PDF Download →</div>
+    </a>
+
+    <a href="https://indiankanoon.org" target="_blank" class="court-card anim">
+      <div class="court-emoji">🔍</div>
+      <div class="court-name">Indian Kanoon</div>
+      <div class="court-desc">Free legal research — Supreme Court and High Court judgments, bare acts, sections — all searchable.</div>
+      <div class="court-url">indiankanoon.org →</div>
+    </a>
+
+    <a href="https://www.barcouncilofindia.org" target="_blank" class="court-card anim">
+      <div class="court-emoji">📋</div>
+      <div class="court-name">Bar Council of India</div>
+      <div class="court-desc">BCI official portal — enrollment, AIBE, state bar councils, advocate verification, rules.</div>
+      <div class="court-url">barcouncilofindia.org →</div>
+    </a>
+
+    <a href="https://traffic.delhipolice.gov.in/evecourtddc" target="_blank" class="court-card anim">
+      <div class="court-emoji">🚦</div>
+      <div class="court-name">Evening Traffic Challan Court</div>
+      <div class="court-desc">Delhi Police's evening traffic challan court portal — online challan payment and case status.</div>
+      <div class="court-url">traffic.delhipolice.gov.in →</div>
+    </a>
+
+    <a href="https://sci.gov.in/mediation" target="_blank" class="court-card anim">
+      <div class="court-emoji">🤝</div>
+      <div class="court-name">SC Mediation Centre</div>
+      <div class="court-desc">Supreme Court Mediation & Conciliation Centre — empanelment, training, case referrals.</div>
+      <div class="court-url">sci.gov.in →</div>
+    </a>
+
+    <a href="https://ecourtsindia.com/causelist/DL" target="_blank" class="court-card anim">
+      <div class="court-emoji">📅</div>
+      <div class="court-name">eCourts India — Delhi Cause Lists</div>
+      <div class="court-desc">Cause lists for all Delhi courts in one place — both High Court and District Courts.</div>
+      <div class="court-url">ecourtsindia.com →</div>
+    </a>
+
+    <a href="https://delhidistrictcourts.nic.in/" target="_blank" class="court-card anim">
+      <div class="court-emoji">🏛️</div>
+      <div class="court-name">Delhi District Courts — Main Portal</div>
+      <div class="court-desc">Central portal for all Delhi district courts — mediation centre, family courts, and DSLSA links also available here.</div>
+      <div class="court-url">delhidistrictcourts.nic.in →</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="extra.html">Court Links</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+    <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility. For informational purposes only. Not legal advice.</p>
+</footer>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.anim').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.06 + 's';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
