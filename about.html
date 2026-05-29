@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About & Contact — Lexbility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #0f1f3d;
+      --gold:   #C9A84C;
+      --gold2:  #e8c56a;
+      --white:  #FFFFFF;
+      --grey:   #F4F6FA;
+      --text:   #1a2340;
+      --muted:  #6b7a99;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10,22,40,0.96); backdrop-filter: blur(12px);
+      padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 0.4rem 1.1rem; border-radius: 4px; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--gold2) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+    @media(max-width:768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); padding: 1rem 5%; }
+      .nav-links.open { display: flex; }
+      .nav-links li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--navy);
+      padding: 120px 5% 70px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '🏛️';
+      position: absolute; font-size: 22rem;
+      opacity: 0.04; top: 50%; right: 5%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .page-hero-content { position: relative; z-index: 1; max-width: 680px; }
+    .page-hero .badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.2rem;
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem,5vw,4rem); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1rem; }
+    .page-hero h1 span { color: var(--gold); }
+    .page-hero p { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 300; max-width: 520px; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 80px 5%; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem,3.5vw,2.4rem); font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; line-height: 1.2; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 560px; }
+    .bg-grey { background: var(--grey); }
+
+    /* ── ABOUT LAWYAAR ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1100px;
+    }
+    @media(max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+    .about-text p {
+      color: var(--muted);
+      font-size: 0.97rem;
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--text); }
+
+    .mission-pillars {
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .pillar {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--grey);
+      border: 1px solid rgba(10,22,40,0.06);
+      border-radius: 10px;
+      padding: 1.2rem;
+      transition: border-color 0.2s;
+    }
+    .pillar:hover { border-color: var(--gold); }
+    .pillar-icon {
+      font-size: 1.6rem; flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pillar-title { font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.25rem; }
+    .pillar-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── FOUNDER SECTION ── */
+    .founder-section {
+      background: var(--navy);
+      padding: 90px 5%;
+      position: relative; overflow: hidden;
+    }
+    .founder-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .founder-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 4rem;
+      align-items: start;
+      position: relative; z-index: 1;
+      max-width: 1000px;
+    }
+    @media(max-width: 768px) { .founder-layout { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* Left column — photo + quick facts */
+    .founder-card-left { text-align: center; }
+    .founder-photo-wrap {
+      position: relative; display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+    .founder-photo {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      display: block;
+    }
+    .founder-photo-ring {
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 1px dashed rgba(201,168,76,0.35);
+      pointer-events: none;
+    }
+
+    .founder-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+    .founder-title {
+      font-size: 0.82rem; color: var(--gold);
+      font-weight: 600; letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+    .founder-org {
+      font-size: 0.8rem; color: rgba(255,255,255,0.45);
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .founder-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .founder-tag {
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.25);
+      color: rgba(255,255,255,0.65);
+      font-size: 0.72rem; font-weight: 500;
+      padding: 0.3rem 0.7rem; border-radius: 20px;
+    }
+
+    /* Right column — bio text */
+    .founder-bio { }
+    .bio-section { margin-bottom: 2rem; }
+    .bio-section:last-child { margin-bottom: 0; }
+    .bio-heading {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.7rem;
+    }
+    .bio-text {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.95rem;
+      line-height: 1.85;
+    }
+    .bio-text strong { color: rgba(255,255,255,0.9); }
+
+    /* Connect links */
+    .connect-links {
+      display: flex; flex-wrap: wrap; gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .connect-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.3rem;
+      border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .connect-btn.gold { background: var(--gold); color: var(--navy); }
+    .connect-btn.gold:hover { background: var(--gold2); transform: translateY(-2px); }
+    .connect-btn.outline {
+      border: 1px solid rgba(201,168,76,0.35);
+      color: rgba(255,255,255,0.7);
+      background: transparent;
+    }
+    .connect-btn.outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    /* ── WHAT WE OFFER ── */
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+    .offer-card {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 12px; padding: 1.6rem;
+      transition: all 0.2s;
+    }
+    .offer-card:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,0.1); transform: translateY(-3px); }
+    .offer-icon { font-size: 1.9rem; margin-bottom: 0.8rem; }
+    .offer-title { font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .offer-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── CONTACT SECTION ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      max-width: 960px;
+    }
+    @media(max-width: 768px) { .contact-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+    .contact-channels { display: flex; flex-direction: column; gap: 1rem; }
+    .channel-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--grey);
+      border: 1px solid rgba(10,22,40,0.06);
+      border-radius: 10px; padding: 1.1rem 1.3rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .channel-item:hover { border-color: var(--gold); transform: translateX(4px); background: #fffdf5; }
+    .channel-icon-wrap {
+      width: 40px; height: 40px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .channel-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.15rem; }
+    .channel-value { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+    /* Simple contact form */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(10,22,40,0.12);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .form-submit {
+      background: var(--navy); color: var(--white);
+      border: none; padding: 0.85rem 2rem;
+      border-radius: 6px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.5rem;
+      width: fit-content;
+    }
+    .form-submit:hover { background: var(--gold); color: var(--navy); transform: translateY(-2px); }
+    .form-note { font-size: 0.78rem; color: var(--muted); margin-top: -0.3rem; }
+
+    /* success state */
+    .form-success {
+      display: none;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text);
+    }
+    .form-success .success-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .form-success p { font-size: 0.9rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer-section {
+      background: var(--navy);
+      padding: 50px 5%;
+      text-align: center;
+    }
+    .disclaimer-box {
+      display: inline-block;
+      max-width: 700px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+    }
+    .disclaimer-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+    .disclaimer-box p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem; line-height: 1.75;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.5);
+      padding: 2.5rem 5%; text-align: center;
+      border-top: 1px solid rgba(201,168,76,0.15);
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--white); margin-bottom: 1rem; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; list-style: none; margin-bottom: 1.2rem; }
+    .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.78rem; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html" class="nav-cta active">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="badge">About Lexbility </div>
+    <h1>Built for <span>Access.</span><br>Driven by Purpose.</h1>
+    <p>A free legal resource platform for Indian law students and practicing advocates — created at the intersection of legal knowledge and technology.</p>
+  </div>
+</div>
+
+<!-- ABOUT LAWYAAR (Mission) -->
+<section>
+  <div class="about-grid">
+    <div>
+      <div class="section-label">Our Mission</div>
+      <div class="section-title">What is Lexbility?</div>
+      <div class="about-text">
+        <p>
+          <strong>Lexbility</strong>  is a free legal resource platform built for Indian law students and practicing advocates.
+        </p>
+        <p>
+          Legal knowledge is a fundamental right — yet it often remains obscured by complexity, paywalls, and access barriers. Lexbility exists to change that. We simplify Bare Acts, curate the best legal resources, build practical guides, and make the Indian legal ecosystem navigable for everyone from first-year law students to senior advocates.
+        </p>
+        <p>
+          Whether you are preparing for CLAT, appearing in court for the first time, or looking for the right bare act at 11 PM before a hearing — <strong>Lexbility has you covered.</strong>
+        </p>
+      </div>
+    </div>
+    <div class="mission-pillars">
+      <div class="pillar">
+        <div class="pillar-icon">🎓</div>
+        <div>
+          <div class="pillar-title">For Law Students</div>
+          <div class="pillar-desc">Bare acts, exam prep, internship guides, free notes, and crash courses — everything a student needs in one place.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">⚖️</div>
+        <div>
+          <div class="pillar-title">For Practicing Lawyers</div>
+          <div class="pillar-desc">Court forms, how-to guides, cause lists, professional development resources — built for the realities of daily practice.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🤖</div>
+        <div>
+          <div class="pillar-title">AI-Powered Assistance</div>
+          <div class="pillar-desc">Ask anything — bare acts, procedures, case laws — and get clear, structured answers in Hindi or English.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">💸</div>
+        <div>
+          <div class="pillar-title">Always Free</div>
+          <div class="pillar-desc">Core resources will always be free. No paywalls, no registration required. Legal knowledge for everyone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE OFFER -->
+<section class="bg-grey">
+  <div class="section-label">Platform Overview</div>
+  <div class="section-title">What You'll Find Here</div>
+  <div class="section-sub">Five sections, one goal — making legal knowledge accessible.</div>
+  <div class="offer-grid">
+    <div class="offer-card">
+      <div class="offer-icon">🏠</div>
+      <div class="offer-title">Home</div>
+      <div class="offer-desc">Top 50 legal websites, top 20 YouTube channels, and quick navigation to all sections.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">📚</div>
+      <div class="offer-title">Students' Corner</div>
+      <div class="offer-desc">Bare acts, exam prep (CLAT, Judiciary, AIBE), free study material, internship guidance, and crash courses.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">⚖️</div>
+      <div class="offer-title">Lawyers' Corner</div>
+      <div class="offer-desc">Court forms, step-by-step procedural guides, cause lists, and professional development resources.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">🤖</div>
+      <div class="offer-title">Ask AI</div>
+      <div class="offer-desc">An AI-powered legal assistant trained on Indian law — ask anything, get clear answers instantly.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">✈️</div>
+      <div class="offer-title">Telegram Community</div>
+      <div class="offer-desc">Get updates, notes, internship alerts, doubt-clearing, and connect with fellow students and lawyers.</div>
+    </div>
+    <div class="offer-card" style="border-color: var(--gold); background: #fffdf5;">
+      <div class="offer-icon">🎓</div>
+      <div class="offer-title">Crash Course — ₹200/sem</div>
+      <div class="offer-desc">Core law subjects, exam-focused, Telegram-based. The most affordable law crash course you'll find.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER SECTION -->
+<section class="founder-section">
+  <div class="founder-layout">
+
+    <!-- Left: Photo & Quick Info -->
+    <div class="founder-card-left">
+      <div class="founder-photo-wrap">
+        <img src="founder1.png" alt="Prashant Pandey" class="founder-photo"
+             onerror="this.style.background='rgba(201,168,76,0.15)';this.style.display='flex';this.removeAttribute('onerror')"/>
+        <div class="founder-photo-ring"></div>
+      </div>
+      <div class="founder-name">Prashant Pandey</div>
+      <div class="founder-title">Joint Secretary</div>
+      <div class="founder-org">Campus Law Centre Students' Union<br>University of Delhi · 2025–26</div>
+      <div class="founder-tags">
+        <span class="founder-tag">Law Student · DU</span>
+        <span class="founder-tag">Legal Research</span>
+        <span class="founder-tag">Criminal Drafting</span>
+        <span class="founder-tag">Civil Drafting</span>
+        <span class="founder-tag">Legal Tech</span>
+      </div>
+    </div>
+
+    <!-- Right: Bio -->
+    <div class="founder-bio">
+      <div class="section-label" style="color:rgba(201,168,76,0.75); margin-bottom: 1.5rem;">The Person Behind Lexbility</div>
+
+      <div class="bio-section">
+        <div class="bio-heading">A Mission for Access</div>
+        <div class="bio-text">
+          Myself <strong>Prashant Pandey</strong>  a law student at the <strong>Campus Law Centre, University of Delhi Batch 2024-27</strong>, and the founder of Lexbility.
+          <br><br>
+          My journey into law is driven by a singular conviction: <strong>legal knowledge is a fundamental right</strong>, yet it often remains obscured by complexity and access barriers. Through Lexbility, I have channeled my passion for legal research and technology to bridge this gap — creating a repository that simplifies Bare Acts, case laws, and procedural requirements for students and practitioners alike.
+        </div>
+      </div>
+
+      <div class="bio-section">
+        <div class="bio-heading">Professional Philosophy</div>
+        <div class="bio-text">
+          My approach to law is rooted in the <strong>intersection of traditional legal research and modern efficiency</strong>. Whether it is through my work as a legal intern in criminal and civil drafting, or my service as the Joint Secretary of the Campus Law Centre Students' Union, I prioritize precision, ethical practice, and the proactive application of legal knowledge.
+        </div>
+      </div>
+
+      <div class="bio-section">
+        <div class="bio-heading">What I'm Looking For</div>
+        <div class="bio-text">
+          I am currently seeking <strong>mentorship and opportunities</strong> to contribute to high-stakes litigation and legal consultancy. I am particularly interested in chambers where technology and rigorous research are utilized to deliver exceptional client outcomes.
+          <br><br>
+          If you believe in democratizing legal access, or would like to discuss my work or a potential collaboration — please reach out. I would love to connect.
+        </div>
+      </div>
+
+      <div class="connect-links">
+        <a href="mailto:prashantpandeysspic@gmail.com" class="connect-btn gold">✉ Send Email</a>
+        <a href="https://www.linkedin.com/in/the-prashant-pandey-link/" target="_blank" class="connect-btn outline">in LinkedIn</a>
+        <a href="https://drive.google.com/drive/folders/1AfNatujl7MbOGMHO1SXmuNzrjT7Ry8DR?usp=drive_link" target="_blank" class="connect-btn outline">⬇ Download CV</a>
+        <a href="https://t.me/lexbility" target="_blank" class="connect-btn outline">✈ Telegram</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section>
+  <div class="section-label">Get in Touch</div>
+  <div class="section-title">📬 Contact & Support</div>
+  <div class="section-sub">For course queries, collaborations, suggestions, or just a conversation about law.</div>
+
+  <div class="contact-grid">
+
+    <!-- Left: Contact Channels -->
+    <div>
+      <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--muted); line-height: 1.7;">
+        Reach out on any of these channels. Telegram is the fastest for quick queries. For collaborations and internship discussions, email is preferred.
+      </div>
+      <div class="contact-channels">
+        <a href="https://t.me/lexbility" target="_blank" class="channel-item">
+          <div class="channel-icon-wrap">✈</div>
+          <div>
+            <div class="channel-label">Telegram</div>
+            <div class="channel-value">Lexbility</div>
+          </div>
+        </a>
+        <a href="mailto:prashantpandeysspic@gmail.com" class="channel-item">
+          <div class="channel-icon-wrap">✉</div>
+          <div>
+            <div class="channel-label">Email</div>
+            <div class="channel-value">prashantpandeysspic@gmail.com</div>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/the.prashant.pandey?igsh=MXhoc2RvZzk0ODdkMw==" target="_blank" class="channel-item">
+          <div class="channel-icon-wrap">📷</div>
+          <div>
+            <div class="channel-label">Instagram</div>
+            <div class="channel-value">@the.prashant.pandey</div>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/the-prashant-pandey-link/" target="_blank" class="channel-item">
+          <div class="channel-icon-wrap" style="font-size:1rem; font-weight:700; color:var(--gold);">in</div>
+          <div>
+            <div class="channel-label">LinkedIn</div>
+            <div class="channel-value">Prashant Pandey</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: Message Form -->
+    <div>
+      <div id="contactForm" class="contact-form">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="fname" placeholder="e.g. Prashant Pandey" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="femail" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="fsubject">
+            <option value="">Select a topic...</option>
+            <option>Crash Course Enquiry</option>
+            <option>Collaboration / Partnership</option>
+            <option>Internship / Mentorship</option>
+            <option>Content Suggestion</option>
+            <option>Bug / Issue Report</option>
+            <option>General Query</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="fmessage" placeholder="Write your message here..."></textarea>
+        </div>
+        <p class="form-note">* This form opens your email client with the message pre-filled.</p>
+        <button class="form-submit" onclick="sendMessage()">Send Message →</button>
+      </div>
+
+      <div id="formSuccess" class="form-success">
+        <div class="success-icon">✅</div>
+        <strong>Your email client has opened!</strong>
+        <p>If it didn't open, please email directly at the address listed on the left.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer-section">
+  <div class="disclaimer-box">
+    <h3>⚠️ Legal Disclaimer</h3>
+    <p>
+      The content on Lexbility is for informational and educational purposes only. Nothing on this website constitutes legal advice. Laws are subject to change — always verify from official sources. For any specific legal matter, please consult a qualified and enrolled advocate. Lexbility and its founder are not liable for any actions taken on the basis of information provided on this platform.
+    </p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+    <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility · Built by Prashant Pandey · Joint Secretary · Campus Law Centre Students' Union, DU 2025–26</p>
+</footer>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  function sendMessage() {
+    const name    = document.getElementById('fname').value.trim();
+    const email   = document.getElementById('femail').value.trim();
+    const subject = document.getElementById('fsubject').value || 'LexbilityEnquiry';
+    const message = document.getElementById('fmessage').value.trim();
+
+    if (!name || !email || !message) {
+      alert('Please fill in your name, email, and message before sending.');
+      return;
+    }
+
+    const body = `Name: ${name}%0AEmail: ${email}%0A%0A${encodeURIComponent(message)}`;
+    window.location.href = `mailto:[your-email@example.com]?subject=${encodeURIComponent(subject)}&body=${body}`;
+
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+
+  // Scroll animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.pillar, .offer-card, .channel-item, .founder-bio .bio-section').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>

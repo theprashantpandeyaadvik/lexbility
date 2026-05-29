@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lexbility — Learn Law, With Flexibility.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── RESET & VARIABLES ─────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #0f1f3d;
+      --gold:   #C9A84C;
+      --gold2:  #e8c56a;
+      --white:  #FFFFFF;
+      --grey:   #F4F6FA;
+      --text:   #1a2340;
+      --muted:  #6b7a99;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAVBAR ────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10, 22, 40, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--navy) !important;
+      padding: 0.4rem 1.1rem;
+      border-radius: 4px;
+      font-weight: 600 !important;
+      color: var(--navy);
+    }
+    .nav-cta:hover { background: var(--gold2); color: var(--navy) !important; }
+
+    /* hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+
+    /* ─── HERO ──────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 5% 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative scales watermark */
+    .hero::before {
+      content: '⚖';
+      position: absolute;
+      font-size: 32rem;
+      color: rgba(201,168,76,0.04);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* subtle grid lines */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 780px; }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .hero h1 span { color: var(--gold); }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: rgba(255,255,255,0.6);
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+      letter-spacing: 0.3px;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-btns {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 2px solid var(--gold);
+    }
+    .btn-primary:hover { background: var(--gold2); border-color: var(--gold2); transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 2px solid rgba(255,255,255,0.3);
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .hero-scroll {
+      margin-top: 3.5rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: fadeUp 0.7s 0.5s ease both;
+    }
+    .hero-scroll::after { content: ' ↓'; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SECTION COMMON ────────────────────────────────── */
+    section { padding: 80px 5%; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.6rem;
+      line-height: 1.2;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 3rem;
+      max-width: 560px;
+    }
+
+    /* ─── WHY LAWYAAR (3 cards) ─────────────────────────── */
+    .why-section { background: var(--grey); }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .why-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid rgba(10,22,40,0.06);
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .why-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(10,22,40,0.1); border-color: var(--gold); }
+
+    .why-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .why-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .why-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    .why-card .card-link {
+      display: inline-block;
+      margin-top: 1.2rem;
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+    .why-card .card-link:hover { text-decoration: underline; }
+
+    /* ─── TOP LEGAL WEBSITES ────────────────────────────── */
+    .resources-section { background: var(--white); }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .resource-card {
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.2s;
+      background: var(--white);
+    }
+    .resource-card:hover { border-color: var(--gold); background: #fffdf5; transform: translateX(3px); }
+
+    .resource-info { flex: 1; }
+    .resource-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 0.2rem;
+    }
+    .resource-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--navy);
+    }
+    .resource-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .resource-visit {
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--grey);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-left: 1rem;
+      transition: all 0.2s;
+    }
+    .resource-visit:hover { background: var(--gold); color: var(--navy); }
+
+    .see-more-wrap { text-align: center; margin-top: 2rem; }
+
+    .see-more-btn {
+      background: transparent;
+      border: 2px solid var(--navy);
+      color: var(--navy);
+      padding: 0.7rem 2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .see-more-btn:hover { background: var(--navy); color: var(--white); }
+
+    .hidden-resources { display: none; }
+    .hidden-resources.open { display: contents; }
+
+    /* ─── YOUTUBE CHANNELS ──────────────────────────────── */
+    .youtube-section { background: var(--grey); }
+
+    .yt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .yt-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+      border: 1px solid rgba(10,22,40,0.06);
+      transition: all 0.2s;
+    }
+    .yt-card:hover { border-color: #ff4444; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+
+    .yt-icon {
+      width: 40px; height: 40px;
+      background: #ff4444;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .yt-info { flex: 1; }
+    .yt-name { font-weight: 600; font-size: 0.92rem; color: var(--navy); }
+    .yt-desc { font-size: 0.76rem; color: var(--muted); margin-top: 0.15rem; }
+
+    .yt-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .yt-link:hover { color: #ff4444; }
+
+    /* ─── FOUNDER ───────────────────────────────────────── */
+    .founder-section {
+      background: var(--navy);
+      text-align: center;
+      padding: 80px 5%;
+    }
+
+    .founder-card {
+      display: inline-block;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 16px;
+      padding: 3rem 4rem;
+      max-width: 480px;
+    }
+
+    .founder-photo {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      margin-bottom: 1.4rem;
+    }
+
+    .founder-photo-placeholder {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.15);
+      border: 3px solid var(--gold);
+      margin: 0 auto 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    .founder-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+
+    .founder-post {
+      color: var(--gold);
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+
+    .founder-quote {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      font-style: italic;
+      line-height: 1.7;
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding-top: 1.2rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    footer {
+      background: #060e1c;
+      padding: 2.5rem 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--white);
+    }
+    .footer-logo span { color: var(--gold); }
+
+    .footer-links {
+      display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      font-size: 0.83rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      color: rgba(255,255,255,0.25);
+      font-size: 0.78rem;
+      width: 100%;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    /* ─── MOBILE ────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy2); padding: 1.5rem 5%; gap: 1.2rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 220px; text-align: center; }
+
+      .founder-card { padding: 2rem 1.5rem; }
+
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+    .founder-insta {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(201,168,76,0.4);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+.founder-insta:hover {
+  background: rgba(201,168,76,0.1);
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════ -->
+<nav>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html" class="nav-cta">About & Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Learn Law, With Flexibility.</div>
+    <h1>Lex<span>bility</span></h1>
+    <p class="hero-tagline">Simplifying Law. Empowering Everyone.<br>From students to senior advocates — we've got you.</p>
+    <div class="hero-btns">
+      <a href="students.html" class="btn-primary">I'm a Law Student →</a>
+      <a href="lawyers.html" class="btn-outline">I'm a Lawyer →</a>
+    </div>
+    <p class="hero-scroll">Scroll to explore</p>
+  </div>
+</section>
+
+<!-- ═══ WHY LAWYAAR ═══════════════════════════════════════ -->
+<section class="why-section">
+  <div class="section-label">What We Offer</div>
+  <div class="section-title">Why Lexbility?</div>
+  <p class="section-sub">Everything a law student or practicing advocate needs — in one place, for free.</p>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">📚</div>
+      <h3>For Law Students</h3>
+      <p>Bare acts, exam prep, internship guides, free notes, crash courses, and a community that gets it.</p>
+      <a href="students.html" class="card-link">Explore Students' Corner →</a>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚖️</div>
+      <h3>For Lawyers</h3>
+      <p>Court forms, bail bond guides, vakalatnama drafts, cause lists, and practical how-to tutorials.</p>
+      <a href="lawyers.html" class="card-link">Explore Lawyers' Corner →</a>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🤖</div>
+      <h3>Ask AI</h3>
+      <p>Get instant answers on bare acts, procedures, and legal concepts — powered by AI, available 24/7.</p>
+      <a href="ask-ai.html" class="card-link">Try Ask AI →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TOP LEGAL WEBSITES ════════════════════════════════ -->
+<section class="resources-section">
+  <div class="section-label">Curated Resources</div>
+  <div class="section-title">⚖️ Top Legal Websites</div>
+  <p class="section-sub">India's most useful legal platforms — verified and hand-picked.</p>
+
+  <div class="resource-grid" id="websiteGrid">
+
+    <!-- TOP 10 always visible -->
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">01</div>
+        <div class="resource-name">SCC Online</div>
+        <div class="resource-desc">Premium case law & legal database</div>
+      </div>
+      <a href="https://www.scconline.com" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">02</div>
+        <div class="resource-name">Manupatra</div>
+        <div class="resource-desc">Comprehensive legal research platform</div>
+      </div>
+      <a href="https://www.manupatra.com" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">03</div>
+        <div class="resource-name">Live Law</div>
+        <div class="resource-desc">Breaking legal news & judgments</div>
+      </div>
+      <a href="https://www.livelaw.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">04</div>
+        <div class="resource-name">Bar & Bench</div>
+        <div class="resource-desc">Legal news, opinions & interviews</div>
+      </div>
+      <a href="https://www.barandbench.com" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">05</div>
+        <div class="resource-name">Indian Kanoon</div>
+        <div class="resource-desc">Free case law search engine</div>
+      </div>
+      <a href="https://indiankanoon.org" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">06</div>
+        <div class="resource-name">Supreme Court of India</div>
+        <div class="resource-desc">Official SC website & cause list</div>
+      </div>
+      <a href="https://main.sci.gov.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">07</div>
+        <div class="resource-name">India Code</div>
+        <div class="resource-desc">Official bare acts repository</div>
+      </div>
+      <a href="https://www.indiacode.nic.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">08</div>
+        <div class="resource-name">eCourts</div>
+        <div class="resource-desc">Case status across all courts</div>
+      </div>
+      <a href="https://ecourts.gov.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">09</div>
+        <div class="resource-name">NALSA</div>
+        <div class="resource-desc">National Legal Services Authority</div>
+      </div>
+      <a href="https://nalsa.gov.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <div class="resource-card">
+      <div class="resource-info">
+        <div class="resource-num">10</div>
+        <div class="resource-name">Law Commission of India</div>
+        <div class="resource-desc">Reports & legal reform documents</div>
+      </div>
+      <a href="https://lawcommissionofindia.nic.in" target="_blank" class="resource-visit">Visit →</a>
+    </div>
+
+    <!-- 11–50 hidden initially -->
+    <div class="hidden-resources" id="moreWebsites">
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">11</div><div class="resource-name">Delhi High Court</div><div class="resource-desc">DHC official portal & e-filing</div></div>
+        <a href="https://delhihighcourt.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">12</div><div class="resource-name">NJDG</div><div class="resource-desc">National Judicial Data Grid</div></div>
+        <a href="https://njdg.ecourts.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">13</div><div class="resource-name">iPleaders Blog</div><div class="resource-desc">In-depth legal articles & guides</div></div>
+        <a href="https://blog.ipleaders.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">14</div><div class="resource-name">Lawctopus</div><div class="resource-desc">Internships, opportunities & news</div></div>
+        <a href="https://www.lawctopus.com" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">15</div><div class="resource-name">Legal Bites</div><div class="resource-desc">Free notes, MCQs & study material</div></div>
+        <a href="https://www.legalbites.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">16</div><div class="resource-name">The Leaflet</div><div class="resource-desc">Independent legal journalism</div></div>
+        <a href="https://theleaflet.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">17</div><div class="resource-name">Bar Council of India</div><div class="resource-desc">Advocate enrollment & AIBE</div></div>
+        <a href="http://www.barcouncilofindia.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">18</div><div class="resource-name">PRS Legislative</div><div class="resource-desc">Bill tracking & parliament research</div></div>
+        <a href="https://prsindia.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">19</div><div class="resource-name">Vidhi Centre</div><div class="resource-desc">Legal policy research & reports</div></div>
+        <a href="https://vidhilegalpolicy.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">20</div><div class="resource-name">Nyaaya</div><div class="resource-desc">Plain language law for citizens</div></div>
+        <a href="https://nyaaya.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">21</div><div class="resource-name">CLAT Consortium</div><div class="resource-desc">Official CLAT portal & admission</div></div>
+        <a href="https://consortiumofnlus.ac.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">22</div><div class="resource-name">Judgment Today</div><div class="resource-desc">Daily SC & HC judgments</div></div>
+        <a href="https://www.judgmenttoday.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">23</div><div class="resource-name">Legal Service India</div><div class="resource-desc">Articles, forms & legal info</div></div>
+        <a href="https://www.legalserviceindia.com" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">24</div><div class="resource-name">Law Insider India</div><div class="resource-desc">Contracts, clauses & legal docs</div></div>
+        <a href="https://www.lawinsider.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">25</div><div class="resource-name">Daksh India</div><div class="resource-desc">Court efficiency & access to justice data</div></div>
+        <a href="https://dakshindia.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">26</div><div class="resource-name">Bombay High Court</div><div class="resource-desc">BHC judgments & cause list</div></div>
+        <a href="https://bombayhighcourt.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">27</div><div class="resource-name">Allahabad High Court</div><div class="resource-desc">AHC portal & e-filing</div></div>
+        <a href="https://www.allahabadhighcourt.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">28</div><div class="resource-name">SEBI</div><div class="resource-desc">Securities & capital markets law</div></div>
+        <a href="https://www.sebi.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">29</div><div class="resource-name">MCA (Company Law)</div><div class="resource-desc">Ministry of Corporate Affairs portal</div></div>
+        <a href="https://www.mca.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">30</div><div class="resource-name">NCLT</div><div class="resource-desc">National Company Law Tribunal</div></div>
+        <a href="https://nclt.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">31</div><div class="resource-name">NCDRC</div><div class="resource-desc">National Consumer Disputes Redressal</div></div>
+        <a href="https://ncdrc.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">32</div><div class="resource-name">CCI</div><div class="resource-desc">Competition Commission of India</div></div>
+        <a href="https://www.cci.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">33</div><div class="resource-name">Income Tax India</div><div class="resource-desc">Direct tax laws & circulars</div></div>
+        <a href="https://www.incometaxindia.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">34</div><div class="resource-name">GST Council</div><div class="resource-desc">GST laws, notifications & rates</div></div>
+        <a href="https://gstcouncil.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">35</div><div class="resource-name">ITAT Online</div><div class="resource-desc">Income Tax Appellate Tribunal orders</div></div>
+        <a href="https://www.itatonline.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">36</div><div class="resource-name">Armed Forces Tribunal</div><div class="resource-desc">AFT Delhi judgments & roster</div></div>
+        <a href="https://aftdelhi.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">37</div><div class="resource-name">TDSAT</div><div class="resource-desc">Telecom Disputes Settlement Tribunal</div></div>
+        <a href="https://tdsat.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">38</div><div class="resource-name">Legislative Dept.</div><div class="resource-desc">Official gazette & acts of Parliament</div></div>
+        <a href="https://legislative.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">39</div><div class="resource-name">Judis</div><div class="resource-desc">SC judgments information system</div></div>
+        <a href="https://judis.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">40</div><div class="resource-name">WorldLII</div><div class="resource-desc">World Legal Information Institute</div></div>
+        <a href="https://www.worldlii.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">41</div><div class="resource-name">CommonLII</div><div class="resource-desc">Commonwealth legal information</div></div>
+        <a href="https://www.commonlii.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">42</div><div class="resource-name">Cornell LII</div><div class="resource-desc">US & international legal resources</div></div>
+        <a href="https://www.law.cornell.edu" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">43</div><div class="resource-name">Calcutta High Court</div><div class="resource-desc">CHC portal & cause list</div></div>
+        <a href="https://calcuttahighcourt.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">44</div><div class="resource-name">Madras High Court</div><div class="resource-desc">MHC judgments & roster</div></div>
+        <a href="https://www.hcmadras.tn.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">45</div><div class="resource-name">NHRC India</div><div class="resource-desc">National Human Rights Commission</div></div>
+        <a href="https://nhrc.nic.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">46</div><div class="resource-name">e-Filing SC</div><div class="resource-desc">Supreme Court e-filing portal</div></div>
+        <a href="https://efiling.sci.gov.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">47</div><div class="resource-name">DSLSA</div><div class="resource-desc">Delhi State Legal Services Authority</div></div>
+        <a href="https://dslsa.org" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">48</div><div class="resource-name">RBI Legal</div><div class="resource-desc">Banking & financial regulations</div></div>
+        <a href="https://www.rbi.org.in" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">49</div><div class="resource-name">AIBE Portal</div><div class="resource-desc">All India Bar Exam info & results</div></div>
+        <a href="https://www.allindiabarexamination.com" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-info"><div class="resource-num">50</div><div class="resource-name">Scroll — Law Section</div><div class="resource-desc">Legal commentary & analysis</div></div>
+        <a href="https://scroll.in/topic/law" target="_blank" class="resource-visit">Visit →</a>
+      </div>
+
+    </div><!-- end hidden-resources -->
+  </div><!-- end resource-grid -->
+
+  <div class="see-more-wrap">
+    <button class="see-more-btn" id="websiteBtn" onclick="toggleWebsites()">See Other Websites ↓</button>
+  </div>
+</section>
+
+<!-- ═══ TOP YOUTUBE CHANNELS ═════════════════════════════ -->
+<!-- ═══ TOP YOUTUBE CHANNELS ═════════════════════════════ -->
+<section class="youtube-section">
+  <div class="section-label">Video Resources</div>
+  <div class="section-title">📺 Top Legal YouTube Channels</div>
+  <p class="section-sub">Learn law through the best Indian legal educators on YouTube.</p>
+
+  <div class="yt-grid" id="ytGrid">
+
+    <!-- Top 10 always visible -->
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Law Sikho</div>
+        <div class="yt-desc">Practical legal skills & courses</div>
+      </div>
+      <a href="https://www.youtube.com/@LawSikho" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Legal Bites</div>
+        <div class="yt-desc">Law notes, concepts & MCQs</div>
+      </div>
+      <a href="https://www.youtube.com/@LegalBitesIndia" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Judiciary Gold (Toprankers)</div>
+        <div class="yt-desc">Judiciary exam prep — all states</div>
+      </div>
+      <a href="https://www.youtube.com/channel/UCV_u6qH9zaPtdIe_uzlwnPg" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Bar & Bench</div>
+        <div class="yt-desc">Legal news, court coverage & webinars</div>
+      </div>
+      <a href="https://www.youtube.com/@BarandBench" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Live Law</div>
+        <div class="yt-desc">Supreme Court live & judgments</div>
+      </div>
+      <a href="https://www.youtube.com/@LiveLaw" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">SCC Online</div>
+        <div class="yt-desc">Case law discussions & legal database</div>
+      </div>
+      <a href="https://www.youtube.com/@SCCOnline" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Vidhi Centre for Legal Policy</div>
+        <div class="yt-desc">Legal reform, policy research & reports</div>
+      </div>
+      <a href="https://www.youtube.com/@VidhiCentreForLegalPolicy" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">NLU Delhi (Official)</div>
+        <div class="yt-desc">Lectures & events from National Law University Delhi</div>
+      </div>
+      <a href="https://www.youtube.com/@NLUNewDelhi" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Sansad TV</div>
+        <div class="yt-desc">Parliamentary debates & legislative proceedings</div>
+      </div>
+      <a href="https://www.youtube.com/c/SansadTV" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <div class="yt-card">
+      <div class="yt-icon">▶</div>
+      <div class="yt-info">
+        <div class="yt-name">Supreme Court of India</div>
+        <div class="yt-desc">Official SC channel — hearings & events</div>
+      </div>
+      <a href="https://www.youtube.com/@supremecourtofindia5950" target="_blank" class="yt-link">Watch →</a>
+    </div>
+
+    <!-- 11–25 hidden initially -->
+    <div class="hidden-resources" id="moreYt">
+
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">Lawyered</div>
+          <div class="yt-desc">Legal awareness & affordable legal solutions</div>
+        </div>
+        <a href="https://www.youtube.com/channel/UCU8WJFknX-H5TxrqI4zk3rA" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">Lawctopus</div>
+          <div class="yt-desc">Student opportunities, internships & guidance</div>
+        </div>
+        <a href="https://www.youtube.com/@Lawctopus" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">Indian Kanoon</div>
+          <div class="yt-desc">Legal research tools & case law guidance</div>
+        </div>
+        <a href="https://www.youtube.com/@indiankanoon" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">NLSIU Official</div>
+          <div class="yt-desc">NLS Bangalore — lectures & events</div>
+        </div>
+        <a href="https://www.youtube.com/channel/UCDALzDwbFHs3nXs9fSlnfug" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">The Print India</div>
+          <div class="yt-desc">Legal policy & court-related current affairs</div>
+        </div>
+        <a href="https://www.youtube.com/@ThePrintIndia" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      
+
+      
+      
+
+      <div class="yt-card">
+        <div class="yt-icon">▶</div>
+        <div class="yt-info">
+          <div class="yt-name">Gujarat High Court</div>
+          <div class="yt-desc">Court proceedings & legal transparency</div>
+        </div>
+        <a href="https://www.youtube.com/@gujarathighcourt" target="_blank" class="yt-link">Watch →</a>
+      </div>
+
+      
+
+      
+
+    </div><!-- end hidden -->
+  </div><!-- end yt-grid -->
+
+  <div class="see-more-wrap" style="margin-top:2rem;">
+    <button class="see-more-btn" id="ytBtn" onclick="toggleYt()">See Other Channels ↓</button>
+  </div>
+</section>
+
+ 
+
+<!-- ═══ FOUNDER ═══════════════════════════════════════════ -->
+<section class="founder-section">
+  <div class="section-label" style="color:rgba(201,168,76,0.7); text-align:center;">Behind LEXBILITY </div>
+  <div class="section-title" style="color:var(--white); text-align:center; margin-bottom:2.5rem;">Meet the Founder</div>
+
+  <div style="display:flex; justify-content:center;">
+    <div class="founder-card">
+
+      <!-- If founder.jpg is in images/ folder, it will show. Otherwise shows emoji placeholder -->
+      <img
+        src="founder.png"
+        alt="Prashant Pandey"
+        class="founder-photo"
+        onerror="this.style.display='none'; document.getElementById('founderPlaceholder').style.display='flex';"
+      />
+      <div class="founder-photo-placeholder" id="founderPlaceholder" style="display:none;">👤</div>
+
+      <div class="founder-name">Prashant Pandey</div>
+      <div class="founder-post">
+        Joint Secretary<br>
+        Campus Law Centre Students' Union<br>
+        Delhi University | 2025–26
+      </div>
+      <div class="founder-quote">
+        "Lexbility was built to make legal knowledge accessible to every student and practitioner in India."
+      </div>
+      <a href="https://www.instagram.com/the.prashant.pandey" target="_blank" class="founder-insta">
+  📷 @the.prashant.pandey
+</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+    <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility . For informational purposes only. Not legal advice.</p>
+</footer>
+
+<!-- ═══ JAVASCRIPT ════════════════════════════════════════ -->
+<script>
+  // Hamburger menu
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // Toggle websites
+  function toggleWebsites() {
+    const el = document.getElementById('moreWebsites');
+    const btn = document.getElementById('websiteBtn');
+    el.classList.toggle('open');
+    btn.textContent = el.classList.contains('open')
+      ? 'Show Less ↑'
+      : 'See All 50 Websites ↓';
+  }
+
+  // Toggle YouTube
+  function toggleYt() {
+    const el = document.getElementById('moreYt');
+    const btn = document.getElementById('ytBtn');
+    el.classList.toggle('open');
+    btn.textContent = el.classList.contains('open')
+      ? 'Show Less ↑'
+      : 'See All 20 Channels ↓';
+  }
+
+  // Scroll animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.why-card, .resource-card, .yt-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>

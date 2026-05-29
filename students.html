@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Law Students' Corner — Lexbility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #0f1f3d;
+      --gold:   #C9A84C;
+      --gold2:  #e8c56a;
+      --white:  #FFFFFF;
+      --grey:   #F4F6FA;
+      --text:   #1a2340;
+      --muted:  #6b7a99;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10,22,40,0.96); backdrop-filter: blur(12px);
+      padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 0.4rem 1.1rem; border-radius: 4px; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--gold2) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+    @media(max-width:768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); padding: 1rem 5%; }
+      .nav-links.open { display: flex; }
+      .nav-links li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--navy);
+      padding: 120px 5% 70px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '📚';
+      position: absolute; font-size: 22rem;
+      opacity: 0.04; top: 50%; right: 5%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .page-hero-content { position: relative; z-index: 1; max-width: 680px; }
+    .page-hero .badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.2rem;
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem,5vw,4rem); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1rem; }
+    .page-hero h1 span { color: var(--gold); }
+    .page-hero p { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 300; max-width: 520px; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 72px 5%; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem,3.5vw,2.4rem); font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; line-height: 1.2; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 520px; }
+    .bg-grey { background: var(--grey); }
+    .bg-navy { background: var(--navy); }
+
+    /* ── BARE ACTS ── */
+    .acts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .act-card {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.1);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .act-card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(201,168,76,0.15); transform: translateY(-2px); }
+    .act-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+    .act-year { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .act-arrow { color: var(--gold); font-size: 1rem; flex-shrink: 0; margin-left: 0.5rem; }
+
+    /* ── EXAM CARDS ── */
+    .exam-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+    .exam-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(10,22,40,0.08);
+      transition: all 0.2s;
+    }
+    .exam-card:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,0.12); transform: translateY(-3px); }
+    .exam-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .exam-title { font-weight: 700; font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .exam-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
+    .exam-link { color: var(--gold); font-size: 0.85rem; font-weight: 600; text-decoration: none; }
+    .exam-link:hover { text-decoration: underline; }
+
+    /* ── FREE MATERIAL ── */
+    .material-list { display: flex; flex-direction: column; gap: 0.8rem; max-width: 700px; }
+    .material-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--white); border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 10px; padding: 1rem 1.3rem;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .material-item:hover { border-color: var(--gold); transform: translateX(4px); }
+    .material-dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+    .material-text { flex: 1; }
+    .material-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+    .material-desc { font-size: 0.82rem; color: var(--muted); }
+    .material-arrow { color: var(--gold); }
+
+    /* ── CRASH COURSE BOX ── */
+    .crash-box {
+      background: var(--navy);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 2.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap;
+      position: relative; overflow: hidden;
+    }
+    .crash-box::before {
+      content: '🎓';
+      position: absolute; font-size: 10rem;
+      opacity: 0.05; right: 2rem; top: 50%;
+      transform: translateY(-50%);
+    }
+    .crash-left { position: relative; z-index: 1; }
+    .crash-tag { display: inline-block; background: var(--gold); color: var(--navy); font-size: 0.72rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 4px; margin-bottom: 0.8rem; }
+    .crash-title { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem,3vw,2.2rem); color: var(--white); font-weight: 700; margin-bottom: 0.5rem; }
+    .crash-points { list-style: none; margin-top: 0.8rem; }
+    .crash-points li { color: rgba(255,255,255,0.7); font-size: 0.9rem; padding: 0.25rem 0; }
+    .crash-points li::before { content: '✓ '; color: var(--gold); font-weight: 700; }
+    .crash-right { position: relative; z-index: 1; text-align: center; }
+    .crash-price { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--gold); font-weight: 900; line-height: 1; }
+    .crash-price-sub { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1.2rem; }
+    .crash-btn {
+      display: inline-block;
+      background: var(--gold); color: var(--navy);
+      padding: 0.85rem 2rem; border-radius: 6px;
+      font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .crash-btn:hover { background: var(--gold2); transform: translateY(-2px); }
+
+    /* ── INTERNSHIP ── */
+    .intern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+    .intern-card {
+      background: var(--white);
+      border-radius: 12px; padding: 1.5rem;
+      border: 1px solid rgba(10,22,40,0.08);
+      transition: all 0.2s;
+    }
+    .intern-card:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,0.1); transform: translateY(-3px); }
+    .intern-icon { font-size: 1.8rem; margin-bottom: 0.7rem; }
+    .intern-title { font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+    .intern-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .intern-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  margin-top: 1rem;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.intern-details h4 {
+  color: var(--navy);
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.intern-details ul {
+  padding-left: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.intern-details li {
+  margin-bottom: 0.4rem;
+}
+
+.read-more-btn {
+  margin-top: 1rem;
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.read-more-btn:hover {
+  background: var(--gold2);
+}
+
+.intern-card.active .intern-details {
+  max-height: 1000px;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+    /* ── COMMUNITY BANNER ── */
+    .community-section {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      text-align: center;
+      padding: 72px 5%;
+    }
+    .community-section .section-title { color: var(--white); margin: 0 auto 0.5rem; }
+    .community-section .section-sub { color: rgba(255,255,255,0.55); margin: 0 auto 2rem; }
+    .tg-btn {
+      display: inline-block;
+      background: var(--gold); color: var(--navy);
+      padding: 0.9rem 2.2rem; border-radius: 6px;
+      font-weight: 700; font-size: 1rem;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .tg-btn:hover { background: var(--gold2); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.5);
+      padding: 2.5rem 5%; text-align: center;
+      border-top: 1px solid rgba(201,168,76,0.15);
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--white); margin-bottom: 1rem; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; list-style: none; margin-bottom: 1.2rem; }
+    .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.78rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html" class="active">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html" class="nav-cta">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="badge">Law Students' Corner</div>
+    <h1>Everything a <span>Law Student</span> Needs</h1>
+    <p>Bare acts, exam prep, free study material, internships — all in one place. Built by a student, for students.</p>
+  </div>
+</div>
+
+<!-- BARE ACTS -->
+<section>
+  <div class="section-label">Quick Access</div>
+  <div class="section-title">📜 Important Bare Acts</div>
+  <div class="section-sub">Direct links to India Code & Legislative Department. Always updated.</div>
+
+  <div class="acts-grid">
+    <a href="https://indiacode.nic.in/handle/123456789/20062" target="_blank" class="act-card">
+      <div><div class="act-name">Bharatiya Nyaya Sanhita</div><div class="act-year">BNS 2023 (replaces IPC)</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/20066" target="_blank" class="act-card">
+      <div><div class="act-name">Bharatiya Nagarik Suraksha Sanhita</div><div class="act-year">BNSS 2023 (replaces CrPC)</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/20065" target="_blank" class="act-card">
+      <div><div class="act-name">Bharatiya Sakshya Adhiniyam</div><div class="act-year">BSA 2023 (replaces Evidence Act)</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://legislative.gov.in/sites/default/files/COI...pdf" target="_blank" class="act-card">
+      <div><div class="act-name">Constitution of India</div><div class="act-year">As amended</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2187" target="_blank" class="act-card">
+      <div><div class="act-name">Code of Civil Procedure</div><div class="act-year">CPC 1908</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2187" target="_blank" class="act-card">
+      <div><div class="act-name">Indian Contract Act</div><div class="act-year">1872</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2338" target="_blank" class="act-card">
+      <div><div class="act-name">Transfer of Property Act</div><div class="act-year">1882</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/1426" target="_blank" class="act-card">
+      <div><div class="act-name">Specific Relief Act</div><div class="act-year">1963</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/1565" target="_blank" class="act-card">
+      <div><div class="act-name">Limitation Act</div><div class="act-year">1963</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/13970" target="_blank" class="act-card">
+      <div><div class="act-name">Companies Act</div><div class="act-year">2013</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/1932" target="_blank" class="act-card">
+      <div><div class="act-name">Consumer Protection Act</div><div class="act-year">2019</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2096" target="_blank" class="act-card">
+      <div><div class="act-name">Right to Information Act</div><div class="act-year">RTI 2005</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2079" target="_blank" class="act-card">
+      <div><div class="act-name">POCSO Act</div><div class="act-year">2012</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/2021" target="_blank" class="act-card">
+      <div><div class="act-name">Domestic Violence Act</div><div class="act-year">2005</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://indiacode.nic.in/handle/123456789/1978" target="_blank" class="act-card">
+      <div><div class="act-name">Arbitration & Conciliation Act</div><div class="act-year">1996</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+    <a href="https://www.indiacode.nic.in" target="_blank" class="act-card" style="border-style:dashed; border-color:var(--gold);">
+      <div><div class="act-name" style="color:var(--gold);">View All Acts →</div><div class="act-year">India Code Full Library</div></div>
+      <div class="act-arrow">↗</div>
+    </a>
+  </div>
+</section>
+
+<!-- EXAM PREP -->
+<section class="bg-grey">
+  <div class="section-label">Competitive Exams</div>
+  <div class="section-title">🎯 Exam Preparation</div>
+  <div class="section-sub">Everything you need for CLAT, Judiciary, AIBE and more.</div>
+
+  <div class="exam-grid">
+    <div class="exam-card">
+      <div class="exam-icon">⚖️</div>
+      <div class="exam-title">CLAT UG & PG</div>
+      <div class="exam-desc">Official consortium site for application, syllabus & previous papers.</div>
+      <a href="https://consortiumofnlus.ac.in" target="_blank" class="exam-link">Official Site →</a>
+    </div>
+    <div class="exam-card">
+      <div class="exam-icon">🏛️</div>
+      <div class="exam-title">Judiciary Exams</div>
+      <div class="exam-desc">State-wise judiciary exam notifications, syllabus & patterns.</div>
+      <a href="https://www.lawctopus.com/judiciary-exams/" target="_blank" class="exam-link">State-wise Links →</a>
+    </div>
+    <div class="exam-card">
+      <div class="exam-icon">📋</div>
+      <div class="exam-title">AIBE</div>
+      <div class="exam-desc">All India Bar Examination — Bar Council official info & syllabus.</div>
+      <a href="https://www.allindiabarexamination.com" target="_blank" class="exam-link">BCI Official →</a>
+    </div>
+    <div class="exam-card">
+      <div class="exam-icon">🎓</div>
+      <div class="exam-title">LLM Entrance</div>
+      <div class="exam-desc">DU, BHU, NLU LLM entrance — notification & prep resources.</div>
+      <a href="https://lawctopus.com/llm-admissions/" target="_blank" class="exam-link">LLM Resources →</a>
+    </div>
+    <div class="exam-card">
+      <div class="exam-icon">💼</div>
+      <div class="exam-title">Internship Tracker</div>
+      <div class="exam-desc">Live internship listings updated daily for law students.</div>
+      <a href="https://www.lawctopus.com/clat-possible/" target="_blank" class="exam-link">Find Internships →</a>
+    </div>
+    <div class="exam-card">
+      <div class="exam-icon">📝</div>
+      <div class="exam-title">Moot Court Comps</div>
+      <div class="exam-desc">National & international moot court competition listings.</div>
+      <a href="https://www.lawctopus.com/moot-court-competitions/" target="_blank" class="exam-link">View Moots →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FREE STUDY MATERIAL -->
+<section>
+  <div class="section-label">Free Resources</div>
+  <div class="section-title">📖 Free Notes & Study Material</div>
+  <div class="section-sub">Curated free resources trusted by thousands of law students.</div>
+
+  <div class="material-list">
+    <a href="https://www.legalbites.in" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">Legal Bites</div>
+        <div class="material-desc">Free subject-wise notes, MCQs & case summaries</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+    <a href="https://lawctopus.com" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">Lawctopus</div>
+        <div class="material-desc">Articles, guides & career resources for law students</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+    <a href="https://blog.ipleaders.in" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">iPleaders Blog</div>
+        <div class="material-desc">In-depth legal articles & practical skill guides</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+    <a href="https://indiankanoon.org" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">Indian Kanoon</div>
+        <div class="material-desc">Free case law search — Supreme Court, High Courts & more</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+    <a href="https://www.livelaw.in" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">Live Law</div>
+        <div class="material-desc">Latest judgments, legal news & court updates</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+    <a href="https://nyaaya.org" target="_blank" class="material-item">
+      <div class="material-dot"></div>
+      <div class="material-text">
+        <div class="material-name">Nyaaya</div>
+        <div class="material-desc">Plain-language explanations of Indian laws</div>
+      </div>
+      <div class="material-arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- CRASH COURSE -->
+<section class="bg-grey">
+  <div class="section-label">Featured</div>
+  <div class="section-title">⭐ Crash Course & Lectures</div>
+  <div class="section-sub">Affordable, focused, and built for law students by law students.</div>
+
+  <div class="crash-box">
+    <div class="crash-left">
+      <div class="crash-tag">Lexbility Exclusive</div>
+      <div class="crash-title">Law Crash Course<br>& Lectures</div>
+      <ul class="crash-points">
+        <li>Core law subjects covered</li>
+        <li>Exam-focused content</li>
+        <li>Online — Telegram based</li>
+        <li>Doubt clearing sessions</li>
+        <li>Notes & PDFs included</li>
+      </ul>
+    </div>
+    <div class="crash-right">
+      <div class="crash-price">₹200</div>
+      <div class="crash-price-sub">per semester only</div>
+      <a href="https://t.me/lexbility" target="_blank" class="crash-btn">Join on Telegram →</a>
+    </div>
+  </div>
+</section>
+
+<!-- INTERNSHIP & CAREER -->
+<!-- INTERNSHIP & CAREER -->
+<section>
+  <div class="section-label">Career</div>
+  <div class="section-title">💼 Internship & Career Guide</div>
+  <div class="section-sub">Step-by-step guidance to kickstart your legal career.</div>
+
+  <div class="intern-grid">
+
+  <!-- INTERNSHIP GUIDE -->
+  <div class="intern-card">
+    <div class="intern-icon">📨</div>
+    <div class="intern-title">How to Apply for Internships</div>
+
+    <div class="intern-desc">
+      Learn the exact process to secure law internships professionally.
+    </div>
+
+    <div class="intern-details">
+      <h4>Step-by-Step Process</h4>
+
+      <p><strong>1. Decide Your Target</strong></p>
+      <ul>
+        <li>Litigation Chambers</li>
+        <li>Corporate Law Firms</li>
+        <li>NGOs</li>
+        <li>Courts & Judges</li>
+        <li>Policy Organizations</li>
+      </ul>
+
+      <p><strong>2. Prepare Documents</strong></p>
+      <ul>
+        <li>1-page CV</li>
+        <li>Professional Email</li>
+        <li>Writing Sample (optional)</li>
+        <li>LinkedIn Profile</li>
+      </ul>
+
+      <p><strong>3. Best Platforms</strong></p>
+      <ul>
+        <li>Lawctopus</li>
+        <li>LinkedIn</li>
+        <li>Telegram Groups</li>
+        <li>Firm Websites</li>
+        <li>Cold Emails</li>
+      </ul>
+
+      <p><strong>Common Mistakes</strong></p>
+      <ul>
+        <li>Generic emails</li>
+        <li>3-page CV</li>
+        <li>No subject line</li>
+        <li>Spelling mistakes</li>
+      </ul>
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+
+  <!-- LAW FIRMS -->
+  <div class="intern-card">
+    <div class="intern-icon">🏢</div>
+    <div class="intern-title">Top Law Firms</div>
+
+    <div class="intern-desc">
+      Understand how Tier-1 law firms hire interns and freshers.
+    </div>
+
+    <div class="intern-details">
+      <h4>Top Firms in India</h4>
+
+      <ul>
+        <li>AZB & Partners</li>
+        <li>Cyril Amarchand Mangaldas</li>
+        <li>Shardul Amarchand Mangaldas</li>
+        <li>Khaitan & Co</li>
+        <li>Trilegal</li>
+        <li>JSA</li>
+      </ul>
+
+      <p><strong>What They Look For</strong></p>
+      <ul>
+        <li>Strong academics</li>
+        <li>Research skills</li>
+        <li>Drafting ability</li>
+        <li>Commercial awareness</li>
+      </ul>
+
+      <p><strong>Reality Check</strong></p>
+      <p>
+        Tier-1 firms are extremely competitive. Networking,
+        internships and strong practical skills matter more
+        than certificates.
+      </p>
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+
+  <!-- HIGH COURT -->
+  <div class="intern-card">
+    <div class="intern-icon">⚖️</div>
+    <div class="intern-title">High Court Internships</div>
+
+    <div class="intern-desc">
+      Learn how court internships actually work.
+    </div>
+
+    <div class="intern-details">
+      <h4>What You’ll Do</h4>
+
+      <ul>
+        <li>Legal research</li>
+        <li>Case summaries</li>
+        <li>Court observation</li>
+        <li>Draft preparation</li>
+      </ul>
+
+      <p><strong>Skills Required</strong></p>
+
+      <ul>
+        <li>Bare Act reading</li>
+        <li>Research skills</li>
+        <li>Professional conduct</li>
+      </ul>
+
+      <p><strong>Important Reality</strong></p>
+
+      <p>
+        Court internships involve long observation hours and
+        repetitive work initially, but they are valuable for
+        litigation exposure.
+      </p>
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+
+  <!-- NGO -->
+  <div class="intern-card">
+    <div class="intern-icon">🤝</div>
+    <div class="intern-title">NGO & Policy Internships</div>
+
+    <div class="intern-desc">
+      Build experience in legal aid, policy and human rights.
+    </div>
+
+    <div class="intern-details">
+      <h4>Popular Organizations</h4>
+
+      <ul>
+        <li>NALSA</li>
+        <li>DSLSA</li>
+        <li>HRLN</li>
+        <li>Vidhi Centre</li>
+        <li>PUCL</li>
+      </ul>
+
+      <p><strong>What You Learn</strong></p>
+
+      <ul>
+        <li>Policy drafting</li>
+        <li>Legal aid work</li>
+        <li>Field exposure</li>
+        <li>Human rights research</li>
+      </ul>
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+
+  <!-- EMAIL TEMPLATE -->
+  <div class="intern-card">
+    <div class="intern-icon">📄</div>
+    <div class="intern-title">Cold Email Template</div>
+
+    <div class="intern-desc">
+      Professional internship email format for law students.
+    </div>
+
+    <div class="intern-details">
+
+<pre>
+Subject: Internship Application |
+1st/2nd/3rd Year Law Student
+
+Respected Sir/Ma’am,
+
+My name is [Your Name], and I am
+a law student at [College Name].
+
+I am interested in interning under
+your guidance during [Month].
+
+Please find my CV attached.
+
+Regards,
+[Your Name]
+</pre>
+
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+
+  <!-- RESUME -->
+  <div class="intern-card">
+    <div class="intern-icon">📊</div>
+    <div class="intern-title">Resume Tips for Law Students</div>
+
+    <div class="intern-desc">
+      Build a proper legal CV that recruiters actually read.
+    </div>
+
+    <div class="intern-details">
+
+      <h4>Golden Rule</h4>
+      <p>Keep your CV one page only.</p>
+
+      <h4>Include These Sections</h4>
+
+      <ul>
+        <li>Education</li>
+        <li>Internships</li>
+        <li>Moot Courts</li>
+        <li>Publications</li>
+        <li>Skills</li>
+      </ul>
+
+      <h4>Avoid These Mistakes</h4>
+
+      <ul>
+        <li>Fancy colors</li>
+        <li>Fake internships</li>
+        <li>School achievements</li>
+        <li>Unnecessary objectives</li>
+      </ul>
+
+    </div>
+
+    <button class="read-more-btn">Read More</button>
+  </div>
+
+</div>
+
+<!-- COMMUNITY -->
+<section class="community-section">
+  <div class="section-label" style="color:rgba(201,168,76,0.7);">Stay Connected</div>
+  <div class="section-title" style="text-align:center;">Join the Lexbility Community</div>
+  <div class="section-sub" style="text-align:center; color:rgba(255,255,255,0.5);">Get updates, notes, internship alerts & connect with fellow law students.</div>
+  <a href="https://t.me/lexbility" target="_blank" class="tg-btn">✈ Join Lexbility on Telegram</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+    <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility. For informational purposes only. Not legal advice.</p>
+</footer>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // Scroll animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.act-card, .exam-card, .material-item, .intern-card').forEach(el => {
+    el.style.opacity ='0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+    observer.observe(el);
+  });
+  // Internship accordion
+
+document.querySelectorAll('.read-more-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+
+    const card = btn.parentElement;
+
+    card.classList.toggle('active');
+
+    if (card.classList.contains('active')) {
+      btn.innerText = 'Show Less';
+    } else {
+      btn.innerText = 'Read More';
+    }
+
+  });
+});
+</script>
+
+</body>
+</html>
