@@ -176,11 +176,10 @@
   // Load approved articles
   async function loadArticles() {
     try {
-      const q = query(
-        collection(db, 'articles'),
-        where('status', '==', 'approved'),
-        orderBy('createdAt', 'desc')
-      );
+     const q = query(
+  collection(db, 'articles'),
+  where('status', '==', 'approved')
+);
       const snapshot = await getDocs(q);
       const grid = document.getElementById('articlesGrid');
       
