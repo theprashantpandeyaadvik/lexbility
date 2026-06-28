@@ -94,7 +94,7 @@
   };
 
   async function loadPending() {
-    const q = query(collection(db, 'pending'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'pending'));
     const snapshot = await getDocs(q);
     const list = document.getElementById('pendingList');
 
