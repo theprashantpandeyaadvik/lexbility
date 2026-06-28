@@ -303,12 +303,49 @@
     .footer-links a:hover { color: var(--gold); }
     .footer-copy { color: rgba(255,255,255,0.25); font-size: 0.78rem; width: 100%; text-align: center; margin-top: 0.5rem; }
 
+    /* SEARCH BAR */
+    .search-bar-wrap { margin: 1.5rem 0 0.5rem; max-width: 480px; }
+    .search-input {
+      width: 100%; padding: 0.85rem 1.2rem;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 8px; font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text); background: var(--white);
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { outline: none; border-color: var(--gold); }
+
+    /* COMPACT WRITE SECTION (now below articles) */
+    .write-section-compact {
+      background: var(--grey);
+      padding: 40px 5%;
+      border-top: 1px solid rgba(10,22,40,0.06);
+    }
+    .write-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; max-width: 720px;
+    }
+    .write-toggle-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; color: var(--navy); font-weight: 700;
+    }
+    .write-toggle-btn {
+      background: var(--gold); color: var(--navy);
+      border: none; padding: 0.7rem 1.6rem;
+      border-radius: 6px; font-size: 0.9rem; font-weight: 700;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .write-toggle-btn:hover { background: var(--gold2); transform: translateY(-1px); }
+    #writeFormWrap { margin-top: 1.5rem; max-width: 720px; }
+
     /* MOBILE */
     @media (max-width: 768px) {
       .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy2); padding: 1.5rem 5%; gap: 1.2rem; }
       .nav-links.open { display: flex; }
       .hamburger { display: flex; }
       #writeForm { padding: 1.5rem; }
+      .write-toggle-row { flex-direction: column; align-items: flex-start; }
       footer { flex-direction: column; text-align: center; }
       .footer-links { justify-content: center; }
     }
@@ -324,7 +361,6 @@
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
     <li><a href="articles.html">Articles</a></li>
-    <li><a href="ask-ai.html">Ask AI</a></li>
     <li><a href="about.html" class="nav-cta">About & Contact</a></li>
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -341,57 +377,67 @@
   </div>
 </section>
 
-<!-- WRITE SECTION -->
-<section class="write-section">
-  <div class="section-label">Contribute</div>
-  <div class="section-title">Write an Article</div>
-  <p class="section-sub">Share your legal knowledge with the Lexbility community. Sign in to submit.</p>
-
-  <!-- Login -->
-  <div id="loginSection">
-    <button id="loginBtn" onclick="loginWithGoogle()">
-      <img src="https://www.google.com/favicon.ico" width="18" alt="Google"> Sign in with Google
-    </button>
-  </div>
-
-  <!-- User Info -->
-  <div id="userInfo">
-    <img id="userPhoto" src="" alt="">
-    <span id="userName"></span>
-    <button id="logoutBtn" onclick="logout()">Sign out</button>
-  </div>
-
-  <!-- Write Form -->
-  <div id="writeForm">
-    <h3>📝 New Article</h3>
-    <div id="successMsg">✓ Your article has been submitted for review. It will appear here once approved.</div>
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" id="articleTitle" placeholder="e.g. Constitutional Morality vs Popular Morality" maxlength="100">
-    </div>
-    <div class="form-group">
-      <label>Category</label>
-      <input type="text" id="articleCategory" placeholder="e.g. Constitutional Law, IPC, CPC, Family Law..." maxlength="50">
-    </div>
-    <div class="form-group">
-      <label>Article Content</label>
-      <textarea id="articleContent" placeholder="Write your article here (minimum 50 words)..."></textarea>
-    </div>
-    <button id="submitBtn" onclick="submitArticle()">Submit for Review →</button>
-  </div>
-</section>
-
-<!-- ARTICLES -->
+<!-- ARTICLES (now first) -->
 <section class="articles-section">
   <div class="section-label">Published</div>
   <div class="section-title">All Articles</div>
   <p class="section-sub">Peer-reviewed legal writing from the Lexbility community.</p>
+
+  <div class="search-bar-wrap">
+    <input type="text" id="articleSearch" class="search-input" placeholder="🔍 Search by title or author name...">
+  </div>
 
   <div class="articles-grid" id="articlesGrid">
     <div class="loader">
       <span class="loader-dot"></span>
       <span class="loader-dot"></span>
       <span class="loader-dot"></span>
+    </div>
+  </div>
+</section>
+
+<!-- WRITE SECTION (now compact, below articles) -->
+<section class="write-section-compact">
+  <div class="write-toggle-row">
+    <div>
+      <div class="section-label" style="margin-bottom:0.2rem;">Contribute</div>
+      <div class="write-toggle-title">Have something to say? Share your knowledge.</div>
+    </div>
+    <button id="writeToggleBtn" class="write-toggle-btn" onclick="toggleWriteForm()">✍️ Write an Article →</button>
+  </div>
+
+  <div id="writeFormWrap" style="display:none;">
+    <!-- Login -->
+    <div id="loginSection">
+      <button id="loginBtn" onclick="loginWithGoogle()">
+        <img src="https://www.google.com/favicon.ico" width="18" alt="Google"> Sign in with Google
+      </button>
+    </div>
+
+    <!-- User Info -->
+    <div id="userInfo">
+      <img id="userPhoto" src="" alt="">
+      <span id="userName"></span>
+      <button id="logoutBtn" onclick="logout()">Sign out</button>
+    </div>
+
+    <!-- Write Form -->
+    <div id="writeForm">
+      <h3>📝 New Article</h3>
+      <div id="successMsg">✓ Your article has been submitted for review. It will appear here once approved.</div>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="articleTitle" placeholder="e.g. Constitutional Morality vs Popular Morality" maxlength="100">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" id="articleCategory" placeholder="e.g. Constitutional Law, IPC, CPC, Family Law..." maxlength="50">
+      </div>
+      <div class="form-group">
+        <label>Article Content</label>
+        <textarea id="articleContent" placeholder="Write your article here (minimum 50 words)..."></textarea>
+      </div>
+      <button id="submitBtn" onclick="submitArticle()">Submit for Review →</button>
     </div>
   </div>
 </section>
@@ -404,7 +450,6 @@
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
     <li><a href="articles.html">Articles</a></li>
-    <li><a href="ask-ai.html">Ask AI</a></li>
     <li><a href="about.html">About & Contact</a></li>
     <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
   </ul>
@@ -414,6 +459,14 @@
 <script>
   function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  function toggleWriteForm() {
+    const wrap = document.getElementById('writeFormWrap');
+    const btn = document.getElementById('writeToggleBtn');
+    const isOpen = wrap.style.display === 'block';
+    wrap.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '✕ Close' : '✍️ Write an Article →';
   }
 </script>
 
@@ -491,23 +544,36 @@
     btn.textContent = 'Submit for Review →'; btn.disabled = false;
   };
 
+  let allArticles = [];
+
   async function loadArticles() {
     const q = query(collection(db, 'articles'), where('status', '==', 'approved'));
     const snapshot = await getDocs(q);
+
+    allArticles = [];
+    snapshot.forEach(doc => {
+      allArticles.push({ id: doc.id, ...doc.data() });
+    });
+
+    renderArticles(allArticles, false);
+  }
+
+  function renderArticles(list, isSearchResult) {
     const grid = document.getElementById('articlesGrid');
 
-    if (snapshot.empty) {
-      grid.innerHTML = `<div id="emptyMsg"><span>No articles yet.</span>Be the first to contribute to the Lexbility community.</div>`;
+    if (list.length === 0) {
+      grid.innerHTML = isSearchResult
+        ? `<div id="emptyMsg"><span>No articles found.</span>Try a different title or author name.</div>`
+        : `<div id="emptyMsg"><span>No articles yet.</span>Be the first to contribute to the Lexbility community.</div>`;
       return;
     }
 
     grid.innerHTML = '';
-    snapshot.forEach(doc => {
-      const a = doc.data();
+    list.forEach(a => {
       const preview = a.content.substring(0, 160) + '...';
       const card = document.createElement('div');
       card.className = 'article-card';
-      card.onclick = () => window.location.href = `article.html?id=${doc.id}`;
+      card.onclick = () => window.location.href = `article.html?id=${a.id}`;
       card.innerHTML = `
         <div class="card-category">${a.category}</div>
         <div class="card-title">${a.title}</div>
@@ -521,6 +587,19 @@
       grid.appendChild(card);
     });
   }
+
+  document.getElementById('articleSearch').addEventListener('input', (e) => {
+    const term = e.target.value.trim().toLowerCase();
+    if (!term) {
+      renderArticles(allArticles, false);
+      return;
+    }
+    const filtered = allArticles.filter(a =>
+      a.title.toLowerCase().includes(term) ||
+      a.authorName.toLowerCase().includes(term)
+    );
+    renderArticles(filtered, true);
+  });
 
   loadArticles();
 </script>
