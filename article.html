@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article — Lexbility</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; margin: 0; }
+    nav { background: #1a1a2e; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    nav a { color: white; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
+    nav button { background: #e94560; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
+    .container { max-width: 750px; margin: 2rem auto; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .category { background: #e94560; color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.85rem; }
+    h1 { color: #1a1a2e; font-size: 1.8rem; margin: 1rem 0; line-height: 1.4; }
+    .author { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0; padding: 1rem; background: #f9f9f9; border-radius: 8px; }
+    .author img { width: 50px; height: 50px; border-radius: 50%; }
+    .author h4 { margin: 0; color: #1a1a2e; }
+    .author p { margin: 0; color: #888; font-size: 0.85rem; }
+    .content { color: #333; line-height: 1.9; font-size: 1.05rem; white-space: pre-wrap; }
+    .back { display: inline-block; margin-bottom: 1rem; color: #e94560; text-decoration: none; font-weight: bold; }
+    #loading { text-align: center; padding: 4rem; color: #888; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">⚖️ Lexbility</a>
+  <button onclick="window.location.href='articles.html'">← Articles</button>
+</nav>
+
+<div id="loading">Loading article...</div>
+
+<div class="container" id="articleContainer" style="display:none;">
+  <span class="category" id="articleCategory"></span>
+  <h1 id="articleTitle"></h1>
+  <div class="author">
+    <img id="authorPhoto" src="" alt="">
+    <div>
+      <h4 id="authorName"></h4>
+      <p id="authorEmail"></p>
+    </div>
+  </div>
+  <div class="content" id="articleContent"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
+    authDomain: "lexbility-fda92.firebaseapp.com",
+    projectId: "lexbility-fda92",
+    storageBucket: "lexbility-fda92.firebasestorage.app",
+    messagingSenderId: "855790706525",
+    appId: "1:855790706525:web:509d8dc087f1c24a7f92b4",
+    measurementId: "G-C9R0GRJ464"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+
+  if (!id) {
+    window.location.href = 'articles.html';
+  } else {
+    const docRef = doc(db, 'articles', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const a = docSnap.data();
+      document.title = a.title + ' — Lexbility';
+      document.getElementById('articleCategory').textContent = a.category;
+      document.getElementById('articleTitle').textContent = a.title;
+      document.getElementById('authorPhoto').src = a.authorPhoto;
+      document.getElementById('authorName').textContent = a.authorName;
+      document.getElementById('authorEmail').textContent = a.authorEmail;
+      document.getElementById('articleContent').textContent = a.content;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('articleContainer').style.display = 'block';
+    } else {
+      document.getElementById('loading').textContent = 'Article nahi mila!';
+    }
+  }
+</script>
+
+</body>
+</html>
