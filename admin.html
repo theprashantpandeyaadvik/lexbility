@@ -40,7 +40,7 @@
 
 <div id="adminPanel">
   <h2 style="text-align:center; color:#1a1a2e;">Pending Articles</h2>
-  <div id="uidBox">Tumhara UID: <strong id="uidDisplay"></strong><br><small>Pehli baar login karo — ye UID copy karke mujhe do</small></div>
+ 
   <div id="pendingList">Loading...</div>
 </div>
 
@@ -59,7 +59,8 @@
     measurementId: "G-C9R0GRJ464"
   };
 
- const ADMIN_UID = '9wksZduLBDQaKBCPpDlqaNaouNn2';
+   const ADMIN_UID = '9wksZduLBDQaKBCPpDlqaNaouNn2';
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
