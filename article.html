@@ -1,47 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Article — Lexbility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; margin: 0; }
-    nav { background: #1a1a2e; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    nav a { color: white; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-    nav button { background: #e94560; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
-    .container { max-width: 750px; margin: 2rem auto; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-    .category { background: #e94560; color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.85rem; }
-    h1 { color: #1a1a2e; font-size: 1.8rem; margin: 1rem 0; line-height: 1.4; }
-    .author { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0; padding: 1rem; background: #f9f9f9; border-radius: 8px; }
-    .author img { width: 50px; height: 50px; border-radius: 50%; }
-    .author h4 { margin: 0; color: #1a1a2e; }
-    .author p { margin: 0; color: #888; font-size: 0.85rem; }
-    .content { color: #333; line-height: 1.9; font-size: 1.05rem; white-space: pre-wrap; }
-    .back { display: inline-block; margin-bottom: 1rem; color: #e94560; text-decoration: none; font-weight: bold; }
-    #loading { text-align: center; padding: 4rem; color: #888; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:  #0A1628;
+      --navy2: #0f1f3d;
+      --gold:  #C9A84C;
+      --gold2: #e8c56a;
+      --white: #FFFFFF;
+      --grey:  #F4F6FA;
+      --text:  #1a2340;
+      --muted: #6b7a99;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--grey); color: var(--text); overflow-x: hidden; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10, 22, 40, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold); color: var(--navy) !important;
+      padding: 0.4rem 1.1rem; border-radius: 4px; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold2) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: var(--navy);
+      padding: 100px 5% 50px;
+      position: relative; overflow: hidden;
+    }
+    .page-header::before {
+      content: '⚖';
+      position: absolute; font-size: 28rem;
+      color: rgba(201,168,76,0.04);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .page-header::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .header-inner { position: relative; z-index: 1; max-width: 800px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--gold); text-decoration: none;
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 0.75; }
+    .article-category-badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 0.35rem 1rem; border-radius: 20px;
+      margin-bottom: 1.2rem;
+    }
+    .article-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900; color: var(--white);
+      line-height: 1.2; letter-spacing: -0.5px;
+      margin-bottom: 2rem;
+    }
+    .author-bar {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .author-bar img {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 2px solid var(--gold); object-fit: cover;
+    }
+    .author-bar-info h4 {
+      font-family: 'Playfair Display', serif;
+      color: var(--white); font-size: 1rem; font-weight: 700;
+    }
+    .author-bar-info p {
+      color: rgba(255,255,255,0.45); font-size: 0.8rem; margin-top: 2px;
+    }
+
+    /* CONTENT AREA */
+    .content-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 5% 5rem;
+    }
+    .article-body {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 3rem;
+      border: 1px solid rgba(10,22,40,0.06);
+      box-shadow: 0 4px 24px rgba(10,22,40,0.06);
+    }
+    .article-body-text {
+      font-size: 1.05rem;
+      line-height: 1.95;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    /* LOADING */
+    #loading {
+      text-align: center;
+      padding: 8rem 2rem;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .loader-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin: 0 3px;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .loader-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loader-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* FOOTER */
+    footer {
+      background: #060e1c;
+      padding: 2.5rem 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--white); }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { color: rgba(255,255,255,0.25); font-size: 0.78rem; width: 100%; text-align: center; margin-top: 0.5rem; }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy2); padding: 1.5rem 5%; gap: 1.2rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .article-body { padding: 1.5rem; }
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
   </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav>
-  <a href="index.html">⚖️ Lexbility</a>
-  <button onclick="window.location.href='articles.html'">← Articles</button>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html" class="nav-cta">About & Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
 
-<div id="loading">Loading article...</div>
+<!-- LOADING -->
+<div id="loading">
+  <span class="loader-dot"></span>
+  <span class="loader-dot"></span>
+  <span class="loader-dot"></span>
+</div>
 
-<div class="container" id="articleContainer" style="display:none;">
-  <span class="category" id="articleCategory"></span>
-  <h1 id="articleTitle"></h1>
-  <div class="author">
-    <img id="authorPhoto" src="" alt="">
-    <div>
-      <h4 id="authorName"></h4>
-      <p id="authorEmail"></p>
+<!-- PAGE HEADER -->
+<div class="page-header" id="pageHeader" style="display:none;">
+  <div class="header-inner">
+    <a href="articles.html" class="back-link">← Back to Articles</a>
+    <div class="article-category-badge" id="articleCategory"></div>
+    <h1 class="article-title" id="articleTitle"></h1>
+    <div class="author-bar">
+      <img id="authorPhoto" src="" alt="">
+      <div class="author-bar-info">
+        <h4 id="authorName"></h4>
+        <p id="authorEmail"></p>
+      </div>
     </div>
   </div>
-  <div class="content" id="articleContent"></div>
 </div>
+
+<!-- CONTENT -->
+<div class="content-wrapper" id="contentWrapper" style="display:none;">
+  <div class="article-body">
+    <div class="article-body-text" id="articleContent"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="ask-ai.html">Ask AI</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+    <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility. For informational purposes only. Not legal advice.</p>
+</footer>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -66,9 +275,7 @@
   if (!id) {
     window.location.href = 'articles.html';
   } else {
-    const docRef = doc(db, 'articles', id);
-    const docSnap = await getDoc(docRef);
-
+    const docSnap = await getDoc(doc(db, 'articles', id));
     if (docSnap.exists()) {
       const a = docSnap.data();
       document.title = a.title + ' — Lexbility';
@@ -79,9 +286,10 @@
       document.getElementById('authorEmail').textContent = a.authorEmail;
       document.getElementById('articleContent').textContent = a.content;
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('articleContainer').style.display = 'block';
+      document.getElementById('pageHeader').style.display = 'block';
+      document.getElementById('contentWrapper').style.display = 'block';
     } else {
-      document.getElementById('loading').textContent = 'Article nahi mila!';
+      document.getElementById('loading').textContent = 'Article not found.';
     }
   }
 </script>
