@@ -74,8 +74,7 @@
     }
 
     document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('uidDisplay').textContent = user.uid;
-
+   // document.getElementById('uidDisplay').textContent = user.uid;
     if (user.uid !== ADMIN_UID && ADMIN_UID !== 'TUMHARA_UID_YAHAN') {
       document.getElementById('accessDenied').style.display = 'block';
       return;
