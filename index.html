@@ -582,7 +582,7 @@
 <section class="articles-section">
   <div class="section-label">From the Community</div>
   <div class="section-title">📝 Latest Articles</div>
-  <p class="section-sub">Fresh perspectives from law students and practitioners.</p>
+  <p class="section-sub">Fresh perspectives ,News and Legal Knowledge from law students and practitioners.</p>
   <div class="articles-feed" id="homeFeed">
     <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">Loading...</div>
   </div>
@@ -593,7 +593,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
@@ -607,36 +607,38 @@
   const db = getFirestore(app);
   const feed = document.getElementById('homeFeed');
 
-  const q = query(collection(db, 'articles'), where('status', '==', 'approved'));
-  const snap = await getDocs(q);
+  try {
+    const snap = await getDocs(collection(db, 'articles'));
+    const articles = [];
+    snap.forEach(d => articles.push({ id: d.id, ...d.data() }));
 
-  const articles = [];
-  snap.forEach(d => articles.push({ id: d.id, ...d.data() }));
+    const approved = articles.filter(a => a.status === 'approved').slice(0, 3);
 
-  if (articles.length === 0) {
-    feed.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">No articles yet. <a href="articles.html" style="color:var(--gold);">Be the first to write one →</a></div>';
-    return;
+    if (approved.length === 0) {
+      feed.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">No articles yet. <a href="articles.html" style="color:var(--gold);">Be the first →</a></div>';
+    } else {
+      feed.innerHTML = '';
+      approved.forEach(a => {
+        const preview = a.content.replace(/[#*>\-`]/g, '').substring(0, 140) + '...';
+        const card = document.createElement('div');
+        card.className = 'home-article-card';
+        card.onclick = () => window.location.href = `article.html?id=${a.id}`;
+        card.innerHTML = `
+          <div class="home-art-category">${a.category}</div>
+          <div class="home-art-title">${a.title}</div>
+          <div class="home-art-preview">${preview}</div>
+          <div class="home-art-author">
+            <img src="${a.authorPhoto}" alt="${a.authorName}">
+            <span>By <strong>${a.authorName}</strong></span>
+            <span class="home-art-readmore">Read →</span>
+          </div>`;
+        feed.appendChild(card);
+      });
+    }
+  } catch(e) {
+    feed.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">Could not load articles.</div>`;
+    console.error(e);
   }
-
-  // latest 3
-  articles.slice(0, 3).forEach(a => {
-    const preview = a.content.replace(/[#*>\-`]/g, '').substring(0, 140) + '...';
-    const card = document.createElement('div');
-    card.className = 'home-article-card';
-    card.onclick = () => window.location.href = `article.html?id=${a.id}`;
-    card.innerHTML = `
-      <div class="home-art-category">${a.category}</div>
-      <div class="home-art-title">${a.title}</div>
-      <div class="home-art-preview">${preview}</div>
-      <div class="home-art-author">
-        <img src="${a.authorPhoto}" alt="${a.authorName}">
-        <span>By <strong>${a.authorName}</strong></span>
-        <span class="home-art-readmore">Read →</span>
-      </div>`;
-    feed.appendChild(card);
-  });
-
-  feed.querySelector('div[style]')?.remove();
 </script>
 
 <!-- ═══ TOP LEGAL WEBSITES ════════════════════════════════ -->
