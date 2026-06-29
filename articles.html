@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Articles — Lexbility</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -184,7 +185,75 @@
     .form-group textarea:focus {
       outline: none; border-color: var(--gold);
     }
-    .form-group textarea { height: 220px; resize: vertical; line-height: 1.7; }
+    .form-group textarea { height: 320px; resize: vertical; line-height: 1.7; font-family: monospace; font-size: 0.9rem; }
+
+    /* Markdown Guide */
+    .md-guide {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .md-guide strong { color: var(--navy); }
+    .md-guide-title {
+      font-weight: 700; color: var(--gold);
+      font-size: 0.78rem; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 0.6rem;
+    }
+    .md-guide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem 1.5rem;
+    }
+    .md-guide-row code {
+      background: rgba(10,22,40,0.07);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--navy);
+    }
+
+    /* Preview Tab */
+    .editor-tabs {
+      display: flex; gap: 0; margin-bottom: 0;
+      border-bottom: 1.5px solid rgba(10,22,40,0.1);
+    }
+    .editor-tab {
+      padding: 0.5rem 1.2rem;
+      font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; border: none; background: none;
+      color: var(--muted); font-family: 'DM Sans', sans-serif;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px; transition: all 0.2s;
+    }
+    .editor-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    #previewPane {
+      display: none;
+      min-height: 320px;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 0 0 8px 8px;
+      padding: 1.2rem;
+      font-size: 0.95rem; line-height: 1.9; color: var(--text);
+      background: var(--grey);
+    }
+    #previewPane h1,#previewPane h2,#previewPane h3,#previewPane h4 {
+      font-family: 'Playfair Display', serif; color: var(--navy);
+      margin: 1.2rem 0 0.5rem;
+    }
+    #previewPane h2 { border-left: 4px solid var(--gold); padding-left: 0.6rem; }
+    #previewPane h3 { color: var(--gold); }
+    #previewPane p { margin-bottom: 0.8rem; }
+    #previewPane ul,#previewPane ol { margin: 0.5rem 0 0.8rem 1.4rem; }
+    #previewPane blockquote {
+      border-left: 4px solid var(--gold); background: rgba(201,168,76,0.06);
+      padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0;
+      font-style: italic; color: var(--muted);
+    }
+    #previewPane strong { color: var(--navy); font-weight: 700; }
 
     #submitBtn {
       background: var(--gold); color: var(--navy);
@@ -435,7 +504,29 @@
       </div>
       <div class="form-group">
         <label>Article Content</label>
-        <textarea id="articleContent" placeholder="Write your article here (minimum 50 words)..."></textarea>
+
+        <!-- Markdown Quick Guide -->
+        <div class="md-guide">
+          <div class="md-guide-title">✍️ Formatting Guide (Markdown)</div>
+          <div class="md-guide-grid">
+            <div class="md-guide-row"><code># Heading 1</code> → बड़ी heading</div>
+            <div class="md-guide-row"><code>## Heading 2</code> → Section heading</div>
+            <div class="md-guide-row"><code>**bold text**</code> → <strong>bold</strong></div>
+            <div class="md-guide-row"><code>*italic text*</code> → <em>italic</em></div>
+            <div class="md-guide-row"><code>- item</code> → Bullet point</div>
+            <div class="md-guide-row"><code>1. item</code> → Numbered list</div>
+            <div class="md-guide-row"><code>&gt; quote</code> → Blockquote</div>
+            <div class="md-guide-row"><code>---</code> → Divider line</div>
+          </div>
+        </div>
+
+        <!-- Write / Preview tabs -->
+        <div class="editor-tabs">
+          <button class="editor-tab active" onclick="switchTab('write')">✏️ Write</button>
+          <button class="editor-tab" onclick="switchTab('preview')">👁 Preview</button>
+        </div>
+        <textarea id="articleContent" placeholder="Write your article here...&#10;&#10;# Introduction&#10;&#10;Yahan se shuru karo...&#10;&#10;## Section 1&#10;&#10;Content..." oninput="updatePreview()"></textarea>
+        <div id="previewPane"></div>
       </div>
       <button id="submitBtn" onclick="submitArticle()">Submit for Review →</button>
     </div>
@@ -466,7 +557,30 @@
     const btn = document.getElementById('writeToggleBtn');
     const isOpen = wrap.style.display === 'block';
     wrap.style.display = isOpen ? 'none' : 'block';
-    btn.textContent = isOpen ? '✕ Close' : '✍️ Write an Article →';
+    btn.textContent = isOpen ? '✍️ Write an Article →' : '✕ Close';
+  }
+
+  function switchTab(tab) {
+    const textarea = document.getElementById('articleContent');
+    const preview = document.getElementById('previewPane');
+    const tabs = document.querySelectorAll('.editor-tab');
+    if (tab === 'preview') {
+      updatePreview();
+      textarea.style.display = 'none';
+      preview.style.display = 'block';
+      tabs[0].classList.remove('active');
+      tabs[1].classList.add('active');
+    } else {
+      textarea.style.display = 'block';
+      preview.style.display = 'none';
+      tabs[0].classList.add('active');
+      tabs[1].classList.remove('active');
+    }
+  }
+
+  function updatePreview() {
+    const content = document.getElementById('articleContent').value;
+    document.getElementById('previewPane').innerHTML = window.marked ? marked.parse(content) : content;
   }
 </script>
 
