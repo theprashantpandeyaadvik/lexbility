@@ -509,7 +509,7 @@
         <div class="md-guide">
           <div class="md-guide-title">✍️ Formatting Guide (Markdown)</div>
           <div class="md-guide-grid">
-            <div class="md-guide-row"><code># Heading 1</code> → बड़ी heading</div>
+            <div class="md-guide-row"><code># Heading 1</code> → Main heading</div>
             <div class="md-guide-row"><code>## Heading 2</code> → Section heading</div>
             <div class="md-guide-row"><code>**bold text**</code> → <strong>bold</strong></div>
             <div class="md-guide-row"><code>*italic text*</code> → <em>italic</em></div>
@@ -525,7 +525,7 @@
           <button class="editor-tab active" onclick="switchTab('write')">✏️ Write</button>
           <button class="editor-tab" onclick="switchTab('preview')">👁 Preview</button>
         </div>
-        <textarea id="articleContent" placeholder="Write your article here...&#10;&#10;# Introduction&#10;&#10;Yahan se shuru karo...&#10;&#10;## Section 1&#10;&#10;Content..." oninput="updatePreview()"></textarea>
+        <textarea id="articleContent" placeholder="Write your article here...&#10;&#10;# Introduction&#10;&#10;Start from here...&#10;&#10;## Section 1&#10;&#10;Content..." oninput="updatePreview()"></textarea>
         <div id="previewPane"></div>
       </div>
       <button id="submitBtn" onclick="submitArticle()">Submit for Review →</button>
