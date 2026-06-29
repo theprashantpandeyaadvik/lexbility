@@ -503,7 +503,21 @@
   background: rgba(201,168,76,0.1);
 }
  
- 
+ .articles-section { background: var(--white); padding: 80px 5%; }
+.articles-feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+.home-article-card { background: var(--white); border: 1px solid rgba(10,22,40,0.08); border-radius: 12px; padding: 1.6rem; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; gap: 0.6rem; }
+.home-article-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(10,22,40,0.09); }
+.home-art-category { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+.home-art-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.home-art-preview { font-size: 0.85rem; color: var(--muted); line-height: 1.6; flex: 1; }
+.home-art-author { display: flex; align-items: center; gap: 8px; margin-top: 0.5rem; padding-top: 0.8rem; border-top: 1px solid rgba(10,22,40,0.06); }
+.home-art-author img { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); object-fit: cover; }
+.home-art-author span { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.home-art-author strong { color: var(--navy); }
+.home-art-readmore { margin-left: auto; color: var(--gold); font-size: 0.8rem; font-weight: 600; }
+.articles-cta-wrap { text-align: center; }
+.articles-view-all { display: inline-flex; align-items: center; gap: 6px; background: var(--navy); color: var(--white); padding: 0.8rem 2rem; border-radius: 6px; font-weight: 600; font-size: 0.92rem; text-decoration: none; transition: all 0.2s; margin-top: 2.5rem; }
+.articles-view-all:hover { background: var(--gold); color: var(--navy); }
  </style>
 </head>
 <body>
@@ -563,6 +577,67 @@
     </div>
   </div>
 </section>
+
+<!-- ═══ LATEST ARTICLES ═══════════════════════════════════ -->
+<section class="articles-section">
+  <div class="section-label">From the Community</div>
+  <div class="section-title">📝 Latest Articles</div>
+  <p class="section-sub">Fresh perspectives from law students and practitioners.</p>
+  <div class="articles-feed" id="homeFeed">
+    <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">Loading...</div>
+  </div>
+  <div class="articles-cta-wrap">
+    <a href="articles.html" class="articles-view-all">View All Articles →</a>
+  </div>
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
+    authDomain: "lexbility-fda92.firebaseapp.com",
+    projectId: "lexbility-fda92",
+    storageBucket: "lexbility-fda92.firebasestorage.app",
+    messagingSenderId: "855790706525",
+    appId: "1:855790706525:web:509d8dc087f1c24a7f92b4"
+  });
+
+  const db = getFirestore(app);
+  const feed = document.getElementById('homeFeed');
+
+  const q = query(collection(db, 'articles'), where('status', '==', 'approved'));
+  const snap = await getDocs(q);
+
+  const articles = [];
+  snap.forEach(d => articles.push({ id: d.id, ...d.data() }));
+
+  if (articles.length === 0) {
+    feed.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">No articles yet. <a href="articles.html" style="color:var(--gold);">Be the first to write one →</a></div>';
+    return;
+  }
+
+  // latest 3
+  articles.slice(0, 3).forEach(a => {
+    const preview = a.content.replace(/[#*>\-`]/g, '').substring(0, 140) + '...';
+    const card = document.createElement('div');
+    card.className = 'home-article-card';
+    card.onclick = () => window.location.href = `article.html?id=${a.id}`;
+    card.innerHTML = `
+      <div class="home-art-category">${a.category}</div>
+      <div class="home-art-title">${a.title}</div>
+      <div class="home-art-preview">${preview}</div>
+      <div class="home-art-author">
+        <img src="${a.authorPhoto}" alt="${a.authorName}">
+        <span>By <strong>${a.authorName}</strong></span>
+        <span class="home-art-readmore">Read →</span>
+      </div>`;
+    feed.appendChild(card);
+  });
+
+  feed.querySelector('div[style]')?.remove();
+</script>
 
 <!-- ═══ TOP LEGAL WEBSITES ════════════════════════════════ -->
 <section class="resources-section">
