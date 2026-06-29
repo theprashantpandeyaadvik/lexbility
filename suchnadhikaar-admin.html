@@ -176,7 +176,33 @@
     }
     .btn-reject:hover { background: rgba(229,57,53,0.2); }
     .pending-empty { color: rgba(255,255,255,0.3); padding: 3rem; text-align: center; }
+.btn-read {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); padding: 0.4rem 1.1rem; border-radius: 5px;
+      cursor: pointer; font-size: 0.82rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    }
+    .btn-read:hover { background: rgba(255,255,255,0.12); }
 
+    .read-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      z-index: 2000; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .read-modal-box {
+      background: #141414; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; max-width: 700px; width: 100%;
+      max-height: 85vh; overflow-y: auto; padding: 2rem;
+    }
+    .read-modal-title { font-family: 'Noto Serif Devanagari', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 0.5rem; }
+    .read-modal-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; }
+    .read-modal-content { font-size: 0.95rem; line-height: 1.9; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; }
+    .read-modal-content h1, .read-modal-content h2, .read-modal-content h3 { color: var(--white); margin: 1rem 0 0.5rem; font-family: 'Noto Serif Devanagari', serif; }
+    .read-modal-content ul, .read-modal-content ol { margin: 0.5rem 0 0.7rem 1.3rem; }
+    .read-modal-actions { display: flex; gap: 0.8rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; }
+    .read-modal-close {
+      position: sticky; top: 0; float: right; background: none; border: none;
+      color: rgba(255,255,255,0.4); font-size: 1.4rem; cursor: pointer;
+    }
     /* PUBLISHED LIST */
     .published-card {
       background: #141414; border: 1px solid rgba(255,255,255,0.07);
@@ -317,7 +343,19 @@
         <div class="pending-empty"><span class="s-dot"></span><span class="s-dot"></span><span class="s-dot"></span></div>
       </div>
     </div>
-
+<!-- READ FULL MODAL -->
+<div class="read-modal-overlay" id="readModalOverlay">
+  <div class="read-modal-box">
+    <button class="read-modal-close" onclick="closeReadModal()">✕</button>
+    <div class="read-modal-title" id="readModalTitle"></div>
+    <div class="read-modal-meta" id="readModalMeta"></div>
+    <div class="read-modal-content" id="readModalContent"></div>
+    <div class="read-modal-actions">
+      <button class="btn-approve" id="readModalApprove">✅ Approve</button>
+      <button class="btn-reject" id="readModalReject">❌ Reject</button>
+    </div>
+  </div>
+</div>
   </div><!-- end adminPanel -->
 </div>
 
@@ -461,11 +499,15 @@
           </div>
           <div class="pending-preview">${cleanMd(s.content)}</div>
           <div class="pending-actions">
+            <button class="btn-read" onclick="openReadModal('${s.id}')">📖 पूरा पढ़ें</button>
             <button class="btn-approve" onclick="approveSubmission('${s.id}')">✅ Approve</button>
             <button class="btn-reject" onclick="rejectSubmission('${s.id}')">❌ Reject</button>
           </div>`;
         pendingList.appendChild(card);
       });
+    }
+    window.pendingDataMap = {};
+    pending.forEach(s => window.pendingDataMap[s.id] = s);
     }
 
     // Published news
@@ -527,6 +569,19 @@
     if (!confirm('यह news delete करें?')) return;
     await deleteDoc(doc(db, 'suchnadhikaar_news', id));
     loadAll();
+  };
+  window.openReadModal = (id) => {
+    const s = window.pendingDataMap[id];
+    if (!s) return;
+    document.getElementById('readModalTitle').textContent = s.title;
+    document.getElementById('readModalMeta').textContent = `By ${s.authorName} · ${s.authorEmail} · ${fmtDate(s.createdAt)}`;
+    document.getElementById('readModalContent').innerHTML = window.marked ? marked.parse(s.content) : s.content;
+    document.getElementById('readModalApprove').onclick = () => { approveSubmission(id); closeReadModal(); };
+    document.getElementById('readModalReject').onclick = () => { rejectSubmission(id); closeReadModal(); };
+    document.getElementById('readModalOverlay').style.display = 'flex';
+  };
+  window.closeReadModal = () => {
+    document.getElementById('readModalOverlay').style.display = 'none';
   };
   window.deleteSubmission = async (id) => {
     if (!confirm('यह submission delete करें?')) return;
