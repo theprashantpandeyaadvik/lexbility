@@ -185,6 +185,7 @@
       transition: all 0.22s;
       display: flex; flex-direction: column;
     }
+    .news-card-img { width: 100%; height: 160px; object-fit: cover; display: block; }
     .news-section.grey-bg .news-card { background: var(--white); }
     .news-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-color: var(--orange); }
     .news-card-body { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
@@ -406,7 +407,22 @@
     <span></span><span></span><span></span>
   </div>
 </nav>
+<!-- SEARCH BAR -->
+<div style="background:var(--black); padding: 1rem 5%; border-bottom:1px solid rgba(255,255,255,0.06);">
+  <input type="text" id="searchInput" placeholder="🔍 खबर खोजें... (title, content, tag)" oninput="doSearch()"
+    style="width:100%; max-width:500px; padding:0.7rem 1rem; border-radius:6px; border:1.5px solid rgba(255,255,255,0.15); background:#141414; color:#fff; font-size:0.95rem; font-family:'DM Sans',sans-serif;">
+</div>
 
+<!-- SEARCH RESULTS -->
+<div id="searchResultsSection" style="display:none; padding: 2.5rem 5%; background:var(--grey);">
+  <div class="section-head">
+    <div class="section-head-left">
+      <div class="section-stripe"></div>
+      <div class="section-name">🔍 Search Results</div>
+    </div>
+  </div>
+  <div class="news-grid" id="searchResultsGrid"></div>
+</div>
 <!-- HERO (latest news) -->
 <div class="hero">
   <div class="hero-inner" id="heroSection">
@@ -650,7 +666,8 @@
     const sides = heroNews.slice(1);
     heroEl.innerHTML = `
       <div class="hero-main-card" onclick="location.href='suchnadhikaar-article.html?id=${main.id}&col=suchnadhikaar_news'">
-        <div class="hero-cat">${main.category === 'bharat' ? '🇮🇳 भारत' : '🌍 देश-दुनिया'}</div>
+        ${main.imageUrl ? `<img src="${main.imageUrl}" style="width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" alt="">` : ''}
+       <div class="hero-cat">${main.category === 'bharat' ? '🇮🇳 भारत' : '🌍 देश-दुनिया'}${main.tag ? ' · ' + main.tag : ''}</div>
         <div class="hero-title">${main.title}</div>
         <div class="hero-preview">${cleanMd(main.content)}</div>
         <div class="hero-meta">By ${main.authorName} · ${fmtDate(main.createdAt)}</div>
@@ -658,7 +675,7 @@
       <div class="hero-side">
         ${sides.map(s => `
           <div class="hero-side-card" onclick="location.href='suchnadhikaar-article.html?id=${s.id}&col=suchnadhikaar_news'">
-            <div class="hero-side-cat">${s.category === 'bharat' ? '🇮🇳 भारत' : '🌍 देश-दुनिया'}</div>
+           <div class="hero-side-cat">${s.category === 'bharat' ? '🇮🇳 भारत' : '🌍 देश-दुनिया'}${s.tag ? ' · ' + s.tag : ''}</div>
             <div class="hero-side-title">${s.title}</div>
             <div class="hero-side-meta">By ${s.authorName} · ${fmtDate(s.createdAt)}</div>
           </div>`).join('')}
@@ -676,10 +693,11 @@
     items.forEach(a => {
       const card = document.createElement('div');
       card.className = 'news-card';
-      card.onclick = () => location.href = `suchnadhikaar-article.html?id=${a.id}&col=${col}`;
+     card.onclick = () => location.href = `suchnadhikaar-article.html?id=${a.id}&col=${a.col || col}`;
       card.innerHTML = `
+      ${a.imageUrl ? `<img src="${a.imageUrl}" class="news-card-img" alt="${a.title}">` : ''}
         <div class="news-card-body">
-          <div class="news-card-cat">${a.category === 'bharat' ? '🇮🇳 भारत' : a.category === 'desh-duniya' ? '🌍 देश-दुनिया' : '📝 पाठक'}</div>
+         <div class="news-card-cat">${a.category === 'bharat' ? '🇮🇳 भारत' : a.category === 'desh-duniya' ? '🌍 देश-दुनिया' : '📝 पाठक'}${a.tag ? ' · ' + a.tag : ''}</div>
           <div class="news-card-title">${a.title}</div>
           <div class="news-card-preview">${cleanMd(a.content)}</div>
         </div>
@@ -724,6 +742,35 @@
       subGrid.appendChild(card);
     });
   }
+
+  // ── SEARCH ──
+  const searchableItems = [
+    ...approved.map(a => ({ ...a, col: 'suchnadhikaar_news' })),
+    ...approvedSubs.map(s => ({ ...s, col: 'suchnadhikaar_submissions', category: 'readers' }))
+  ];
+
+  function searchScore(item, q) {
+    let s = 0;
+    if (item.title && item.title.toLowerCase().includes(q)) s += 3;
+    if (item.tag && item.tag.toLowerCase().includes(q)) s += 2;
+    if (item.content && item.content.toLowerCase().includes(q)) s += 1;
+    return s;
+  }
+
+  window.doSearch = () => {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const section = document.getElementById('searchResultsSection');
+    if (!q) { section.style.display = 'none'; return; }
+    const matched = searchableItems
+      .filter(item => searchScore(item, q) > 0)
+      .sort((x, y) => searchScore(y, q) - searchScore(x, q));
+    section.style.display = 'block';
+    if (matched.length === 0) {
+      document.getElementById('searchResultsGrid').innerHTML = '<div style="color:var(--muted);padding:2rem;">कुछ नहीं मिला।</div>';
+    } else {
+      renderGrid('searchResultsGrid', matched, null);
+    }
+  };
 </script>
 
 </body>

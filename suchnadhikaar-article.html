@@ -130,6 +130,7 @@
   <div class="article-header">
     <div class="header-inner">
       <div class="art-category" id="artCategory"></div>
+         <img id="artImage" src="" alt="" style="display:none; width:100%; max-height:420px; object-fit:cover; border-radius:8px; margin-bottom:1.5rem;">
       <h1 class="art-title" id="artTitle"></h1>
       <div class="art-author-bar">
         <img id="artAuthorPhoto" src="" alt="">
@@ -187,8 +188,12 @@
       const a = snap.data();
       document.title = a.title + ' — The Suchnadhikaar';
       const catMap = { 'bharat': '🇮🇳 भारत', 'desh-duniya': '🌍 देश-दुनिया', 'readers': '📝 पाठक' };
-      document.getElementById('artCategory').textContent = catMap[a.category] || a.category || '📰 समाचार';
+      document.getElementById('artCategory').textContent = (catMap[a.category] || a.category || '📰 समाचार') + (a.tag ? ' · ' + a.tag : '');
       document.getElementById('artTitle').textContent = a.title;
+      if (a.imageUrl) {
+        document.getElementById('artImage').src = a.imageUrl;
+        document.getElementById('artImage').style.display = 'block';
+      }
       document.getElementById('artAuthorPhoto').src = a.authorPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.authorName)}&background=F05A1A&color=fff`;
       document.getElementById('artAuthorName').textContent = a.authorName;
       document.getElementById('artAuthorMeta').textContent = fmtDate(a.createdAt);

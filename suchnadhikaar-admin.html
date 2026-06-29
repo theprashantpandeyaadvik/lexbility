@@ -261,12 +261,18 @@
             <option value="desh-duniya">🌍 देश-दुनिया</option>
           </select>
         </div>
-
+<div class="form-group">
+  <label>टैग (City / Topic)</label>
+  <input type="text" id="postTag" placeholder="जैसे: Delhi, Crime, Politics, Mumbai..." maxlength="40">
+</div>
         <div class="form-group">
           <label>शीर्षक (Title)</label>
           <input type="text" id="postTitle" placeholder="समाचार का शीर्षक लिखें..." maxlength="150">
         </div>
-
+<div class="form-group">
+  <label>फोटो लिंक (Photo URL) — वैकल्पिक</label>
+  <input type="text" id="postImage" placeholder="https://i.ibb.co/xxxxx/photo.jpg">
+</div>
         <div class="form-group">
           <label>सामग्री (Content)</label>
           <div class="md-guide">
@@ -405,14 +411,15 @@
     const title = document.getElementById('postTitle').value.trim();
     const content = document.getElementById('postContent').value.trim();
     const category = document.getElementById('postCategory').value;
+   const tag = document.getElementById('postTag').value.trim();
+    const imageUrl = document.getElementById('postImage').value.trim();
     if (!title || !content) return alert('शीर्षक और सामग्री दोनों भरें।');
-
     const btn = document.getElementById('postBtn');
     btn.textContent = 'प्रकाशित हो रहा है...'; btn.disabled = true;
 
     try {
       await addDoc(collection(db, 'suchnadhikaar_news'), {
-        title, content, category,
+        title, content, category, tag, imageUrl,
         authorName: 'Suchnadhikaar Desk',
         authorPhoto: '',
         status: 'approved',
@@ -420,6 +427,8 @@
       });
       document.getElementById('postTitle').value = '';
       document.getElementById('postContent').value = '';
+      document.getElementById('postTag').value = '';
+      document.getElementById('postImage').value = '';
       document.getElementById('postSuccess').style.display = 'block';
       setTimeout(() => document.getElementById('postSuccess').style.display = 'none', 4000);
       loadAll();
