@@ -499,6 +499,16 @@
       </div>
 
       <div class="form-group">
+        <label>Introduction <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(shown before Chapter 1)</span></label>
+        <div class="editor-tabs">
+          <button type="button" class="editor-tab active" id="introTabWrite" onclick="switchIntroTab('write')">✏️ Write</button>
+          <button type="button" class="editor-tab" id="introTabPreview" onclick="switchIntroTab('preview')">👁 Preview</button>
+        </div>
+        <textarea id="courseIntro" style="height:160px;" placeholder="Briefly introduce the course — what students will learn, who it's for, etc. (Markdown supported)" oninput="updateIntroPreview()"></textarea>
+        <div id="coursePreviewPane"></div>
+      </div>
+
+      <div class="form-group">
         <label>Chapters</label>
 
         <div class="md-guide">
@@ -744,6 +754,29 @@
     loadPublished();
   };
 
+  /* ===== COURSES: INTRO BOX ===== */
+  window.switchIntroTab = (tab) => {
+    const textarea = document.getElementById('courseIntro');
+    const preview = document.getElementById('coursePreviewPane');
+    const tabWrite = document.getElementById('introTabWrite');
+    const tabPreview = document.getElementById('introTabPreview');
+    if (tab === 'preview') {
+      updateIntroPreview();
+      textarea.style.display = 'none';
+      preview.style.display = 'block';
+      tabWrite.classList.remove('active'); tabPreview.classList.add('active');
+    } else {
+      textarea.style.display = 'block';
+      preview.style.display = 'none';
+      tabWrite.classList.add('active'); tabPreview.classList.remove('active');
+    }
+  };
+
+  window.updateIntroPreview = () => {
+    const content = document.getElementById('courseIntro').value;
+    document.getElementById('coursePreviewPane').innerHTML = window.marked ? marked.parse(content) : content;
+  };
+
   /* ===== COURSES: CHAPTER BUILDER ===== */
   let chapterCounter = 0;
 
@@ -821,6 +854,7 @@
     const category = document.getElementById('courseCategory').value.trim();
     const authorName = document.getElementById('courseAuthorName').value.trim();
     const authorPhoto = document.getElementById('courseAuthorPhoto').value.trim();
+    const intro = document.getElementById('courseIntro').value.trim();
 
     const chapterBlocks = [...document.getElementById('chaptersContainer').children];
     const chapters = chapterBlocks.map(block => {
@@ -846,13 +880,15 @@
 
     try {
       await addDoc(collection(db, 'courses'), {
-        title, category, authorName, authorPhoto, chapters,
+        title, category, authorName, authorPhoto, intro, chapters,
         createdAt: serverTimestamp()
       });
       document.getElementById('courseTitle').value = '';
       document.getElementById('courseCategory').value = '';
       document.getElementById('courseAuthorName').value = '';
       document.getElementById('courseAuthorPhoto').value = '';
+      document.getElementById('courseIntro').value = '';
+      switchIntroTab('write');
       resetChapterBuilder();
       document.getElementById('courseSuccessMsg').style.display = 'block';
       loadCourses();

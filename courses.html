@@ -448,9 +448,11 @@
 
     grid.innerHTML = '';
     list.forEach(c => {
-      const previewSource = (Array.isArray(c.chapters) && c.chapters.length > 0)
-        ? c.chapters[0].content
-        : (c.content || '');
+      const previewSource = (c.intro && c.intro.trim())
+        ? c.intro
+        : (Array.isArray(c.chapters) && c.chapters.length > 0)
+          ? c.chapters[0].content
+          : (c.content || '');
       const preview = previewSource.substring(0, 160) + (previewSource.length > 160 ? '...' : '');
       const card = document.createElement('div');
       card.className = 'course-card';

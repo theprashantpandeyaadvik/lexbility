@@ -189,6 +189,20 @@
       box-shadow: 0 6px 20px rgba(10,22,40,0.1);
     }
 
+    /* COURSE INTRO BOX */
+    .course-intro {
+      margin-bottom: 1.8rem;
+      padding: 1.5rem 1.7rem;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 12px;
+    }
+    .course-intro-label {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.7rem;
+    }
+
     /* CHAPTER ACCORDION */
     .chapters-list { margin-bottom: 1rem; }
     .chapter-item {
@@ -491,6 +505,12 @@
     <div id="unlockedBox" style="display:none;">
       <div class="enrolled-badge" id="enrolledBadge">✓ You're enrolled in this course</div>
 
+      <!-- COURSE INTRODUCTION -->
+      <div class="course-intro" id="courseIntroBox" style="display:none;">
+        <div class="course-intro-label">Introduction</div>
+        <div class="article-body-text" id="courseIntroText"></div>
+      </div>
+
       <div class="chapters-list" id="chaptersList" style="display:none;"></div>
 
       <!-- fallback for old single-content courses -->
@@ -622,6 +642,15 @@
   function renderChapters(c) {
     const listEl = document.getElementById('chaptersList');
     const fallbackEl = document.getElementById('courseContent');
+    const introBox = document.getElementById('courseIntroBox');
+    const introText = document.getElementById('courseIntroText');
+
+    if (c.intro && c.intro.trim()) {
+      introText.innerHTML = marked.parse(c.intro);
+      introBox.style.display = 'block';
+    } else {
+      introBox.style.display = 'none';
+    }
 
     if (Array.isArray(c.chapters) && c.chapters.length > 0) {
       listEl.style.display = 'block';
