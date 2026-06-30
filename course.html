@@ -200,6 +200,63 @@
       margin-bottom: 1.5rem;
     }
 
+    /* LOCKED STATE */
+    .locked-box {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .locked-box .lock-icon {
+      font-size: 3rem;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .locked-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--navy);
+      margin-bottom: 0.8rem;
+    }
+    .locked-box p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 420px;
+      margin: 0 auto 1.8rem;
+      line-height: 1.7;
+    }
+    .locked-box a.enroll-btn {
+      display: inline-block;
+      background: var(--gold); color: var(--navy);
+      padding: 0.85rem 2.2rem;
+      border-radius: 6px; font-weight: 700;
+      font-size: 0.95rem; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .locked-box a.enroll-btn:hover { background: var(--gold2); transform: translateY(-1px); }
+
+    /* LOCKED STATE */
+    .locked-box {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .locked-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .locked-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--navy);
+      margin-bottom: 0.7rem;
+    }
+    .locked-box p {
+      color: var(--muted); font-size: 0.95rem;
+      max-width: 420px; margin: 0 auto 1.8rem;
+      line-height: 1.6;
+    }
+    .locked-btn {
+      display: inline-block;
+      background: var(--gold); color: var(--navy);
+      padding: 0.85rem 2.2rem; border-radius: 6px;
+      font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .locked-btn:hover { background: var(--gold2); transform: translateY(-1px); }
+
     /* LOADING */
     #loading {
       text-align: center;
@@ -291,8 +348,21 @@
 <!-- CONTENT -->
 <div class="content-wrapper" id="contentWrapper" style="display:none;">
   <div class="article-body">
-    <div class="enrolled-badge" id="enrolledBadge" style="display:none;">✓ You're enrolled in this course</div>
-    <div class="article-body-text" id="courseContent"></div>
+
+    <!-- LOCKED STATE (shown if not enrolled) -->
+    <div class="locked-box" id="lockedBox" style="display:none;">
+      <span class="lock-icon">🔒</span>
+      <h3>Enroll to Access This Course</h3>
+      <p>This course content is only visible to enrolled students. Please enroll first to unlock the full content.</p>
+      <a href="courses.html" class="enroll-btn">Go to Courses & Enroll →</a>
+    </div>
+
+    <!-- UNLOCKED CONTENT -->
+    <div id="unlockedBox" style="display:none;">
+      <div class="enrolled-badge" id="enrolledBadge">✓ You're enrolled in this course</div>
+      <div class="article-body-text" id="courseContent"></div>
+    </div>
+
   </div>
 </div>
 
@@ -350,14 +420,18 @@
       document.getElementById('authorPhoto').src = c.authorPhoto;
       document.getElementById('authorName').textContent = c.authorName;
 
-      if (enrolled === '1') {
-        document.getElementById('enrolledBadge').style.display = 'inline-flex';
-      }
-
-      document.getElementById('courseContent').innerHTML = marked.parse(c.content);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('pageHeader').style.display = 'block';
       document.getElementById('contentWrapper').style.display = 'block';
+
+      if (enrolled === '1') {
+        document.getElementById('courseContent').innerHTML = marked.parse(c.content);
+        document.getElementById('unlockedBox').style.display = 'block';
+        document.getElementById('lockedBox').style.display = 'none';
+      } else {
+        document.getElementById('unlockedBox').style.display = 'none';
+        document.getElementById('lockedBox').style.display = 'block';
+      }
     } else {
       document.getElementById('loading').textContent = 'Course not found.';
     }
