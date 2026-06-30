@@ -454,6 +454,7 @@
     <button class="top-tab" onclick="switchMainTab('courses')">🎓 Courses</button>
     <button class="top-tab" onclick="switchMainTab('mcqs')">❓ MCQs</button>
     <button class="top-tab" onclick="switchMainTab('enrollments')">👥 Enrollments</button>
+    <button class="top-tab" onclick="switchMainTab('recruitment')">💼 Recruitment Board</button>
   </div>
 
   <!-- ===== ARTICLES TAB ===== -->
@@ -604,6 +605,21 @@
     <div id="enrollmentsList">Loading...</div>
   </div>
 
+  <!-- ===== RECRUITMENT BOARD TAB ===== -->
+  <div class="tab-panel" id="tab-recruitment">
+    <div class="panel-heading">
+      <div class="section-label">Manage</div>
+      <h2>Posted Recruitments</h2>
+    </div>
+    <div id="recruitmentsAdminList">Loading...</div>
+
+    <div class="panel-heading second">
+      <div class="section-label">Manage</div>
+      <h2>Posted Candidate Profiles</h2>
+    </div>
+    <div id="candidatesAdminList">Loading...</div>
+  </div>
+
 </div>
 
 <script type="module">
@@ -649,6 +665,8 @@
     loadCourses();
     loadEnrollments();
     loadMcqs();
+    loadRecruitmentsAdmin();
+    loadCandidatesAdmin();
     addChapterBlock();
   });
 
@@ -1032,6 +1050,82 @@
     await deleteDoc(doc(db, 'quizzes', id));
     alert('🗑️ Question delete kar diya gaya.');
     loadMcqs();
+  };
+
+  /* ===== RECRUITMENT BOARD: MANAGE / DELETE ===== */
+  async function loadRecruitmentsAdmin() {
+    const snapshot = await getDocs(collection(db, 'recruitments'));
+    const list = document.getElementById('recruitmentsAdminList');
+
+    if (snapshot.empty) {
+      list.innerHTML = '<p class="empty-msg">Koi recruitment abhi tak post nahi hui hai.</p>';
+      return;
+    }
+
+    let rows = [];
+    snapshot.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+    list.innerHTML = '';
+    rows.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <span class="category-badge">${r.type} · ${r.mode}</span>
+        <h3>${r.title}</h3>
+        <p><strong>${r.firmName}</strong> — ${r.location}${r.pay ? ' · ' + r.pay : ''}<br>
+        Posted by ${r.postedBy} · ${r.email}${r.phone ? ' · ' + r.phone : ''}</p>
+        <div class="btns">
+          <button class="rejectBtn" onclick="deleteRecruitment('${r.id}')">🗑️ Delete Listing</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  window.deleteRecruitment = async (id) => {
+    if (!confirm('Sure ho? Ye recruitment listing permanently delete ho jayegi.')) return;
+    await deleteDoc(doc(db, 'recruitments', id));
+    alert('🗑️ Listing delete kar di gayi.');
+    loadRecruitmentsAdmin();
+  };
+
+  async function loadCandidatesAdmin() {
+    const snapshot = await getDocs(collection(db, 'candidates'));
+    const list = document.getElementById('candidatesAdminList');
+
+    if (snapshot.empty) {
+      list.innerHTML = '<p class="empty-msg">Koi candidate profile abhi tak post nahi hua hai.</p>';
+      return;
+    }
+
+    let rows = [];
+    snapshot.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+    list.innerHTML = '';
+    rows.forEach(c => {
+      const skills = (c.skills || []).join(', ');
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <span class="category-badge">Seeking ${c.seeking}</span>
+        <h3>${c.name}</h3>
+        <p><strong>${c.status}</strong> — ${c.location}${skills ? '<br>Skills: ' + skills : ''}<br>
+        Contact: ${c.email}${c.phone ? ' · ' + c.phone : ''}</p>
+        <div class="btns">
+          <button class="rejectBtn" onclick="deleteCandidate('${c.id}')">🗑️ Delete Profile</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  window.deleteCandidate = async (id) => {
+    if (!confirm('Sure ho? Ye candidate profile permanently delete ho jayega.')) return;
+    await deleteDoc(doc(db, 'candidates', id));
+    alert('🗑️ Profile delete kar diya gaya.');
+    loadCandidatesAdmin();
   };
 
   /* ===== ENROLLMENTS ===== */
