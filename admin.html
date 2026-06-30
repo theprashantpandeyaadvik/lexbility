@@ -325,6 +325,67 @@
       margin-bottom: 1.5rem; font-weight: 600;
     }
 
+    /* ─── COURSE CHAPTERS BUILDER ────────────────────── */
+    .chapters-wrap { margin-bottom: 0.5rem; }
+    .chapter-block {
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 10px;
+      padding: 1.3rem;
+      margin-bottom: 1.1rem;
+      background: var(--grey);
+      position: relative;
+    }
+    .chapter-block-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.9rem;
+    }
+    .chapter-block-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; color: var(--gold);
+      font-size: 0.95rem; letter-spacing: 0.5px;
+    }
+    .chapter-remove-btn {
+      background: none; border: 1px solid rgba(201,80,76,0.35);
+      color: var(--red); font-size: 0.75rem; font-weight: 700;
+      padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    }
+    .chapter-remove-btn:hover { background: rgba(201,80,76,0.08); }
+    .chapter-title-input {
+      width: 100%; padding: 0.7rem 0.9rem;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 7px; font-size: 0.95rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; color: var(--navy);
+      background: var(--white); margin-bottom: 0.8rem;
+    }
+    .chapter-title-input:focus { outline: none; border-color: var(--gold); }
+    .chapter-content-textarea {
+      width: 100%; height: 220px; padding: 0.85rem 1rem;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 8px; resize: vertical; line-height: 1.7;
+      font-family: monospace; font-size: 0.88rem; color: var(--text);
+      background: var(--white);
+    }
+    .chapter-content-textarea:focus { outline: none; border-color: var(--gold); }
+    .chapter-preview-pane {
+      display: none; min-height: 220px;
+      border: 1.5px solid rgba(10,22,40,0.12); border-radius: 0 0 8px 8px;
+      padding: 1rem 1.1rem; font-size: 0.92rem; line-height: 1.8;
+      color: var(--text); background: var(--white);
+    }
+    .chapter-preview-pane h1, .chapter-preview-pane h2, .chapter-preview-pane h3 {
+      font-family: 'Playfair Display', serif; color: var(--navy); margin: 0.8rem 0 0.4rem;
+    }
+    .add-chapter-btn {
+      background: var(--white); color: var(--gold);
+      border: 1.5px dashed var(--gold);
+      padding: 0.75rem 1.5rem; border-radius: 8px;
+      cursor: pointer; font-size: 0.9rem; font-weight: 700;
+      font-family: 'DM Sans', sans-serif; width: 100%;
+      margin-bottom: 1.3rem; transition: all 0.2s;
+    }
+    .add-chapter-btn:hover { background: rgba(201,168,76,0.07); }
+
     /* ─── ENROLLMENTS ────────────────────────────────── */
     .enroll-group-title {
       font-family: 'Playfair Display', serif;
@@ -438,10 +499,10 @@
       </div>
 
       <div class="form-group">
-        <label>Course Content</label>
+        <label>Chapters</label>
 
         <div class="md-guide">
-          <div class="md-guide-title">✍️ Formatting Guide (Markdown)</div>
+          <div class="md-guide-title">✍️ Formatting Guide (Markdown — applies inside each chapter)</div>
           <div class="md-guide-grid">
             <div class="md-guide-row"><code># Heading 1</code> → Main heading</div>
             <div class="md-guide-row"><code>## Heading 2</code> → Section heading</div>
@@ -454,12 +515,8 @@
           </div>
         </div>
 
-        <div class="editor-tabs">
-          <button class="editor-tab active" onclick="switchCourseEditorTab('write')">✏️ Write</button>
-          <button class="editor-tab" onclick="switchCourseEditorTab('preview')">👁 Preview</button>
-        </div>
-        <textarea id="courseContent" placeholder="Write the full course content here...&#10;&#10;# Module 1: Introduction&#10;&#10;Content..." oninput="updateCoursePreview()"></textarea>
-        <div id="coursePreviewPane"></div>
+        <div class="chapters-wrap" id="chaptersContainer"></div>
+        <button type="button" class="add-chapter-btn" onclick="addChapterBlock()">+ Add Chapter</button>
       </div>
 
       <button id="addCourseBtn" onclick="addCourse()">Publish Course →</button>
@@ -582,6 +639,7 @@
     loadCourses();
     loadEnrollments();
     loadMcqs();
+    addChapterBlock();
   });
 
   window.adminLogin = async () => {
@@ -686,27 +744,76 @@
     loadPublished();
   };
 
-  /* ===== COURSES: EDITOR TABS ===== */
-  window.switchCourseEditorTab = (tab) => {
-    const textarea = document.getElementById('courseContent');
-    const preview = document.getElementById('coursePreviewPane');
-    const tabs = document.querySelectorAll('#tab-courses .editor-tab');
+  /* ===== COURSES: CHAPTER BUILDER ===== */
+  let chapterCounter = 0;
+
+  function addChapterBlock(title = '', content = '') {
+    chapterCounter++;
+    const uid = chapterCounter;
+    const wrap = document.getElementById('chaptersContainer');
+    const block = document.createElement('div');
+    block.className = 'chapter-block';
+    block.id = `chapterBlock_${uid}`;
+    block.innerHTML = `
+      <div class="chapter-block-head">
+        <span class="chapter-block-num">Chapter ${wrap.children.length + 1}</span>
+        <button type="button" class="chapter-remove-btn" onclick="removeChapterBlock(${uid})">✕ Remove Chapter</button>
+      </div>
+      <input type="text" class="chapter-title-input" id="chapterTitle_${uid}" placeholder="Chapter title, e.g. Module 1: Foundations of Legal Drafting" value="${title.replace(/"/g, '&quot;')}">
+      <div class="editor-tabs">
+        <button type="button" class="editor-tab active" id="chapterTabWrite_${uid}" onclick="switchChapterTab(${uid}, 'write')">✏️ Write</button>
+        <button type="button" class="editor-tab" id="chapterTabPreview_${uid}" onclick="switchChapterTab(${uid}, 'preview')">👁 Preview</button>
+      </div>
+      <textarea class="chapter-content-textarea" id="chapterContent_${uid}" placeholder="Write this chapter's full content here..." oninput="updateChapterPreview(${uid})"></textarea>
+      <div class="chapter-preview-pane" id="chapterPreview_${uid}"></div>
+    `;
+    wrap.appendChild(block);
+    if (content) document.getElementById(`chapterContent_${uid}`).value = content;
+    renumberChapters();
+  }
+
+  window.addChapterBlock = addChapterBlock;
+
+  window.removeChapterBlock = (uid) => {
+    const block = document.getElementById(`chapterBlock_${uid}`);
+    if (block) block.remove();
+    renumberChapters();
+  };
+
+  function renumberChapters() {
+    const wrap = document.getElementById('chaptersContainer');
+    [...wrap.children].forEach((block, i) => {
+      block.querySelector('.chapter-block-num').textContent = `Chapter ${i + 1}`;
+    });
+  }
+
+  window.switchChapterTab = (uid, tab) => {
+    const textarea = document.getElementById(`chapterContent_${uid}`);
+    const preview = document.getElementById(`chapterPreview_${uid}`);
+    const tabWrite = document.getElementById(`chapterTabWrite_${uid}`);
+    const tabPreview = document.getElementById(`chapterTabPreview_${uid}`);
     if (tab === 'preview') {
-      updateCoursePreview();
+      updateChapterPreview(uid);
       textarea.style.display = 'none';
       preview.style.display = 'block';
-      tabs[0].classList.remove('active'); tabs[1].classList.add('active');
+      tabWrite.classList.remove('active'); tabPreview.classList.add('active');
     } else {
       textarea.style.display = 'block';
       preview.style.display = 'none';
-      tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+      tabWrite.classList.add('active'); tabPreview.classList.remove('active');
     }
   };
 
-  window.updateCoursePreview = () => {
-    const content = document.getElementById('courseContent').value;
-    document.getElementById('coursePreviewPane').innerHTML = window.marked ? marked.parse(content) : content;
+  window.updateChapterPreview = (uid) => {
+    const content = document.getElementById(`chapterContent_${uid}`).value;
+    document.getElementById(`chapterPreview_${uid}`).innerHTML = window.marked ? marked.parse(content) : content;
   };
+
+  function resetChapterBuilder() {
+    document.getElementById('chaptersContainer').innerHTML = '';
+    chapterCounter = 0;
+    addChapterBlock();
+  }
 
   /* ===== COURSES: ADD ===== */
   window.addCourse = async () => {
@@ -714,10 +821,23 @@
     const category = document.getElementById('courseCategory').value.trim();
     const authorName = document.getElementById('courseAuthorName').value.trim();
     const authorPhoto = document.getElementById('courseAuthorPhoto').value.trim();
-    const content = document.getElementById('courseContent').value.trim();
 
-    if (!title || !category || !authorName || !authorPhoto || !content) {
-      alert('Please fill in all fields.');
+    const chapterBlocks = [...document.getElementById('chaptersContainer').children];
+    const chapters = chapterBlocks.map(block => {
+      const uid = block.id.replace('chapterBlock_', '');
+      return {
+        title: document.getElementById(`chapterTitle_${uid}`).value.trim(),
+        content: document.getElementById(`chapterContent_${uid}`).value.trim()
+      };
+    }).filter(ch => ch.title || ch.content);
+
+    if (!title || !category || !authorName || !authorPhoto || chapters.length === 0) {
+      alert('Please fill in all fields and add at least one chapter.');
+      return;
+    }
+    const incomplete = chapters.find(ch => !ch.title || !ch.content);
+    if (incomplete) {
+      alert('Every chapter needs both a title and content.');
       return;
     }
 
@@ -726,14 +846,14 @@
 
     try {
       await addDoc(collection(db, 'courses'), {
-        title, category, content, authorName, authorPhoto,
+        title, category, authorName, authorPhoto, chapters,
         createdAt: serverTimestamp()
       });
       document.getElementById('courseTitle').value = '';
       document.getElementById('courseCategory').value = '';
       document.getElementById('courseAuthorName').value = '';
       document.getElementById('courseAuthorPhoto').value = '';
-      document.getElementById('courseContent').value = '';
+      resetChapterBuilder();
       document.getElementById('courseSuccessMsg').style.display = 'block';
       loadCourses();
     } catch (e) {
@@ -761,6 +881,8 @@
       const c = docSnap.data();
       const div = document.createElement('div');
       div.className = 'card';
+      const chCount = (c.chapters || []).length;
+      const chTitles = (c.chapters || []).map((ch, i) => `${i + 1}. ${ch.title}`).join('<br>');
       div.innerHTML = `
         <div class="author">
           <img src="${c.authorPhoto}" alt="${c.authorName}">
@@ -768,7 +890,7 @@
         </div>
         <span class="category-badge">${c.category}</span>
         <h3>${c.title}</h3>
-        <p>${(c.content || '').substring(0, 200)}...</p>
+        <p><strong>${chCount} chapter${chCount === 1 ? '' : 's'}</strong>${chTitles ? '<br>' + chTitles : ''}</p>
         <div class="btns">
           <button class="rejectBtn" onclick="deleteCourse('${docSnap.id}')">🗑️ Delete Course</button>
         </div>
