@@ -358,20 +358,24 @@
     <p class="modal-course-name">Fill in your details to access this course.</p>
 
     <div class="form-group">
+      <label>Course</label>
+      <input type="text" id="enrollCourseName" readonly style="background:var(--grey); cursor:not-allowed; color:var(--muted); font-weight:600;">
+    </div>
+    <div class="form-group">
       <label>Full Name</label>
-      <input type="text" id="enrollName" placeholder="e.g. Priya Sharma">
+      <input type="text" id="enrollName" placeholder="e.g. Prashant Pandey">
     </div>
     <div class="form-group">
       <label>College Name</label>
-      <input type="text" id="enrollCollege" placeholder="e.g. Faculty of Law, Delhi University">
+      <input type="text" id="enrollCollege" placeholder="e.g. Campus Law Centre, Delhi University">
     </div>
     <div class="form-group">
       <label>Batch Year</label>
-      <input type="text" id="enrollBatch" placeholder="e.g. 2023-2028">
+      <input type="text" id="enrollBatch" placeholder="e.g. 2024-2027">
     </div>
     <div class="form-group">
       <label>Email Address</label>
-      <input type="email" id="enrollEmail" placeholder="e.g. priya@example.com">
+      <input type="email" id="enrollEmail" placeholder="e.g. prashant@example.com">
     </div>
 
     <button id="enrollSubmitBtn" onclick="submitEnrollment()">Enroll & Start Course →</button>
@@ -479,6 +483,7 @@
     selectedCourseId = id;
     selectedCourseTitle = title;
     document.getElementById('modalCourseTitle').textContent = title;
+    document.getElementById('enrollCourseName').value = title;
     document.getElementById('enrollModal').classList.add('open');
   };
 
