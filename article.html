@@ -427,7 +427,7 @@ async function loadSidebar(currentId, category) {
       loadSidebar(id, a.category);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('pageHeader').style.display = 'block';
-      document.getElementById('contentWrapper').style.display = 'block';
+     document.getElementById('contentWrapper').style.display = 'grid';
     } else {
       document.getElementById('loading').textContent = 'Article not found.';
     }
