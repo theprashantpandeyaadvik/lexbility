@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advocate Diary — Lexbility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #0f1f3d;
+      --gold:   #C9A84C;
+      --gold2:  #e8c56a;
+      --white:  #FFFFFF;
+      --grey:   #F4F6FA;
+      --text:   #1a2340;
+      --muted:  #6b7a99;
+      --red:    #b5453f;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+    /* ── NAVBAR (same as rest of site) ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(10,22,40,0.96); backdrop-filter: blur(12px);
+      padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 0.4rem 1.1rem; border-radius: 4px; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--gold2) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+    @media(max-width:768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); padding: 1rem 5%; }
+      .nav-links.open { display: flex; }
+      .nav-links li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--navy);
+      padding: 120px 5% 70px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '📔';
+      position: absolute; font-size: 18rem;
+      opacity: 0.05; top: 50%; right: 5%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .page-hero-content { position: relative; z-index: 1; max-width: 680px; }
+    .page-hero .badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.2rem;
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1rem; }
+    .page-hero h1 span { color: var(--gold); }
+    .page-hero p { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 300; max-width: 520px; }
+
+    section { padding: 56px 5%; max-width: 900px; margin: 0 auto; }
+
+    /* ── SIGN-IN CARD ── */
+    .auth-card {
+      background: var(--grey);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 14px;
+      padding: 2.4rem 2rem;
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .auth-card .lock-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .auth-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .auth-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.6rem; line-height: 1.6; }
+
+    .google-btn {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      background: var(--white); border: 1px solid rgba(10,22,40,0.15);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem; font-weight: 600;
+      padding: 0.75rem 1.6rem; border-radius: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .google-btn:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(201,168,76,0.18); transform: translateY(-1px); }
+    .google-btn svg { width: 18px; height: 18px; }
+
+    .auth-note { margin-top: 1.4rem; font-size: 0.78rem; color: var(--muted); }
+
+    /* ── PROFILE BAR (when signed in) ── */
+    .profile-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--grey); border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 12px; padding: 0.9rem 1.4rem; margin-bottom: 2rem;
+      flex-wrap: wrap; gap: 0.8rem;
+    }
+    .profile-info { display: flex; align-items: center; gap: 0.8rem; }
+    .profile-info img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--gold); }
+    .profile-name { font-weight: 600; font-size: 0.92rem; color: var(--text); }
+    .profile-email { font-size: 0.78rem; color: var(--muted); }
+    .signout-btn {
+      background: none; border: 1px solid rgba(10,22,40,0.15); color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 600;
+      padding: 0.45rem 1rem; border-radius: 6px; cursor: pointer; transition: 0.2s;
+    }
+    .signout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── DIARY FORM ── */
+    .diary-form {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 14px;
+      padding: 1.8rem;
+      margin-bottom: 2.4rem;
+      box-shadow: 0 4px 24px rgba(10,22,40,0.05);
+    }
+    .diary-form h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 1.2rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-field input, .form-field textarea {
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      border: 1px solid rgba(10,22,40,0.15); border-radius: 8px;
+      padding: 0.6rem 0.8rem; color: var(--text); background: var(--white);
+    }
+    .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+    .form-field textarea { resize: vertical; min-height: 70px; }
+    @media(max-width:640px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .form-actions { display: flex; gap: 0.7rem; margin-top: 1.2rem; }
+    .btn-primary {
+      background: var(--navy); color: var(--gold); border: none;
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem;
+      padding: 0.7rem 1.6rem; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-primary:hover { background: var(--navy2); }
+    .btn-secondary {
+      background: none; color: var(--muted); border: 1px solid rgba(10,22,40,0.15);
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem;
+      padding: 0.7rem 1.4rem; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--text); color: var(--text); }
+
+    /* ── ENTRY LIST ── */
+    .entries-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .entries-header h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); }
+    .entries-count { font-size: 0.8rem; color: var(--muted); }
+
+    .entry-card {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-left: 4px solid var(--gold);
+      border-radius: 10px;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 0.9rem;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      transition: box-shadow 0.2s;
+    }
+    .entry-card:hover { box-shadow: 0 4px 18px rgba(10,22,40,0.07); }
+    .entry-card.overdue { border-left-color: var(--red); }
+    .entry-main { flex: 1; min-width: 0; }
+    .entry-top { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+    .entry-date {
+      font-size: 0.74rem; font-weight: 700; color: var(--navy);
+      background: rgba(201,168,76,0.12); padding: 0.2rem 0.6rem; border-radius: 12px;
+    }
+    .entry-card.overdue .entry-date { background: rgba(181,69,63,0.12); color: var(--red); }
+    .entry-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+    .entry-meta { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    .entry-notes { font-size: 0.83rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.5; }
+    .entry-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .icon-btn {
+      background: none; border: none; cursor: pointer; font-size: 1rem;
+      color: var(--muted); padding: 0.3rem; border-radius: 6px; transition: 0.2s;
+    }
+    .icon-btn:hover { color: var(--gold); background: rgba(201,168,76,0.1); }
+    .icon-btn.danger:hover { color: var(--red); background: rgba(181,69,63,0.1); }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state .e-icon { font-size: 2.4rem; margin-bottom: 0.8rem; opacity: 0.5; }
+
+    .hidden { display: none !important; }
+
+    footer { background: var(--navy); padding: 2.4rem 5%; text-align: center; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--white); margin-bottom: 1rem; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; list-style: none; flex-wrap: wrap; margin-bottom: 1rem; }
+    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { color: rgba(255,255,255,0.35); font-size: 0.78rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="diary.html" class="active">Diary</a></li>
+    <li><a href="about.html" class="nav-cta">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="badge">Advocates Only</div>
+    <h1>Your Cases. <span>Privately Kept.</span></h1>
+    <p>Sign in with your Google account to maintain a private case diary — hearing dates, party names and notes. Visible only to you.</p>
+  </div>
+</div>
+
+<section>
+
+  <!-- SIGNED OUT STATE -->
+  <div id="signedOutView" class="auth-card">
+    <div class="lock-icon">🔒</div>
+    <h2>Sign in to access your diary</h2>
+    <p>Each advocate's entries are private and tied to their own Google account — no one else, including other advocates, can see them.</p>
+    <button class="google-btn" onclick="signIn()">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4c-7.5 0-14 4.2-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6C29.6 35 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.9 39.7 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.3-4.1 5.7l6.6 5.6C41.9 36.6 44 30.8 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="auth-note">By signing in you agree this diary is for your personal case-tracking use only.</div>
+  </div>
+
+  <!-- SIGNED IN STATE -->
+  <div id="signedInView" class="hidden">
+    <div class="profile-bar">
+      <div class="profile-info">
+        <img id="userPhoto" src="" alt="">
+        <div>
+          <div class="profile-name" id="userName"></div>
+          <div class="profile-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="signout-btn" onclick="signOutUser()">Sign Out</button>
+    </div>
+
+    <div class="diary-form">
+      <h3 id="formHeading">➕ Add Case Entry</h3>
+      <div class="form-grid">
+        <div class="form-field full">
+          <label>Case Title</label>
+          <input type="text" id="f_title" placeholder="e.g. Sharma vs Sharma — Divorce Petition">
+        </div>
+        <div class="form-field">
+          <label>Case Number</label>
+          <input type="text" id="f_caseno" placeholder="e.g. HMA 234/2026">
+        </div>
+        <div class="form-field">
+          <label>Court</label>
+          <input type="text" id="f_court" placeholder="e.g. Saket District Court, Delhi">
+        </div>
+        <div class="form-field">
+          <label>Next Hearing Date</label>
+          <input type="date" id="f_date">
+        </div>
+        <div class="form-field">
+          <label>Opposing Party / Client Phone</label>
+          <input type="text" id="f_party" placeholder="e.g. +91 98xxxxxx10">
+        </div>
+        <div class="form-field full">
+          <label>Notes</label>
+          <textarea id="f_notes" placeholder="What's due, last order, documents to bring..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveEntry()" id="saveBtn">Save Entry</button>
+        <button class="btn-secondary hidden" id="cancelEditBtn" onclick="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="entries-header">
+      <h3>📁 Your Diary</h3>
+      <div class="entries-count" id="entriesCount"></div>
+    </div>
+    <div id="entriesList"></div>
+    <div id="emptyState" class="empty-state hidden">
+      <div class="e-icon">📭</div>
+      <p>No entries yet. Add your first case above.</p>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="footer-logo">Lex<span>bility</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="students.html">Students' Corner</a></li>
+    <li><a href="lawyers.html">Lawyers' Corner</a></li>
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="about.html">About & Contact</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Lexbility. For informational purposes only. Not legal advice.</p>
+</footer>
+
+<!--
+  ════════════════════════════════════════════════════════════════
+  SETUP NOTES FOR DEVELOPER (Lexbility team) — not visible to advocates
+  ════════════════════════════════════════════════════════════════
+  1. Replace firebaseConfig below with your actual Firebase project config
+     (Firebase Console → Project Settings → General → Your apps → SDK setup).
+
+  2. In Firebase Console → Authentication → Sign-in method → enable "Google".
+
+  3. In Firebase Console → Authentication → Settings → Authorized domains,
+     add the domain where this site is hosted (e.g. lexbility.com).
+
+  4. In Firebase Console → Firestore Database → create a database (production mode),
+     then go to Rules and paste the following so each advocate can ONLY
+     read/write their own entries:
+
+     rules_version = '2';
+     service cloud.firestore {
+       match /databases/{database}/documents {
+         match /diaries/{uid}/entries/{entryId} {
+           allow read, write: if request.auth != null && request.auth.uid == uid;
+         }
+       }
+     }
+
+  5. That's it — no separate backend server needed for this part. Firebase
+     handles auth + storage directly from the browser.
+  ════════════════════════════════════════════════════════════════
+-->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
+    onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ── REPLACE WITH YOUR FIREBASE PROJECT CONFIG ──
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  let currentUser = null;
+  let unsubscribeEntries = null;
+  let editingId = null;
+
+  window.signIn = function () {
+    signInWithPopup(auth, provider).catch((err) => {
+      alert("Sign-in failed: " + err.message);
+    });
+  };
+
+  window.signOutUser = function () {
+    signOut(auth);
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('signedOutView').classList.add('hidden');
+      document.getElementById('signedInView').classList.remove('hidden');
+      document.getElementById('userPhoto').src = user.photoURL || '';
+      document.getElementById('userName').textContent = user.displayName || 'Advocate';
+      document.getElementById('userEmail').textContent = user.email || '';
+      listenToEntries(user.uid);
+    } else {
+      document.getElementById('signedInView').classList.add('hidden');
+      document.getElementById('signedOutView').classList.remove('hidden');
+      if (unsubscribeEntries) unsubscribeEntries();
+    }
+  });
+
+  function listenToEntries(uid) {
+    const entriesRef = collection(db, 'diaries', uid, 'entries');
+    const q = query(entriesRef, orderBy('hearingDate', 'asc'));
+    if (unsubscribeEntries) unsubscribeEntries();
+    unsubscribeEntries = onSnapshot(q, (snap) => {
+      renderEntries(snap, uid);
+    }, (err) => {
+      console.error(err);
+    });
+  }
+
+  function renderEntries(snap, uid) {
+    const list = document.getElementById('entriesList');
+    const empty = document.getElementById('emptyState');
+    const count = document.getElementById('entriesCount');
+    list.innerHTML = '';
+
+    if (snap.empty) {
+      empty.classList.remove('hidden');
+      count.textContent = '';
+      return;
+    }
+    empty.classList.add('hidden');
+    count.textContent = snap.size + (snap.size === 1 ? ' entry' : ' entries');
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    snap.forEach((docSnap) => {
+      const d = docSnap.data();
+      const isOverdue = d.hearingDate && d.hearingDate < today;
+      const card = document.createElement('div');
+      card.className = 'entry-card' + (isOverdue ? ' overdue' : '');
+      card.innerHTML = `
+        <div class="entry-main">
+          <div class="entry-top">
+            <span class="entry-date">${formatDate(d.hearingDate)}</span>
+            <span class="entry-title">${escapeHtml(d.caseTitle || 'Untitled Case')}</span>
+          </div>
+          <div class="entry-meta">${escapeHtml(d.caseNumber || '')}${d.caseNumber && d.court ? ' · ' : ''}${escapeHtml(d.court || '')}${d.party ? ' · ' + escapeHtml(d.party) : ''}</div>
+          ${d.notes ? `<div class="entry-notes">${escapeHtml(d.notes)}</div>` : ''}
+        </div>
+        <div class="entry-actions">
+          <button class="icon-btn" title="Edit" onclick="editEntry('${docSnap.id}')">✏️</button>
+          <button class="icon-btn danger" title="Delete" onclick="deleteEntry('${docSnap.id}')">🗑️</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    window.__entriesCache = window.__entriesCache || {};
+    snap.forEach((docSnap) => { window.__entriesCache[docSnap.id] = docSnap.data(); });
+  }
+
+  function formatDate(iso) {
+    if (!iso) return 'No date';
+    const dt = new Date(iso + 'T00:00:00');
+    return dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  window.saveEntry = async function () {
+    if (!currentUser) return;
+    const data = {
+      caseTitle: document.getElementById('f_title').value.trim(),
+      caseNumber: document.getElementById('f_caseno').value.trim(),
+      court: document.getElementById('f_court').value.trim(),
+      hearingDate: document.getElementById('f_date').value,
+      party: document.getElementById('f_party').value.trim(),
+      notes: document.getElementById('f_notes').value.trim(),
+    };
+    if (!data.caseTitle) { alert('Please enter a case title.'); return; }
+
+    const entriesRef = collection(db, 'diaries', currentUser.uid, 'entries');
+    if (editingId) {
+      await updateDoc(doc(db, 'diaries', currentUser.uid, 'entries', editingId), data);
+      cancelEdit();
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(entriesRef, data);
+    }
+    clearForm();
+  };
+
+  window.editEntry = function (id) {
+    const d = (window.__entriesCache || {})[id];
+    if (!d) return;
+    editingId = id;
+    document.getElementById('f_title').value = d.caseTitle || '';
+    document.getElementById('f_caseno').value = d.caseNumber || '';
+    document.getElementById('f_court').value = d.court || '';
+    document.getElementById('f_date').value = d.hearingDate || '';
+    document.getElementById('f_party').value = d.party || '';
+    document.getElementById('f_notes').value = d.notes || '';
+    document.getElementById('formHeading').textContent = '✏️ Edit Case Entry';
+    document.getElementById('saveBtn').textContent = 'Update Entry';
+    document.getElementById('cancelEditBtn').classList.remove('hidden');
+    window.scrollTo({ top: document.querySelector('.diary-form').offsetTop - 90, behavior: 'smooth' });
+  };
+
+  window.cancelEdit = function () {
+    editingId = null;
+    document.getElementById('formHeading').textContent = '➕ Add Case Entry';
+    document.getElementById('saveBtn').textContent = 'Save Entry';
+    document.getElementById('cancelEditBtn').classList.add('hidden');
+    clearForm();
+  };
+
+  window.deleteEntry = async function (id) {
+    if (!currentUser) return;
+    if (!confirm('Delete this entry? This cannot be undone.')) return;
+    await deleteDoc(doc(db, 'diaries', currentUser.uid, 'entries', id));
+  };
+
+  function clearForm() {
+    ['f_title', 'f_caseno', 'f_court', 'f_date', 'f_party', 'f_notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+</script>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>

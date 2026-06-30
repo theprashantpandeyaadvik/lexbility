@@ -315,6 +315,40 @@
     .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .modal-note { text-align: center; color: var(--muted); font-size: 0.78rem; margin-top: 0.9rem; }
 
+    .hidden { display: none !important; }
+
+    /* AUTH BAR (floating, shows when signed in) */
+    .auth-bar {
+      position: fixed; top: 76px; right: 5%; z-index: 998;
+      background: var(--white); border: 1px solid rgba(10,22,40,0.1);
+      border-radius: 30px; padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+      box-shadow: 0 6px 20px rgba(10,22,40,0.1);
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .auth-bar img { width: 26px; height: 26px; border-radius: 50%; }
+    .auth-bar span { font-size: 0.8rem; font-weight: 600; color: var(--text); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .auth-bar button {
+      background: none; border: 1px solid rgba(10,22,40,0.15); color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+      padding: 0.25rem 0.6rem; border-radius: 14px; cursor: pointer; transition: 0.2s;
+    }
+    .auth-bar button:hover { border-color: var(--navy); color: var(--navy); }
+    @media(max-width:640px) { .auth-bar { top: 70px; right: 3%; } .auth-bar span { max-width: 90px; } }
+
+    /* SIGN-IN MODAL OPTIONS */
+    .auth-options { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.6rem 0; }
+    .auth-option-btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+      padding: 0.8rem 1rem; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.92rem;
+      cursor: pointer; transition: all 0.2s; width: 100%;
+    }
+    .auth-option-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+    .auth-option-btn.google { background: var(--white); border: 1.5px solid rgba(10,22,40,0.15); color: var(--text); }
+    .auth-option-btn.google:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(201,168,76,0.16); transform: translateY(-1px); }
+    .auth-option-btn.linkedin { background: #0A66C2; border: none; color: #fff; }
+    .auth-option-btn.linkedin:hover { background: #004182; transform: translateY(-1px); }
+
     /* DETAIL MODAL */
     .detail-type-badge { margin-bottom: 0.9rem; }
     .detail-meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.4rem; }
@@ -384,12 +418,19 @@
   </div>
 </nav>
 
+<!-- AUTH BAR: visible only when signed in -->
+<div class="auth-bar hidden" id="authBar">
+  <img id="authBarPhoto" src="" alt="">
+  <span id="authBarName"></span>
+  <button onclick="signOutUser()">Sign Out</button>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-badge">Talent Meets Opportunity</div>
     <h1>Recruitment <span>Board</span></h1>
-    <p>Lawyers and chambers post openings for interns and associates. Students and young professionals post their profile to be discovered. No login, no middlemen — connect directly.</p>
+    <p>Lawyers and chambers post openings for interns and associates. Students and young professionals post their profile to be discovered. No hustle, no middlemen — connect directly.</p>
     <div class="hero-jump">
       <a href="#recruitmentsSection" class="primary">🏢 I'm Hiring</a>
       <a href="#candidatesSection" class="secondary">🎓 I'm Looking for Work</a>
@@ -405,7 +446,7 @@
       <h2>Open Recruitments</h2>
       <p>Internships, associate positions, and jobs posted by lawyers, chambers, and firms.</p>
     </div>
-    <button class="post-btn" onclick="openPostRecruitmentModal()">+ Post a Recruitment</button>
+    <button class="post-btn" onclick="requirePostRecruitment()">+ Post a Recruitment</button>
   </div>
 
   <div class="search-bar-wrap">
@@ -426,7 +467,7 @@
         <h2>Available Talent</h2>
         <p>Students and associates looking for internships or jobs — browse profiles or post your own.</p>
       </div>
-      <button class="post-btn gold" onclick="openPostCandidateModal()">+ Post Your Profile</button>
+      <button class="post-btn gold" onclick="requirePostCandidate()">+ Post Your Profile</button>
     </div>
 
     <div class="search-bar-wrap">
@@ -439,6 +480,29 @@
   </div>
 </section>
 
+<!-- ===== MODAL: SIGN IN TO POST ===== -->
+<div class="modal-overlay" id="signInModal">
+  <div class="modal-box" style="max-width: 420px; text-align: center;">
+    <button class="modal-close" onclick="closeModal('signInModal')">✕</button>
+    <div class="modal-eyebrow">Verify Your Identity</div>
+    <h3>Sign in to post</h3>
+    <p class="modal-sub">We ask everyone to sign in before posting so listings and profiles on the board stay genuine.</p>
+
+    <div class="auth-options">
+      <button class="auth-option-btn google" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4c-7.5 0-14 4.2-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6C29.6 35 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.9 39.7 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.3-4.1 5.7l6.6 5.6C41.9 36.6 44 30.8 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+      <button class="auth-option-btn linkedin" onclick="signInWithLinkedIn()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+        Continue with LinkedIn
+      </button>
+    </div>
+
+    <p class="modal-note">We only use your name and email to verify your post — never shared without your consent.</p>
+  </div>
+</div>
+
 <!-- ===== MODAL: POST A RECRUITMENT ===== -->
 <div class="modal-overlay" id="postRecruitmentModal">
   <div class="modal-box">
@@ -450,11 +514,11 @@
     <div class="form-row">
       <div class="form-group">
         <label>Firm / Chamber Name</label>
-        <input type="text" id="recFirmName" placeholder="e.g. Chambers of Adv. R. Mehta">
+        <input type="text" id="recFirmName" placeholder="e.g. Chambers of Adv. Prashant Pandey">
       </div>
       <div class="form-group">
         <label>Your Name</label>
-        <input type="text" id="recPostedBy" placeholder="e.g. Adv. Rohan Mehta">
+        <input type="text" id="recPostedBy" placeholder="e.g. Adv. Prashant Pandey">
       </div>
     </div>
 
@@ -530,7 +594,7 @@
     <div class="form-row">
       <div class="form-group">
         <label>Full Name</label>
-        <input type="text" id="candName" placeholder="e.g. Priya Sharma">
+        <input type="text" id="candName" placeholder="e.g. Prashant Pandey">
       </div>
       <div class="form-group">
         <label>Looking For</label>
@@ -662,6 +726,9 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
@@ -675,6 +742,98 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  /* ============================================================
+     AUTHENTICATION (Google / LinkedIn)
+     ------------------------------------------------------------
+     Posting a recruitment or a candidate profile requires sign-in.
+     Setup needed in Firebase Console:
+       1) Authentication → Sign-in method → enable "Google" (works out of the box).
+       2) For LinkedIn: Authentication → Sign-in method → Add new provider →
+          OpenID Connect. This requires upgrading the project to
+          "Firebase Authentication with Identity Platform" (free up to
+          50,000 monthly active users on Blaze plan / 3,000 daily on Spark).
+          Create a LinkedIn Developer app with "Sign In with LinkedIn using
+          OpenID Connect", then enter its Client ID / Secret / Issuer in the
+          Firebase console provider screen. Name the provider "linkedin" so
+          its ID becomes "oidc.linkedin" (must match the code below).
+          NOTE: LinkedIn's OIDC discovery document has historically lived at
+          a non-standard path, which can make it incompatible with some OIDC
+          implementations — test this end-to-end after enabling it; if it
+          doesn't work, Google sign-in alone is a fully reliable fallback.
+       3) Authentication → Settings → Authorized domains → add your live domain.
+  ============================================================ */
+  let currentUser = null;
+  let pendingAction = null; // 'recruitment' | 'candidate'
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    updateAuthBar();
+  });
+
+  function updateAuthBar() {
+    const bar = document.getElementById('authBar');
+    if (currentUser) {
+      bar.classList.remove('hidden');
+      document.getElementById('authBarPhoto').src =
+        currentUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.displayName || currentUser.email || 'U')}`;
+      document.getElementById('authBarName').textContent = currentUser.displayName || currentUser.email || 'Signed in';
+    } else {
+      bar.classList.add('hidden');
+    }
+  }
+
+  window.signOutUser = () => signOut(auth);
+
+  window.signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+      closeModal('signInModal');
+      afterSignIn();
+    } catch (e) {
+      alert('Sign-in failed: ' + e.message);
+    }
+  };
+
+  window.signInWithLinkedIn = async () => {
+    try {
+      const provider = new OAuthProvider('oidc.linkedin');
+      await signInWithPopup(auth, provider);
+      closeModal('signInModal');
+      afterSignIn();
+    } catch (e) {
+      alert('LinkedIn sign-in failed: ' + e.message + '\n\nMake sure the "linkedin" OIDC provider is configured in Firebase Console → Authentication.');
+    }
+  };
+
+  function afterSignIn() {
+    if (pendingAction === 'recruitment') openRecruitmentFormModal();
+    else if (pendingAction === 'candidate') openCandidateFormModal();
+    pendingAction = null;
+  }
+
+  window.requirePostRecruitment = () => {
+    if (currentUser) { openRecruitmentFormModal(); }
+    else { pendingAction = 'recruitment'; document.getElementById('signInModal').classList.add('open'); }
+  };
+
+  window.requirePostCandidate = () => {
+    if (currentUser) { openCandidateFormModal(); }
+    else { pendingAction = 'candidate'; document.getElementById('signInModal').classList.add('open'); }
+  };
+
+  function openRecruitmentFormModal() {
+    if (!document.getElementById('recPostedBy').value) document.getElementById('recPostedBy').value = currentUser.displayName || '';
+    if (!document.getElementById('recEmail').value) document.getElementById('recEmail').value = currentUser.email || '';
+    document.getElementById('postRecruitmentModal').classList.add('open');
+  }
+
+  function openCandidateFormModal() {
+    if (!document.getElementById('candName').value) document.getElementById('candName').value = currentUser.displayName || '';
+    if (!document.getElementById('candEmail').value) document.getElementById('candEmail').value = currentUser.email || '';
+    document.getElementById('postCandidateModal').classList.add('open');
+  }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -705,11 +864,8 @@
   ============================================================ */
   let allRecruitments = [];
 
-  window.openPostRecruitmentModal = () => {
-    document.getElementById('postRecruitmentModal').classList.add('open');
-  };
-
   window.submitRecruitment = async () => {
+    if (!currentUser) { alert('Please sign in first.'); return; }
     const firmName = document.getElementById('recFirmName').value.trim();
     const postedBy = document.getElementById('recPostedBy').value.trim();
     const type = document.getElementById('recType').value;
@@ -738,6 +894,7 @@
       await addDoc(collection(db, 'recruitments'), {
         firmName, postedBy, type, mode, title, location, pay,
         description, requirements, email, phone,
+        postedByUid: currentUser.uid,
         createdAt: serverTimestamp()
       });
       ['recFirmName','recPostedBy','recTitle','recLocation','recPay','recDescription','recRequirements','recEmail','recPhone']
@@ -839,11 +996,8 @@
   ============================================================ */
   let allCandidates = [];
 
-  window.openPostCandidateModal = () => {
-    document.getElementById('postCandidateModal').classList.add('open');
-  };
-
   window.submitCandidate = async () => {
+    if (!currentUser) { alert('Please sign in first.'); return; }
     const name = document.getElementById('candName').value.trim();
     const seeking = document.getElementById('candSeeking').value;
     const status = document.getElementById('candStatus').value.trim();
@@ -871,6 +1025,7 @@
     try {
       await addDoc(collection(db, 'candidates'), {
         name, seeking, status, location, skills, bio, resume, email, phone,
+        postedByUid: currentUser.uid,
         createdAt: serverTimestamp()
       });
       ['candName','candStatus','candLocation','candSkills','candBio','candResume','candEmail','candPhone']
