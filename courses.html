@@ -451,7 +451,7 @@
       const preview = c.content.substring(0, 160) + '...';
       const card = document.createElement('div');
       card.className = 'course-card';
-      card.onclick = () => openEnrollModal(c.id, c.title);
+      card.onclick = () => goToCourse(c.id, c.title);
       card.innerHTML = `
         <div class="card-category">${c.category}</div>
         <div class="card-title">${c.title}</div>
@@ -478,7 +478,25 @@
     );
     renderCourses(filtered, true);
   });
+function getEnrolledCourses() {
+    try {
+      return JSON.parse(localStorage.getItem('lexbility_enrolled_courses') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
 
+  window.goToCourse = (id, title) => {
+    const enrolledCourses = getEnrolledCourses();
+    if (enrolledCourses.includes(id)) {
+      // already enrolled in this browser — skip the form entirely
+      window.location.href = `course.html?id=${id}&enrolled=1`;
+    } else {
+      openEnrollModal(id, title);
+    }
+  };
+
+  window.openEnrollModal = (id, title) => {
   window.openEnrollModal = (id, title) => {
     selectedCourseId = id;
     selectedCourseTitle = title;
