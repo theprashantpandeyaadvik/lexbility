@@ -325,8 +325,8 @@
   ════════════════════════════════════════════════════════════════
   SETUP NOTES FOR DEVELOPER (Lexbility team) — not visible to advocates
   ════════════════════════════════════════════════════════════════
-  1. Replace firebaseConfig below with your actual Firebase project config
-     (Firebase Console → Project Settings → General → Your apps → SDK setup).
+  1. Firebase config below is already set to the lexbility-fda92 project
+     (same project used by recruitment.html / lawyers.html).
 
   2. In Firebase Console → Authentication → Sign-in method → enable "Google".
 
@@ -362,12 +362,13 @@
 
   // ── REPLACE WITH YOUR FIREBASE PROJECT CONFIG ──
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
+    authDomain: "lexbility-fda92.firebaseapp.com",
+    projectId: "lexbility-fda92",
+    storageBucket: "lexbility-fda92.firebasestorage.app",
+    messagingSenderId: "855790706525",
+    appId: "1:855790706525:web:509d8dc087f1c24a7f92b4",
+    measurementId: "G-C9R0GRJ464"
   };
 
   const app = initializeApp(firebaseConfig);
