@@ -122,6 +122,64 @@
       margin: 0 auto;
       padding: 3rem 5% 5rem;
     }
+    .content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 90px;
+}
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 1.2rem;
+  border-left: 4px solid var(--gold);
+  padding-left: 0.7rem;
+}
+.sidebar-card {
+  background: var(--white);
+  border: 1px solid rgba(10,22,40,0.08);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sidebar-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 6px 20px rgba(10,22,40,0.08);
+  transform: translateY(-2px);
+}
+.sidebar-card .sc-category {
+  display: inline-block;
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+.sidebar-card .sc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .content-wrapper { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
     .article-body {
       background: var(--white);
       border-radius: 16px;
@@ -179,6 +237,15 @@
       font-family: monospace;
     }
     .article-body-text a { color: var(--gold); text-decoration: underline; }
+    .article-body-text img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 1.8rem 0;
+  display: block;
+  box-shadow: 0 6px 20px rgba(10,22,40,0.1);
+}
 
     /* LOADING */
     #loading {
@@ -262,9 +329,8 @@
     <div class="author-bar">
       <img id="authorPhoto" src="" alt="">
       <div class="author-bar-info">
-        <h4 id="authorName"></h4>
-        <p id="authorEmail"></p>
-      </div>
+  <h4 id="authorName"></h4>
+</div>
     </div>
   </div>
 </div>
@@ -274,6 +340,10 @@
   <div class="article-body">
     <div class="article-body-text" id="articleContent"></div>
   </div>
+  <aside class="sidebar">
+    <div class="sidebar-title">More Articles</div>
+    <div id="sidebarArticles"></div>
+  </aside>
 </div>
 
 <!-- FOOTER -->
@@ -299,8 +369,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   const firebaseConfig = {
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
     authDomain: "lexbility-fda92.firebaseapp.com",
@@ -313,7 +382,32 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+async function loadSidebar(currentId, category) {
+    const sidebarDiv = document.getElementById('sidebarArticles');
+    const snapshot = await getDocs(query(collection(db, 'articles'), where('status', '==', 'approved')));
+    let all = [];
+    snapshot.forEach(d => { if (d.id !== currentId) all.push({ id: d.id, ...d.data() }); });
 
+    let sameCategory = all.filter(a => a.category === category);
+    let others = all.filter(a => a.category !== category);
+
+    let picks = sameCategory.slice(0, 5);
+    if (picks.length < 5) {
+      picks = picks.concat(others.slice(0, 5 - picks.length));
+    }
+
+    if (picks.length === 0) {
+      sidebarDiv.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Koi aur article nahi mila.</p>';
+      return;
+    }
+
+    sidebarDiv.innerHTML = picks.map(a => `
+      <div class="sidebar-card" onclick="window.location.href='article.html?id=${a.id}'">
+        <span class="sc-category">${a.category}</span>
+        <div class="sc-title">${a.title}</div>
+      </div>
+    `).join('');
+  }
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
 
@@ -328,8 +422,9 @@
       document.getElementById('articleTitle').textContent = a.title;
       document.getElementById('authorPhoto').src = a.authorPhoto;
       document.getElementById('authorName').textContent = a.authorName;
-      document.getElementById('authorEmail').textContent = a.authorEmail;
+      
       document.getElementById('articleContent').innerHTML = marked.parse(a.content);
+      loadSidebar(id, a.category);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('pageHeader').style.display = 'block';
       document.getElementById('contentWrapper').style.display = 'block';
