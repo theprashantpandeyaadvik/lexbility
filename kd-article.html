@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>Loading... — कलम-दवात</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --black: #0a0a0a; --black2: #141414;
+      --orange: #F05A1A; --orange2: #ff7a3d;
+      --white: #ffffff; --grey: #f5f5f5;
+      --text: #1a1a1a; --muted: #6b6b6b;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--grey); color: var(--text); }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: var(--black); padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; border-bottom: 3px solid var(--orange);
+    }
+    .nav-brand { text-decoration: none; }
+    .nav-brand-main { font-family: 'Noto Serif Devanagari', serif; font-size: 1.3rem; font-weight: 900; color: var(--white); }
+    .nav-brand-main span { color: var(--orange); }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.5); text-decoration: none;
+      font-size: 0.82rem; font-weight: 600; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* PAGE HEADER */
+    .article-header {
+      background: var(--black);
+      padding: 100px 5% 50px;
+      position: relative; overflow: hidden;
+    }
+    .article-header::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(240,90,26,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,90,26,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .header-inner { position: relative; z-index: 1; max-width: 800px; }
+    .art-category {
+      display: inline-block;
+      background: rgba(240,90,26,0.15); border: 1px solid rgba(240,90,26,0.4);
+      color: var(--orange); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 0.3rem 0.9rem; border-radius: 20px; margin-bottom: 1.2rem;
+    }
+    .art-title {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 900; color: var(--white);
+      line-height: 1.25; margin-bottom: 1.8rem;
+    }
+    .art-standfirst {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem; font-weight: 500; font-style: italic;
+      color: rgba(255,255,255,0.7); line-height: 1.6;
+      margin-bottom: 1.5rem; max-width: 650px;
+    }
+    .art-meta-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 0.8rem; padding-top: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .art-meta-row span { color: rgba(255,255,255,0.4); font-size: 0.78rem; }
+    .art-share { display: flex; gap: 10px; margin-left: auto; }
+    .art-share a {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); display: flex;
+      align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem;
+    }
+    .art-share a:hover { background: var(--orange); color: var(--white); }
+    .art-author-bar { display: flex; align-items: center; gap: 12px; }
+    .art-author-bar img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--orange); object-fit: cover; }
+    .art-author-name { font-weight: 700; color: var(--white); font-size: 0.95rem; }
+    .art-author-meta { color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 2px; }
+
+    /* CONTENT */
+    .content-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 5% 5rem; }
+   .article-body {
+      background: var(--white); border-radius: 0;
+      padding: 3rem; border: none;
+      border-top: 4px solid var(--orange);
+      box-shadow: none;
+    }
+    .article-body-text { font-size: 1rem; line-height: 1.75; color: var(--text); }
+    .article-body-text h1,.article-body-text h2,.article-body-text h3,.article-body-text h4 {
+      font-family: 'Noto Serif Devanagari', serif; color: var(--black);
+      margin-top: 2rem; margin-bottom: 0.8rem; line-height: 1.3;
+    }
+    .article-body-text h1 { font-size: 1.8rem; border-bottom: 2px solid rgba(240,90,26,0.25); padding-bottom: 0.4rem; }
+    .article-body-text h2 { font-size: 1.4rem; border-left: 4px solid var(--orange); padding-left: 0.75rem; }
+    .article-body-text h3 { font-size: 1.15rem; color: var(--orange); }
+    .article-body-text p { margin-bottom: 1.2rem; }
+    .article-body-text ul,.article-body-text ol { margin: 0.8rem 0 1.2rem 1.5rem; }
+    .article-body-text li { margin-bottom: 0.4rem; }
+    .article-body-text strong { font-weight: 700; color: var(--black); }
+    .article-body-text blockquote {
+      border-left: 4px solid var(--orange); background: rgba(240,90,26,0.05);
+      padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+      font-style: italic; color: var(--muted);
+    }
+    .article-body-text hr { border: none; border-top: 1px solid rgba(0,0,0,0.1); margin: 2rem 0; }
+    .article-body-text a { color: var(--orange); text-decoration: underline; }
+
+    /* Loading */
+    #loading { text-align: center; padding: 10rem 2rem; }
+    .s-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin: 0 3px; animation: sdot 1.2s infinite ease-in-out; }
+    .s-dot:nth-child(2){animation-delay:0.2s} .s-dot:nth-child(3){animation-delay:0.4s}
+    @keyframes sdot{0%,80%,100%{transform:scale(0.5);opacity:0.3}40%{transform:scale(1);opacity:1}}
+
+    /* Footer */
+    footer { background: #050505; border-top: 3px solid var(--orange); padding: 2rem 5%; text-align: center; }
+    .footer-brand { font-family: 'Noto Serif Devanagari', serif; font-size: 1.1rem; font-weight: 700; color: var(--white); }
+    .footer-brand span { color: var(--orange); }
+    .footer-copy { color: rgba(255,255,255,0.2); font-size: 0.75rem; margin-top: 0.5rem; }
+
+    @media(max-width:768px) { .article-body { padding: 1.5rem; } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="kd.html" class="nav-brand">
+    <div class="nav-brand-main">कलम-<span>दवात</span></div>
+  </a>
+  <a href="kd.html" class="back-link">← वापस जाएं</a>
+</nav>
+
+<!-- LOADING -->
+<div id="loading">
+  <span class="s-dot"></span><span class="s-dot"></span><span class="s-dot"></span>
+</div>
+
+<!-- ARTICLE HEADER -->
+<div id="articleHeader" style="display:none;">
+  <div class="article-header">
+    <div class="header-inner">
+      <div class="art-category" id="artCategory"></div>
+         <img id="artImage" src="" alt="" style="display:none; width:100%; max-height:420px; object-fit:cover; border-radius:8px; margin-bottom:1.5rem;">
+    <h1 class="art-title" id="artTitle"></h1>
+      <p class="art-standfirst" id="artStandfirst" style="display:none;"></p>
+      <div class="art-author-bar">
+        <img id="artAuthorPhoto" src="" alt="">
+        <div>
+          <div class="art-author-name" id="artAuthorName"></div>
+          <div class="art-author-meta" id="artAuthorMeta"></div>
+        </div>
+      </div>
+      <div class="art-meta-row">
+        <span id="artReadTime"></span>
+        <div class="art-share">
+          <a href="#" id="shareWhatsapp" target="_blank">W</a>
+          <a href="#" id="shareTwitter" target="_blank">X</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content-wrap">
+    <div class="article-body">
+      <div class="article-body-text" id="artContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+ <div class="footer-brand"> <span>कलम-दवात</span></div>
+ <p class="footer-copy">© 2026 कलम-दवात · A branch of Lexbility</p>
+</footer>
+
+<script>
+  const months = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+  function fmtDate(ts) {
+    if (!ts) return '';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
+    authDomain: "lexbility-fda92.firebaseapp.com",
+    projectId: "lexbility-fda92",
+    storageBucket: "lexbility-fda92.firebasestorage.app",
+    messagingSenderId: "855790706525",
+    appId: "1:855790706525:web:509d8dc087f1c24a7f92b4"
+  });
+
+  const db = getFirestore(app);
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const col = params.get('col') || 'suchnadhikaar_news';
+
+  if (!id) { window.location.href = 'kd.html'; }
+  else {
+    const snap = await getDoc(doc(db, col, id));
+    if (snap.exists()) {
+      const a = snap.data();
+    document.title = a.title + ' — कलम-दवात';
+      const catMap = { 'bharat': '🇮🇳 भारत', 'desh-duniya': '🌍 देश-दुनिया', 'readers': '📝 पाठक' };
+      document.getElementById('artCategory').textContent = (catMap[a.category] || a.category || '📰 समाचार') + (a.tag ? ' · ' + a.tag : '');
+      document.getElementById('artTitle').textContent = a.title;
+      if (a.imageUrl) {
+        document.getElementById('artImage').src = a.imageUrl;
+        document.getElementById('artImage').style.display = 'block';
+      }
+      document.getElementById('artAuthorPhoto').src = a.authorPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.authorName)}&background=F05A1A&color=fff`;
+      document.getElementById('artAuthorName').textContent = a.authorName;
+      document.getElementById('artAuthorMeta').textContent = fmtDate(a.createdAt);
+     if (a.standfirst) {
+        document.getElementById('artStandfirst').textContent = a.standfirst;
+        document.getElementById('artStandfirst').style.display = 'block';
+      }
+      const wordCount = (a.content || '').split(/\s+/).length;
+      const readMins = Math.max(1, Math.round(wordCount / 200));
+      document.getElementById('artReadTime').textContent = `${readMins} मिनट पढ़ें`;
+      const shareUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent(a.title);
+      document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${shareText}%20${shareUrl}`;
+      document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+      document.getElementById('artContent').innerHTML = marked.parse(a.content);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('articleHeader').style.display = 'block';
+    } else {
+      document.getElementById('loading').textContent = 'समाचार नहीं मिला।';
+    }
+  }
+</script>
+</body>
+</html>
