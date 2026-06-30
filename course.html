@@ -232,30 +232,97 @@
     }
     .locked-box a.enroll-btn:hover { background: var(--gold2); transform: translateY(-1px); }
 
-    /* LOCKED STATE */
-    .locked-box {
-      text-align: center;
-      padding: 4rem 2rem;
+    /* QUIZ SECTION */
+    .quiz-section {
+      margin-top: 2.5rem;
+      padding-top: 2.5rem;
+      border-top: 2px solid rgba(201,168,76,0.2);
     }
-    .locked-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .locked-box h3 {
+    .quiz-heading {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; color: var(--navy);
-      margin-bottom: 0.7rem;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
     }
-    .locked-box p {
-      color: var(--muted); font-size: 0.95rem;
-      max-width: 420px; margin: 0 auto 1.8rem;
-      line-height: 1.6;
+    .quiz-sub {
+      color: var(--muted); font-size: 0.9rem;
+      margin-bottom: 1.8rem;
     }
-    .locked-btn {
-      display: inline-block;
+    .quiz-question {
+      background: var(--grey);
+      border: 1px solid rgba(10,22,40,0.06);
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.2rem;
+    }
+    .quiz-question-text {
+      font-weight: 700; color: var(--navy);
+      font-size: 0.98rem; margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .quiz-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid rgba(10,22,40,0.1);
+      border-radius: 8px;
+      margin-bottom: 0.6rem;
+      cursor: pointer;
+      background: var(--white);
+      transition: all 0.15s;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .quiz-option:hover { border-color: var(--gold); }
+    .quiz-option input[type="radio"] { accent-color: var(--gold); width: 16px; height: 16px; }
+    #quizSubmitBtn {
       background: var(--gold); color: var(--navy);
-      padding: 0.85rem 2.2rem; border-radius: 6px;
-      font-weight: 700; font-size: 0.95rem;
-      text-decoration: none; transition: all 0.2s;
+      border: none; padding: 0.85rem 2.5rem;
+      border-radius: 6px; font-size: 0.95rem;
+      font-weight: 700; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+      margin-top: 0.5rem;
     }
-    .locked-btn:hover { background: var(--gold2); transform: translateY(-1px); }
+    #quizSubmitBtn:hover { background: var(--gold2); transform: translateY(-1px); }
+    #quizSubmitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .quiz-result-box {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 12px;
+    }
+    .quiz-result-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 900;
+      color: var(--navy); margin-bottom: 0.4rem;
+    }
+    .quiz-result-label {
+      color: var(--muted); font-size: 0.9rem;
+      margin-bottom: 1.8rem;
+    }
+    .quiz-cert-box {
+      text-align: left;
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .quiz-cert-box h4 {
+      font-family: 'Playfair Display', serif;
+      color: var(--navy); font-size: 1.05rem;
+      margin-bottom: 0.6rem;
+    }
+    .quiz-cert-box p {
+      color: var(--muted); font-size: 0.88rem;
+      line-height: 1.7; margin-bottom: 0.4rem;
+    }
+    .quiz-cert-box a {
+      color: var(--gold); font-weight: 700;
+      text-decoration: underline;
+    }
 
     /* LOADING */
     #loading {
@@ -361,8 +428,31 @@
     <div id="unlockedBox" style="display:none;">
       <div class="enrolled-badge" id="enrolledBadge">✓ You're enrolled in this course</div>
       <div class="article-body-text" id="courseContent"></div>
-    </div>
 
+      <!-- QUIZ SECTION -->
+      <div class="quiz-section" id="quizSection" style="display:none;">
+        <div class="quiz-heading">📝 Course Assessment</div>
+        <p class="quiz-sub">Answer the questions below to receive your marks and certificate instructions.</p>
+
+        <div id="quizQuestions"></div>
+        <button id="quizSubmitBtn" onclick="submitQuiz()">Submit Answers →</button>
+
+        <div class="quiz-result-box" id="quizResultBox" style="display:none;">
+          <div class="quiz-result-score" id="quizScoreText"></div>
+          <div class="quiz-result-label">Marks Obtained</div>
+
+          <div class="quiz-cert-box">
+            <h4>🎓 Apply for Your Certificate</h4>
+            <p>Send the following details to <a href="mailto:lexbility@gmail.com">lexbility@gmail.com</a> to apply for your certificate:</p>
+            <p>— Name</p>
+            <p>— College Name</p>
+            <p>— Batch Year</p>
+            <p>— Course Name</p>
+            <p>— Marks Obtained</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -389,7 +479,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
@@ -444,6 +534,7 @@
         document.getElementById('courseContent').innerHTML = marked.parse(c.content);
         document.getElementById('unlockedBox').style.display = 'block';
         document.getElementById('lockedBox').style.display = 'none';
+        loadQuiz(id);
       } else {
         document.getElementById('unlockedBox').style.display = 'none';
         document.getElementById('lockedBox').style.display = 'block';
@@ -452,6 +543,56 @@
       document.getElementById('loading').textContent = 'Course not found.';
     }
   }
+
+  let quizQuestions = [];
+
+  async function loadQuiz(courseId) {
+    const q = query(collection(db, 'quizzes'), where('courseId', '==', courseId));
+    const snapshot = await getDocs(q);
+
+    quizQuestions = [];
+    snapshot.forEach(d => quizQuestions.push({ id: d.id, ...d.data() }));
+
+    if (quizQuestions.length === 0) return; // no quiz for this course
+
+    document.getElementById('quizSection').style.display = 'block';
+    const wrap = document.getElementById('quizQuestions');
+    wrap.innerHTML = quizQuestions.map((qz, i) => `
+      <div class="quiz-question">
+        <div class="quiz-question-text">${i + 1}. ${qz.question}</div>
+        ${qz.options.map((opt, oi) => `
+          <label class="quiz-option">
+            <input type="radio" name="q_${i}" value="${oi}">
+            <span>${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+    `).join('');
+  }
+
+  window.submitQuiz = () => {
+    let unanswered = [];
+    let score = 0;
+
+    quizQuestions.forEach((qz, i) => {
+      const selected = document.querySelector(`input[name="q_${i}"]:checked`);
+      if (!selected) {
+        unanswered.push(i + 1);
+      } else if (parseInt(selected.value) === qz.correctIndex) {
+        score++;
+      }
+    });
+
+    if (unanswered.length > 0) {
+      alert('Please answer all questions. Missing: Q' + unanswered.join(', Q'));
+      return;
+    }
+
+    document.getElementById('quizQuestions').style.display = 'none';
+    document.getElementById('quizSubmitBtn').style.display = 'none';
+    document.getElementById('quizScoreText').textContent = `${score} / ${quizQuestions.length}`;
+    document.getElementById('quizResultBox').style.display = 'block';
+  };
 </script>
 
 </body>
