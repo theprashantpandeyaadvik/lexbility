@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin — The Suchnadhikaar</title>
+ <title>Admin — कलम-दवात</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
   <style>
@@ -234,7 +234,7 @@
 <!-- NAVBAR -->
 <nav>
   <a href="suchnadhikaar.html" class="nav-brand">
-    <div class="nav-brand-main">The <span>Suchnadhikaar</span></div>
+    <div class="nav-brand-main">कलम-<span>दवात</span></div>
   </a>
   <div style="display:flex;align-items:center;gap:1rem;">
     <span class="nav-tag">ADMIN</span>
@@ -259,7 +259,7 @@
   <!-- ADMIN PANEL -->
   <div id="adminPanel">
     <div class="admin-header">
-      <h1>📋 Suchnadhikaar Admin</h1>
+      <h1>📋 कलम-दवात Admin</h1>
       <div class="admin-user">
         <img id="adminPhoto" src="" alt="">
         <span id="adminName"></span>
@@ -458,7 +458,7 @@
     try {
       await addDoc(collection(db, 'suchnadhikaar_news'), {
         title, content, category, tag, imageUrl,
-        authorName: 'Suchnadhikaar Desk',
+       authorName: 'कलम-दवात Desk',
         authorPhoto: '',
         status: 'approved',
         createdAt: serverTimestamp()

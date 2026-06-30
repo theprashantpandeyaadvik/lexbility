@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading... — The Suchnadhikaar</title>
+ <title>Loading... — कलम-दवात</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
   <style>
@@ -63,6 +63,26 @@
       font-weight: 900; color: var(--white);
       line-height: 1.25; margin-bottom: 1.8rem;
     }
+    .art-standfirst {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem; font-weight: 500; font-style: italic;
+      color: rgba(255,255,255,0.7); line-height: 1.6;
+      margin-bottom: 1.5rem; max-width: 650px;
+    }
+    .art-meta-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 0.8rem; padding-top: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .art-meta-row span { color: rgba(255,255,255,0.4); font-size: 0.78rem; }
+    .art-share { display: flex; gap: 10px; margin-left: auto; }
+    .art-share a {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); display: flex;
+      align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem;
+    }
+    .art-share a:hover { background: var(--orange); color: var(--white); }
     .art-author-bar { display: flex; align-items: center; gap: 12px; }
     .art-author-bar img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--orange); object-fit: cover; }
     .art-author-name { font-weight: 700; color: var(--white); font-size: 0.95rem; }
@@ -70,12 +90,13 @@
 
     /* CONTENT */
     .content-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 5% 5rem; }
-    .article-body {
-      background: var(--white); border-radius: 12px;
-      padding: 3rem; border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+   .article-body {
+      background: var(--white); border-radius: 0;
+      padding: 3rem; border: none;
+      border-top: 4px solid var(--orange);
+      box-shadow: none;
     }
-    .article-body-text { font-size: 1.05rem; line-height: 2; color: var(--text); }
+    .article-body-text { font-size: 1rem; line-height: 1.75; color: var(--text); }
     .article-body-text h1,.article-body-text h2,.article-body-text h3,.article-body-text h4 {
       font-family: 'Noto Serif Devanagari', serif; color: var(--black);
       margin-top: 2rem; margin-bottom: 0.8rem; line-height: 1.3;
@@ -115,7 +136,7 @@
 <!-- NAVBAR -->
 <nav>
   <a href="suchnadhikaar.html" class="nav-brand">
-    <div class="nav-brand-main">The <span>Suchnadhikaar</span></div>
+    <div class="nav-brand-main">कलम-<span>दवात</span></div>
   </a>
   <a href="suchnadhikaar.html" class="back-link">← वापस जाएं</a>
 </nav>
@@ -131,12 +152,20 @@
     <div class="header-inner">
       <div class="art-category" id="artCategory"></div>
          <img id="artImage" src="" alt="" style="display:none; width:100%; max-height:420px; object-fit:cover; border-radius:8px; margin-bottom:1.5rem;">
-      <h1 class="art-title" id="artTitle"></h1>
+    <h1 class="art-title" id="artTitle"></h1>
+      <p class="art-standfirst" id="artStandfirst" style="display:none;"></p>
       <div class="art-author-bar">
         <img id="artAuthorPhoto" src="" alt="">
         <div>
           <div class="art-author-name" id="artAuthorName"></div>
           <div class="art-author-meta" id="artAuthorMeta"></div>
+        </div>
+      </div>
+      <div class="art-meta-row">
+        <span id="artReadTime"></span>
+        <div class="art-share">
+          <a href="#" id="shareWhatsapp" target="_blank">W</a>
+          <a href="#" id="shareTwitter" target="_blank">X</a>
         </div>
       </div>
     </div>
@@ -150,8 +179,8 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand">The <span>Suchnadhikaar</span></div>
-  <p class="footer-copy">© 2026 The Suchnadhikaar · A branch of Lexbility</p>
+ <div class="footer-brand">The <span>कलम-दवात</span></div>
+ <p class="footer-copy">© 2026 कलम-दवात · A branch of Lexbility</p>
 </footer>
 
 <script>
@@ -186,7 +215,7 @@
     const snap = await getDoc(doc(db, col, id));
     if (snap.exists()) {
       const a = snap.data();
-      document.title = a.title + ' — The Suchnadhikaar';
+    document.title = a.title + ' — कलम-दवात';
       const catMap = { 'bharat': '🇮🇳 भारत', 'desh-duniya': '🌍 देश-दुनिया', 'readers': '📝 पाठक' };
       document.getElementById('artCategory').textContent = (catMap[a.category] || a.category || '📰 समाचार') + (a.tag ? ' · ' + a.tag : '');
       document.getElementById('artTitle').textContent = a.title;
@@ -197,6 +226,17 @@
       document.getElementById('artAuthorPhoto').src = a.authorPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.authorName)}&background=F05A1A&color=fff`;
       document.getElementById('artAuthorName').textContent = a.authorName;
       document.getElementById('artAuthorMeta').textContent = fmtDate(a.createdAt);
+     if (a.standfirst) {
+        document.getElementById('artStandfirst').textContent = a.standfirst;
+        document.getElementById('artStandfirst').style.display = 'block';
+      }
+      const wordCount = (a.content || '').split(/\s+/).length;
+      const readMins = Math.max(1, Math.round(wordCount / 200));
+      document.getElementById('artReadTime').textContent = `${readMins} मिनट पढ़ें`;
+      const shareUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent(a.title);
+      document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${shareText}%20${shareUrl}`;
+      document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
       document.getElementById('artContent').innerHTML = marked.parse(a.content);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('articleHeader').style.display = 'block';
