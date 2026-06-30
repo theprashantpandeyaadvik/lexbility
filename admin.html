@@ -304,7 +304,7 @@
     #coursePreviewPane p { margin-bottom: 0.8rem; }
     #coursePreviewPane strong { color: var(--navy); font-weight: 700; }
 
-    #addCourseBtn {
+    #addCourseBtn, #addMcqBtn {
       background: var(--gold); color: var(--navy);
       border: none; padding: 0.85rem 2.5rem;
       border-radius: 6px; font-size: 0.95rem;
@@ -312,8 +312,8 @@
       cursor: pointer; transition: all 0.2s;
       margin-top: 0.5rem;
     }
-    #addCourseBtn:hover { background: var(--gold2); transform: translateY(-1px); }
-    #addCourseBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    #addCourseBtn:hover, #addMcqBtn:hover { background: var(--gold2); transform: translateY(-1px); }
+    #addCourseBtn:disabled, #addMcqBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     #courseSuccessMsg {
       display: none;
@@ -391,6 +391,7 @@
   <div class="top-tabs">
     <button class="top-tab active" onclick="switchMainTab('articles')">📝 Articles</button>
     <button class="top-tab" onclick="switchMainTab('courses')">🎓 Courses</button>
+    <button class="top-tab" onclick="switchMainTab('mcqs')">❓ MCQs</button>
     <button class="top-tab" onclick="switchMainTab('enrollments')">👥 Enrollments</button>
   </div>
 
@@ -471,6 +472,62 @@
     <div id="courseList">Loading...</div>
   </div>
 
+  <!-- ===== MCQs TAB ===== -->
+  <div class="tab-panel" id="tab-mcqs">
+    <div class="panel-heading">
+      <div class="section-label">Create</div>
+      <h2>Add Quiz Question</h2>
+    </div>
+
+    <div class="form-card">
+      <div id="mcqSuccessMsg" style="display:none; background: rgba(58,157,99,0.08); border: 1px solid rgba(58,157,99,0.3); color: var(--green); padding: 1rem 1.2rem; border-radius: 8px; font-size: 0.92rem; margin-bottom: 1.5rem; font-weight: 600;">✓ Question added successfully.</div>
+
+      <div class="form-group">
+        <label>Course</label>
+        <select id="mcqCourseSelect" style="width:100%; padding:0.85rem 1rem; border:1.5px solid rgba(10,22,40,0.12); border-radius:8px; font-size:0.95rem; font-family:'DM Sans', sans-serif; color:var(--text); background:var(--white);">
+          <option value="">Loading courses...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <input type="text" id="mcqQuestion" placeholder="e.g. What is the limitation period for filing a suit under Section 27?">
+      </div>
+      <div class="form-group">
+        <label>Option A</label>
+        <input type="text" id="mcqOptionA" placeholder="Option A">
+      </div>
+      <div class="form-group">
+        <label>Option B</label>
+        <input type="text" id="mcqOptionB" placeholder="Option B">
+      </div>
+      <div class="form-group">
+        <label>Option C</label>
+        <input type="text" id="mcqOptionC" placeholder="Option C">
+      </div>
+      <div class="form-group">
+        <label>Option D</label>
+        <input type="text" id="mcqOptionD" placeholder="Option D">
+      </div>
+      <div class="form-group">
+        <label>Correct Answer</label>
+        <select id="mcqCorrectAnswer" style="width:100%; padding:0.85rem 1rem; border:1.5px solid rgba(10,22,40,0.12); border-radius:8px; font-size:0.95rem; font-family:'DM Sans', sans-serif; color:var(--text); background:var(--white);">
+          <option value="0">Option A</option>
+          <option value="1">Option B</option>
+          <option value="2">Option C</option>
+          <option value="3">Option D</option>
+        </select>
+      </div>
+
+      <button id="addMcqBtn" onclick="addMcq()">Add Question →</button>
+    </div>
+
+    <div class="panel-heading second">
+      <div class="section-label">Manage</div>
+      <h2>Existing Questions</h2>
+    </div>
+    <div id="mcqList">Loading...</div>
+  </div>
+
   <!-- ===== ENROLLMENTS TAB ===== -->
   <div class="tab-panel" id="tab-enrollments">
     <div class="panel-heading">
@@ -524,6 +581,7 @@
     loadPublished();
     loadCourses();
     loadEnrollments();
+    loadMcqs();
   });
 
   window.adminLogin = async () => {
@@ -689,13 +747,16 @@
   async function loadCourses() {
     const snapshot = await getDocs(collection(db, 'courses'));
     const list = document.getElementById('courseList');
+    const mcqSelect = document.getElementById('mcqCourseSelect');
 
     if (snapshot.empty) {
       list.innerHTML = '<p class="empty-msg">Koi course abhi tak nahi bana hai.</p>';
+      if (mcqSelect) mcqSelect.innerHTML = '<option value="">No courses yet — add a course first</option>';
       return;
     }
 
     list.innerHTML = '';
+    let mcqOptions = '<option value="">Select a course...</option>';
     snapshot.forEach(docSnap => {
       const c = docSnap.data();
       const div = document.createElement('div');
@@ -713,7 +774,9 @@
         </div>
       `;
       list.appendChild(div);
+      mcqOptions += `<option value="${docSnap.id}">${c.title}</option>`;
     });
+    if (mcqSelect) mcqSelect.innerHTML = mcqOptions;
   }
 
   window.deleteCourse = async (id) => {
@@ -721,6 +784,96 @@
     await deleteDoc(doc(db, 'courses', id));
     alert('🗑️ Course delete kar diya gaya.');
     loadCourses();
+  };
+
+  /* ===== MCQs ===== */
+  window.addMcq = async () => {
+    const courseId = document.getElementById('mcqCourseSelect').value;
+    const courseTitle = document.getElementById('mcqCourseSelect').selectedOptions[0]?.textContent || '';
+    const question = document.getElementById('mcqQuestion').value.trim();
+    const optionA = document.getElementById('mcqOptionA').value.trim();
+    const optionB = document.getElementById('mcqOptionB').value.trim();
+    const optionC = document.getElementById('mcqOptionC').value.trim();
+    const optionD = document.getElementById('mcqOptionD').value.trim();
+    const correctIndex = parseInt(document.getElementById('mcqCorrectAnswer').value);
+
+    if (!courseId || !question || !optionA || !optionB || !optionC || !optionD) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const btn = document.getElementById('addMcqBtn');
+    btn.textContent = 'Adding...'; btn.disabled = true;
+
+    try {
+      await addDoc(collection(db, 'quizzes'), {
+        courseId, courseTitle, question,
+        options: [optionA, optionB, optionC, optionD],
+        correctIndex,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById('mcqQuestion').value = '';
+      document.getElementById('mcqOptionA').value = '';
+      document.getElementById('mcqOptionB').value = '';
+      document.getElementById('mcqOptionC').value = '';
+      document.getElementById('mcqOptionD').value = '';
+      document.getElementById('mcqCorrectAnswer').value = '0';
+      document.getElementById('mcqSuccessMsg').style.display = 'block';
+      loadMcqs();
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+
+    btn.textContent = 'Add Question →'; btn.disabled = false;
+  };
+
+  async function loadMcqs() {
+    const snapshot = await getDocs(collection(db, 'quizzes'));
+    const list = document.getElementById('mcqList');
+
+    if (snapshot.empty) {
+      list.innerHTML = '<p class="empty-msg">Koi question abhi tak add nahi hua hai.</p>';
+      return;
+    }
+
+    const grouped = {};
+    snapshot.forEach(docSnap => {
+      const q = { id: docSnap.id, ...docSnap.data() };
+      const key = q.courseTitle || 'Unknown Course';
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(q);
+    });
+
+    list.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    Object.keys(grouped).forEach(courseTitle => {
+      const heading = document.createElement('div');
+      heading.className = 'enroll-group-title';
+      heading.innerHTML = `${courseTitle} <span class="enroll-count-badge">${grouped[courseTitle].length} questions</span>`;
+      list.appendChild(heading);
+
+      grouped[courseTitle].forEach(q => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <h3 style="font-size:1.05rem;">${q.question}</h3>
+          <p>
+            ${q.options.map((opt, i) => `${letters[i]}) ${opt}${i === q.correctIndex ? ' ✅ (Correct)' : ''}`).join('<br>')}
+          </p>
+          <div class="btns">
+            <button class="rejectBtn" onclick="deleteMcq('${q.id}')">🗑️ Delete Question</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    });
+  }
+
+  window.deleteMcq = async (id) => {
+    if (!confirm('Sure ho? Ye question permanently delete ho jayega.')) return;
+    await deleteDoc(doc(db, 'quizzes', id));
+    alert('🗑️ Question delete kar diya gaya.');
+    loadMcqs();
   };
 
   /* ===== ENROLLMENTS ===== */
