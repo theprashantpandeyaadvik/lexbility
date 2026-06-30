@@ -406,7 +406,23 @@
 
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  const enrolled = params.get('enrolled'); // set to '1' after enrollment form submit
+  const enrolledParam = params.get('enrolled'); // set to '1' right after enrollment form submit
+
+  // Remember enrollment in this browser so the user doesn't have to re-enroll
+  // every time they revisit this course (e.g. after pressing Back).
+  let enrolledCourses = [];
+  try {
+    enrolledCourses = JSON.parse(localStorage.getItem('lexbility_enrolled_courses') || '[]');
+  } catch (e) {
+    enrolledCourses = [];
+  }
+
+  if (enrolledParam === '1' && id && !enrolledCourses.includes(id)) {
+    enrolledCourses.push(id);
+    localStorage.setItem('lexbility_enrolled_courses', JSON.stringify(enrolledCourses));
+  }
+
+  const isEnrolled = enrolledParam === '1' || enrolledCourses.includes(id);
 
   if (!id) {
     window.location.href = 'courses.html';
@@ -424,7 +440,7 @@
       document.getElementById('pageHeader').style.display = 'block';
       document.getElementById('contentWrapper').style.display = 'block';
 
-      if (enrolled === '1') {
+      if (isEnrolled) {
         document.getElementById('courseContent').innerHTML = marked.parse(c.content);
         document.getElementById('unlockedBox').style.display = 'block';
         document.getElementById('lockedBox').style.display = 'none';
