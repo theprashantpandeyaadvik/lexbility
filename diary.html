@@ -278,7 +278,7 @@
           <input type="text" id="f_court" placeholder="e.g. Saket District Court, Delhi">
         </div>
         <div class="form-field">
-          <label>Next Hearing Date</label>
+          <label>Next Hearing Date <span id="todayHint" style="text-transform:none; font-weight:400; color:var(--muted);"></span></label>
           <input type="date" id="f_date">
         </div>
         <div class="form-field">
@@ -360,7 +360,6 @@
     onSnapshot, query, orderBy, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // ── REPLACE WITH YOUR FIREBASE PROJECT CONFIG ──
   const firebaseConfig = {
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
     authDomain: "lexbility-fda92.firebaseapp.com",
@@ -465,6 +464,15 @@
     return dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
+  function todayISO() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  // Show today's date as a hint, and default the date field to today.
+  document.getElementById('todayHint').textContent = '(Today: ' + formatDate(todayISO()) + ')';
+  document.getElementById('f_date').value = todayISO();
+
   function escapeHtml(str) {
     const d = document.createElement('div');
     d.textContent = str;
@@ -525,9 +533,10 @@
   };
 
   function clearForm() {
-    ['f_title', 'f_caseno', 'f_court', 'f_date', 'f_party', 'f_notes'].forEach(id => {
+    ['f_title', 'f_caseno', 'f_court', 'f_party', 'f_notes'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.getElementById('f_date').value = todayISO();
   }
 </script>
 
