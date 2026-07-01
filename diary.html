@@ -199,6 +199,80 @@
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
     .empty-state .e-icon { font-size: 2.4rem; margin-bottom: 0.8rem; opacity: 0.5; }
 
+    /* ── CALENDAR ── */
+    .calendar-wrap {
+      background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 14px;
+      padding: 1.4rem;
+      box-shadow: 0 4px 24px rgba(10,22,40,0.05);
+    }
+    .calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .calendar-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--navy); font-weight: 700; }
+    .cal-nav-btn {
+      background: var(--grey); border: 1px solid rgba(10,22,40,0.1); color: var(--navy);
+      width: 34px; height: 34px; border-radius: 8px; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .cal-nav-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+    .cal-today-btn {
+      background: none; border: 1px solid rgba(10,22,40,0.15); color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 0.76rem; font-weight: 600;
+      padding: 0.35rem 0.8rem; border-radius: 6px; cursor: pointer; margin-left: 0.6rem; transition: 0.2s;
+    }
+    .cal-today-btn:hover { border-color: var(--gold); color: var(--navy); }
+    .calendar-nav-group { display: flex; align-items: center; gap: 0.4rem; }
+    .calendar-weekdays {
+      display: grid; grid-template-columns: repeat(7,1fr); gap: 4px;
+      margin-bottom: 6px;
+    }
+    .calendar-weekdays div {
+      text-align: center; font-size: 0.68rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 0.3rem;
+    }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+    .cal-cell {
+      position: relative; aspect-ratio: 1 / 1; min-height: 44px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 8px; cursor: default; background: transparent;
+      font-size: 0.85rem; color: var(--text);
+    }
+    .cal-cell.empty { visibility: hidden; }
+    .cal-cell.has-entries { cursor: pointer; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); }
+    .cal-cell.has-entries:hover { background: rgba(201,168,76,0.18); }
+    .cal-cell.has-overdue { background: rgba(181,69,63,0.08); border-color: rgba(181,69,63,0.25); }
+    .cal-cell.has-overdue:hover { background: rgba(181,69,63,0.16); }
+    .cal-cell.is-today .cal-daynum { color: var(--navy); font-weight: 800; text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+    .cal-daynum { font-weight: 500; }
+    .cal-dot-row { display: flex; gap: 2px; margin-top: 3px; }
+    .cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    .cal-dot.overdue { background: var(--red); }
+    .cal-count-badge {
+      position: absolute; top: 2px; right: 3px; font-size: 0.58rem; font-weight: 700;
+      color: var(--gold); background: rgba(10,22,40,0.85); border-radius: 8px;
+      padding: 0px 4px; line-height: 1.3;
+    }
+
+    /* ── DAY MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10,22,40,0.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1200; padding: 1rem;
+    }
+    .modal-box {
+      background: var(--white); border-radius: 14px; max-width: 520px; width: 100%;
+      max-height: 82vh; overflow-y: auto; padding: 1.6rem;
+      box-shadow: 0 20px 60px rgba(10,22,40,0.3);
+    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--navy); }
+    .modal-close {
+      background: var(--grey); border: none; width: 30px; height: 30px; border-radius: 50%;
+      cursor: pointer; font-size: 0.9rem; color: var(--muted); transition: 0.2s;
+    }
+    .modal-close:hover { background: rgba(181,69,63,0.12); color: var(--red); }
+    .modal-empty { text-align: center; color: var(--muted); padding: 1.6rem 0.5rem; font-size: 0.88rem; }
+
     .hidden { display: none !important; }
 
     footer { background: var(--navy); padding: 2.4rem 5%; text-align: center; }
@@ -300,7 +374,22 @@
       <h3>📁 Your Diary</h3>
       <div class="entries-count" id="entriesCount"></div>
     </div>
-    <div id="entriesList"></div>
+
+    <div class="calendar-wrap">
+      <div class="calendar-header">
+        <div class="calendar-title" id="calTitle">—</div>
+        <div class="calendar-nav-group">
+          <button class="cal-nav-btn" onclick="changeMonth(-1)" title="Previous month">‹</button>
+          <button class="cal-nav-btn" onclick="changeMonth(1)" title="Next month">›</button>
+          <button class="cal-today-btn" onclick="goToToday()">Today</button>
+        </div>
+      </div>
+      <div class="calendar-weekdays">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
     <div id="emptyState" class="empty-state hidden">
       <div class="e-icon">📭</div>
       <p>No entries yet. Add your first case above.</p>
@@ -308,6 +397,17 @@
   </div>
 
 </section>
+
+<!-- DAY DETAIL MODAL -->
+<div id="dayModal" class="modal-overlay hidden" onclick="closeDayModalOverlay(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modalDateTitle"></h3>
+      <button class="modal-close" onclick="closeDayModal()">✕</button>
+    </div>
+    <div id="modalEntriesList"></div>
+  </div>
+</div>
 
 <footer>
   <div class="footer-logo">Lex<span>bility</span></div>
@@ -418,46 +518,145 @@
   }
 
   function renderEntries(snap, uid) {
-    const list = document.getElementById('entriesList');
     const empty = document.getElementById('emptyState');
     const count = document.getElementById('entriesCount');
-    list.innerHTML = '';
 
     if (snap.empty) {
       empty.classList.remove('hidden');
       count.textContent = '';
-      return;
+    } else {
+      empty.classList.add('hidden');
+      count.textContent = snap.size + (snap.size === 1 ? ' entry' : ' entries');
     }
-    empty.classList.add('hidden');
-    count.textContent = snap.size + (snap.size === 1 ? ' entry' : ' entries');
 
-    const today = new Date().toISOString().slice(0, 10);
-
+    // Build a date -> [entries] map so the calendar can drop each
+    // entry onto its hearing date automatically (e.g. 27 July entry
+    // shows up on the 27 July cell).
+    window.__entriesCache = {};
+    window.__entriesByDate = {};
     snap.forEach((docSnap) => {
       const d = docSnap.data();
-      const isOverdue = d.hearingDate && d.hearingDate < today;
-      const card = document.createElement('div');
-      card.className = 'entry-card' + (isOverdue ? ' overdue' : '');
-      card.innerHTML = `
-        <div class="entry-main">
-          <div class="entry-top">
-            <span class="entry-date">${formatDate(d.hearingDate)}</span>
-            <span class="entry-title">${escapeHtml(d.caseTitle || 'Untitled Case')}</span>
-          </div>
-          <div class="entry-meta">${escapeHtml(d.caseNumber || '')}${d.caseNumber && d.court ? ' · ' : ''}${escapeHtml(d.court || '')}${d.party ? ' · ' + escapeHtml(d.party) : ''}</div>
-          ${d.notes ? `<div class="entry-notes">${escapeHtml(d.notes)}</div>` : ''}
-        </div>
-        <div class="entry-actions">
-          <button class="icon-btn" title="Edit" onclick="editEntry('${docSnap.id}')">✏️</button>
-          <button class="icon-btn danger" title="Delete" onclick="deleteEntry('${docSnap.id}')">🗑️</button>
-        </div>
-      `;
-      list.appendChild(card);
+      window.__entriesCache[docSnap.id] = d;
+      if (d.hearingDate) {
+        (window.__entriesByDate[d.hearingDate] = window.__entriesByDate[d.hearingDate] || [])
+          .push({ id: docSnap.id, data: d });
+      }
     });
 
-    window.__entriesCache = window.__entriesCache || {};
-    snap.forEach((docSnap) => { window.__entriesCache[docSnap.id] = docSnap.data(); });
+    renderCalendar();
+
+    // If a day modal is currently open, refresh its contents live
+    // (e.g. after an edit/delete) so it doesn't show stale data.
+    const modal = document.getElementById('dayModal');
+    if (!modal.classList.contains('hidden') && window.__openModalDate) {
+      openDayModal(window.__openModalDate);
+    }
   }
+
+  // ── CALENDAR ──
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const today0 = new Date();
+  let calView = { year: today0.getFullYear(), month: today0.getMonth() }; // month: 0-11
+
+  window.changeMonth = function (delta) {
+    calView.month += delta;
+    if (calView.month < 0) { calView.month = 11; calView.year -= 1; }
+    if (calView.month > 11) { calView.month = 0; calView.year += 1; }
+    renderCalendar();
+  };
+
+  window.goToToday = function () {
+    const t = new Date();
+    calView = { year: t.getFullYear(), month: t.getMonth() };
+    renderCalendar();
+  };
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const title = document.getElementById('calTitle');
+    if (!grid || !title) return;
+
+    title.textContent = MONTH_NAMES[calView.month] + ' ' + calView.year;
+
+    const byDate = window.__entriesByDate || {};
+    const todayISOStr = todayISO();
+    const firstOfMonth = new Date(calView.year, calView.month, 1);
+    const startWeekday = firstOfMonth.getDay(); // 0 = Sun
+    const daysInMonth = new Date(calView.year, calView.month + 1, 0).getDate();
+
+    let html = '';
+    for (let i = 0; i < startWeekday; i++) {
+      html += '<div class="cal-cell empty"></div>';
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = calView.year + '-' + pad2(calView.month + 1) + '-' + pad2(day);
+      const entries = byDate[dateStr] || [];
+      const hasEntries = entries.length > 0;
+      const isOverdue = hasEntries && dateStr < todayISOStr;
+      const isToday = dateStr === todayISOStr;
+
+      let cls = 'cal-cell';
+      if (isToday) cls += ' is-today';
+      if (hasEntries) cls += ' has-entries';
+      if (isOverdue) cls += ' has-overdue';
+
+      const clickAttr = hasEntries ? `onclick="openDayModal('${dateStr}')"` : '';
+      const badge = entries.length > 1 ? `<span class="cal-count-badge">${entries.length}</span>` : '';
+      const dot = hasEntries ? `<div class="cal-dot-row"><span class="cal-dot${isOverdue ? ' overdue' : ''}"></span></div>` : '';
+
+      html += `<div class="${cls}" ${clickAttr}>${badge}<span class="cal-daynum">${day}</span>${dot}</div>`;
+    }
+
+    grid.innerHTML = html;
+  }
+
+  // ── DAY DETAIL MODAL ──
+  window.openDayModal = function (dateStr) {
+    window.__openModalDate = dateStr;
+    const modal = document.getElementById('dayModal');
+    const titleEl = document.getElementById('modalDateTitle');
+    const listEl = document.getElementById('modalEntriesList');
+    const entries = (window.__entriesByDate || {})[dateStr] || [];
+
+    titleEl.textContent = formatDate(dateStr) + (entries.length ? ` · ${entries.length} case${entries.length > 1 ? 's' : ''}` : '');
+
+    if (!entries.length) {
+      listEl.innerHTML = '<div class="modal-empty">No cases on this date.</div>';
+    } else {
+      const todayISOStr = todayISO();
+      listEl.innerHTML = entries.map(({ id, data: d }) => {
+        const isOverdue = d.hearingDate < todayISOStr;
+        return `
+          <div class="entry-card${isOverdue ? ' overdue' : ''}" style="margin-bottom:0.7rem;">
+            <div class="entry-main">
+              <div class="entry-top">
+                <span class="entry-title">${escapeHtml(d.caseTitle || 'Untitled Case')}</span>
+              </div>
+              <div class="entry-meta">${escapeHtml(d.caseNumber || '')}${d.caseNumber && d.court ? ' · ' : ''}${escapeHtml(d.court || '')}${d.party ? ' · ' + escapeHtml(d.party) : ''}</div>
+              ${d.notes ? `<div class="entry-notes">${escapeHtml(d.notes)}</div>` : ''}
+            </div>
+            <div class="entry-actions">
+              <button class="icon-btn" title="Edit" onclick="editEntry('${id}')">✏️</button>
+              <button class="icon-btn danger" title="Delete" onclick="deleteEntry('${id}')">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    modal.classList.remove('hidden');
+  };
+
+  window.closeDayModal = function () {
+    document.getElementById('dayModal').classList.add('hidden');
+    window.__openModalDate = null;
+  };
+
+  window.closeDayModalOverlay = function (e) {
+    if (e.target.id === 'dayModal') closeDayModal();
+  };
 
   function formatDate(iso) {
     if (!iso) return 'No date';
@@ -473,6 +672,7 @@
   // Show today's date as a hint, and default the date field to today.
   document.getElementById('todayHint').textContent = '(Today: ' + formatDate(todayISO()) + ')';
   document.getElementById('f_date').value = todayISO();
+  renderCalendar();
 
   function escapeHtml(str) {
     const d = document.createElement('div');
@@ -506,6 +706,7 @@
   window.editEntry = function (id) {
     const d = (window.__entriesCache || {})[id];
     if (!d) return;
+    closeDayModal();
     editingId = id;
     document.getElementById('f_title').value = d.caseTitle || '';
     document.getElementById('f_caseno').value = d.caseNumber || '';
