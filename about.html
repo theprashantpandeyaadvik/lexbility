@@ -38,6 +38,58 @@
     .nav-cta:hover { background: var(--gold2) !important; }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+
+    /* ── NAV DROPDOWN (More) ── */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; background: none; border: none; }
+    .nav-dropdown-toggle .caret { font-size: 0.65em; transition: transform 0.2s ease; }
+    .nav-dropdown-menu {
+      list-style: none;
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 50%;
+      min-width: 220px;
+      background: var(--navy2);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      padding: 0.5rem;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(8px);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+      z-index: 1000;
+    }
+    .nav-dropdown-menu li { padding: 0 !important; border: none !important; }
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.55rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      color: rgba(255,255,255,0.75);
+    }
+    .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { background: rgba(201,168,76,0.12); color: var(--gold); }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown.open .nav-dropdown-menu {
+      opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+    }
+    .nav-dropdown:hover .caret, .nav-dropdown.open .caret { transform: rotate(180deg); }
+    .nav-dropdown-toggle.active-parent { color: var(--gold); }
+    @media (max-width: 768px) {
+      .nav-dropdown-menu {
+        position: static;
+        opacity: 1; visibility: visible; transform: none;
+        display: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0 0 0 1rem;
+        min-width: 0;
+      }
+      .nav-dropdown.open .nav-dropdown-menu { display: block; }
+      .nav-dropdown-toggle { justify-content: space-between; width: 100%; }
+    }
     @media(max-width:768px) {
       .hamburger { display: flex; }
       .nav-links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); padding: 1rem 5%; }
@@ -368,12 +420,22 @@
   <div class="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
-  <ul class="nav-links" id="navLinks">
+    <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
     <li><a href="articles.html">Articles</a></li>
-    <li><a href="about.html" class="nav-cta active">About</a></li>
+    <li class="nav-dropdown">
+      <a href="#" class="nav-dropdown-toggle" onclick="return toggleDropdown(event, this)">More <span class="caret">▾</span></a>
+      <ul class="nav-dropdown-menu">
+        <li><a href="courses.html">Certificate Courses</a></li>
+        <li><a href="diary.html">Diary</a></li>
+        <li><a href="extra.html">Court Links</a></li>
+        <li><a href="recruitment.html">Recruitment Board</a></li>
+        <li><a href="kd.html" target="_blank">कलम-दवात (Hindi News)</a></li>
+      </ul>
+    </li>
+    <li><a href="about.html" class="nav-cta active">About & Contact</a></li>
   </ul>
 </nav>
 
@@ -401,9 +463,6 @@
         </p>
         <p>
           Whether you are preparing for CLAT, appearing in court for the first time, or looking for the right bare act at 11 PM before a hearing — <strong>Lexbility has you covered.</strong>
-        </p>
-        <p>
-          Beyond the core platform, Lexbility now also runs <strong>certificate courses</strong> for practical skill-building and <strong>कलम-दवात</strong>, a Hindi-language news branch for everyday legal and current-affairs awareness.
         </p>
       </div>
     </div>
@@ -444,7 +503,7 @@
 <section class="bg-grey">
   <div class="section-label">Platform Overview</div>
   <div class="section-title">What You'll Find Here</div>
-  <div class="section-sub">One platform, many sections — making legal knowledge accessible.</div>
+  <div class="section-sub">Ten sections, one goal — making legal knowledge accessible.</div>
   <div class="offer-grid">
     <div class="offer-card">
       <div class="offer-icon">🏠</div>
@@ -466,26 +525,36 @@
       <div class="offer-title">Articles</div>
       <div class="offer-desc">Share your legal knowledge/views with the Lexbility community.</div>
     </div>
+    <div class="offer-card" style="border-color: var(--gold); background: #fffdf5;">
+      <div class="offer-icon">🎓</div>
+      <div class="offer-title">Certificate Courses</div>
+      <div class="offer-desc">Short, practical certificate courses designed for law students and early-career practitioners.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">📔</div>
+      <div class="offer-title">Advocate Diary</div>
+      <div class="offer-desc">A running log of practical tips, court experiences, and drafting notes for practicing advocates.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">🏛️</div>
+      <div class="offer-title">Court Links</div>
+      <div class="offer-desc">Quick links to Delhi court websites, cause lists, e-filing portals, and other official resources.</div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon">💼</div>
+      <div class="offer-title">Recruitment Board</div>
+      <div class="offer-desc">Internship and job openings for law students and young lawyers, updated regularly.</div>
+    </div>
+    <div class="offer-card" style="border-color: #F05A1A; background: #fff8f5;">
+      <div class="offer-icon">🗞️</div>
+      <div class="offer-title">कलम-दवात</div>
+      <div class="offer-desc">Our Hindi-language news branch — India and world news, plus reader-submitted stories.</div>
+    </div>
     <div class="offer-card">
       <div class="offer-icon">✈️</div>
       <div class="offer-title">Telegram Community</div>
       <div class="offer-desc">Get updates, notes, internship alerts, doubt-clearing, and connect with fellow students and lawyers.</div>
     </div>
-    <div class="offer-card" style="border-color: var(--gold); background: #fffdf5;">
-      <div class="offer-icon">🎓</div>
-      <div class="offer-title">AI DESIGNED NOTES</div>
-      <div class="offer-desc">Everything a student needs in Notes.</div>
-    </div>
-    <a href="courses.html" class="offer-card" style="text-decoration:none; color:inherit; display:block;">
-      <div class="offer-icon">📜</div>
-      <div class="offer-title">Certificate Courses</div>
-      <div class="offer-desc">Browse and enroll in Lexbility's certificate courses — built to add practical, job-ready skills to your legal education.</div>
-    </a>
-    <a href="kd.html" class="offer-card" style="text-decoration:none; color:inherit; display:block; border-color: rgba(240,90,26,0.3);">
-      <div class="offer-icon">🗞️</div>
-      <div class="offer-title">कलम-दवात (Hindi News)</div>
-      <div class="offer-desc">A new branch of Lexbility — भारत और दुनिया की ताज़ा खबरें हिंदी में, plus reader-submitted stories from your own neighbourhood.</div>
-    </a>
   </div>
 </section>
 
@@ -675,12 +744,17 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">Lex<span>bility</span></div>
-  <ul class="footer-links">
+    <ul class="footer-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
-   <li><a href="articles.html">Articles</a></li>
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="courses.html">Certificate Courses</a></li>
+    <li><a href="diary.html">Diary</a></li>
+    <li><a href="extra.html">Court Links</a></li>
+    <li><a href="recruitment.html">Recruitment Board</a></li>
     <li><a href="about.html">About & Contact</a></li>
+    <li><a href="kd.html">कलम-दवात</a></li>
     <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
   </ul>
   <p class="footer-copy">© 2026 Lexbility · Built by Prashant Pandey · Joint Secretary · Campus Law Centre Students' Union, DU 2025–26</p>
@@ -690,6 +764,21 @@
   function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('open');
   }
+
+  // Dropdown menu (More ▾)
+  function toggleDropdown(e, el) {
+    e.preventDefault();
+    const parent = el.closest('.nav-dropdown');
+    const wasOpen = parent.classList.contains('open');
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) parent.classList.add('open');
+    return false;
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-dropdown')) {
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+  });
 
   function sendMessage() {
     const name    = document.getElementById('fname').value.trim();
@@ -703,7 +792,7 @@
     }
 
     const body = `Name: ${name}%0AEmail: ${email}%0A%0A${encodeURIComponent(message)}`;
-    window.location.href = `mailto:prashantpandeysspic@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    window.location.href = `mailto:[your-email@example.com]?subject=${encodeURIComponent(subject)}&body=${body}`;
 
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('formSuccess').style.display = 'block';

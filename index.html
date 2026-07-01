@@ -62,7 +62,7 @@
       letter-spacing: 0.3px;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
 
     .nav-cta {
       background: var(--gold);
@@ -77,6 +77,58 @@
     /* hamburger */
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: 0.3s; }
+
+    /* ── NAV DROPDOWN (More) ── */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; background: none; border: none; }
+    .nav-dropdown-toggle .caret { font-size: 0.65em; transition: transform 0.2s ease; }
+    .nav-dropdown-menu {
+      list-style: none;
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 50%;
+      min-width: 220px;
+      background: var(--navy2);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      padding: 0.5rem;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(8px);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+      z-index: 1000;
+    }
+    .nav-dropdown-menu li { padding: 0 !important; border: none !important; }
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.55rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      color: rgba(255,255,255,0.75);
+    }
+    .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { background: rgba(201,168,76,0.12); color: var(--gold); }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown.open .nav-dropdown-menu {
+      opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+    }
+    .nav-dropdown:hover .caret, .nav-dropdown.open .caret { transform: rotate(180deg); }
+    .nav-dropdown-toggle.active-parent { color: var(--gold); }
+    @media (max-width: 768px) {
+      .nav-dropdown-menu {
+        position: static;
+        opacity: 1; visibility: visible; transform: none;
+        display: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0 0 0 1rem;
+        min-width: 0;
+      }
+      .nav-dropdown.open .nav-dropdown-menu { display: block; }
+      .nav-dropdown-toggle { justify-content: space-between; width: 100%; }
+    }
 
     /* ─── HERO ──────────────────────────────────────────── */
     .hero {
@@ -525,11 +577,21 @@
 <!-- ═══ NAVBAR ═══════════════════════════════════════════ -->
 <nav>
   <a href="index.html" class="nav-logo">Lex<span>bility</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="index.html">Home</a></li>
+    <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Home</a></li>
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
     <li><a href="articles.html">Articles</a></li>
+    <li class="nav-dropdown">
+      <a href="#" class="nav-dropdown-toggle" onclick="return toggleDropdown(event, this)">More <span class="caret">▾</span></a>
+      <ul class="nav-dropdown-menu">
+        <li><a href="courses.html">Certificate Courses</a></li>
+        <li><a href="diary.html">Diary</a></li>
+        <li><a href="extra.html">Court Links</a></li>
+        <li><a href="recruitment.html">Recruitment Board</a></li>
+        <li><a href="kd.html" target="_blank">कलम-दवात (Hindi News)</a></li>
+      </ul>
+    </li>
     <li><a href="about.html" class="nav-cta">About & Contact</a></li>
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -1020,12 +1082,17 @@
 <!-- ═══ FOOTER ════════════════════════════════════════════ -->
 <footer>
   <div class="footer-logo">Lex<span>bility</span></div>
-  <ul class="footer-links">
+    <ul class="footer-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="students.html">Students' Corner</a></li>
     <li><a href="lawyers.html">Lawyers' Corner</a></li>
     <li><a href="articles.html">Articles</a></li>
+    <li><a href="courses.html">Certificate Courses</a></li>
+    <li><a href="diary.html">Diary</a></li>
+    <li><a href="extra.html">Court Links</a></li>
+    <li><a href="recruitment.html">Recruitment Board</a></li>
     <li><a href="about.html">About & Contact</a></li>
+    <li><a href="kd.html">कलम-दवात</a></li>
     <li><a href="https://t.me/lexbility" target="_blank">Telegram</a></li>
   </ul>
   <p class="footer-copy">© 2026 Lexbility . For informational purposes only. Not legal advice.</p>
@@ -1037,6 +1104,21 @@
   function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('open');
   }
+
+  // Dropdown menu (More ▾)
+  function toggleDropdown(e, el) {
+    e.preventDefault();
+    const parent = el.closest('.nav-dropdown');
+    const wasOpen = parent.classList.contains('open');
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) parent.classList.add('open');
+    return false;
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-dropdown')) {
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+  });
 
   // Toggle websites
   function toggleWebsites() {
