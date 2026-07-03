@@ -698,11 +698,15 @@
   const feed = document.getElementById('homeFeed');
 
   try {
-    const snap = await getDocs(collection(db, 'articles'));
-    const articles = [];
-    snap.forEach(d => articles.push({ id: d.id, ...d.data() }));
-
-    const approved = articles.filter(a => a.status === 'approved').slice(0, 3);
+    const q = query(
+      collection(db, 'articles'),
+      where('status', '==', 'approved'),
+      orderBy('createdAt', 'desc'),
+      limit(3)
+    );
+    const snap = await getDocs(q);
+    const approved = [];
+    snap.forEach(d => approved.push({ id: d.id, ...d.data() }));
 
     if (approved.length === 0) {
       feed.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">No articles yet. <a href="articles.html" style="color:var(--gold);">Be the first →</a></div>';
