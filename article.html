@@ -391,6 +391,7 @@
       <img id="authorPhoto" src="" alt="">
       <div class="author-bar-info">
   <h4 id="authorName"></h4>
+  <p id="authorDate"></p>
 </div>
     </div>
   </div>
@@ -462,6 +463,21 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function formatArticleDate(ts) {
+    if (!ts) return '';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    const day = d.getDate();
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${day} ${month} ${year} · ${hours}:${mins} ${ampm}`;
+  }
+
 async function loadSidebar(currentId, category) {
     const sidebarDiv = document.getElementById('sidebarArticles');
     const snapshot = await getDocs(query(collection(db, 'articles'), where('status', '==', 'approved')));
@@ -502,6 +518,7 @@ async function loadSidebar(currentId, category) {
       document.getElementById('articleTitle').textContent = a.title;
       document.getElementById('authorPhoto').src = a.authorPhoto;
       document.getElementById('authorName').textContent = a.authorName;
+      document.getElementById('authorDate').textContent = formatArticleDate(a.createdAt);
       
       document.getElementById('articleContent').innerHTML = marked.parse(a.content);
       loadSidebar(id, a.category);
