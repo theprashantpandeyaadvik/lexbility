@@ -425,7 +425,11 @@
     .footer-copy { color: rgba(255,255,255,0.25); font-size: 0.78rem; width: 100%; text-align: center; margin-top: 0.5rem; }
 
     /* SEARCH BAR */
-    .search-bar-wrap { margin: 1.5rem 0 0.5rem; max-width: 480px; }
+    .search-sort-row {
+      display: flex; align-items: flex-end; gap: 1.2rem;
+      flex-wrap: wrap; margin: 1.5rem 0 0.5rem;
+    }
+    .search-bar-wrap { max-width: 480px; flex: 1 1 320px; }
     .search-input {
       width: 100%; padding: 0.85rem 1.2rem;
       border: 1.5px solid rgba(10,22,40,0.12);
@@ -435,6 +439,34 @@
       transition: border-color 0.2s;
     }
     .search-input:focus { outline: none; border-color: var(--gold); }
+
+    .sort-wrap { display: flex; flex-direction: column; gap: 0.4rem; }
+    .sort-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .sort-select {
+      padding: 0.8rem 1.1rem;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      border-radius: 8px; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      color: var(--navy); background: var(--white);
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .sort-select:focus { outline: none; border-color: var(--gold); }
+
+    /* CARD DATE + IMAGE */
+    .card-image {
+      width: calc(100% + 3.6rem); height: 150px;
+      margin: -1.8rem -1.8rem 1.2rem;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+    }
+    .card-date {
+      display: flex; align-items: center; gap: 5px;
+      color: var(--muted); font-size: 0.76rem;
+      font-weight: 500; margin-bottom: 0.6rem;
+    }
 
     /* COMPACT WRITE SECTION (now below articles) */
     .write-section-compact {
@@ -514,8 +546,20 @@
   <div class="section-title">All Articles</div>
   <p class="section-sub">Peer-reviewed legal writing from the Lexbility community.</p>
 
-  <div class="search-bar-wrap">
-    <input type="text" id="articleSearch" class="search-input" placeholder="🔍 Search by title or author name...">
+  <div class="search-sort-row">
+    <div class="search-bar-wrap">
+      <input type="text" id="articleSearch" class="search-input" placeholder="🔍 Search by title or author name...">
+    </div>
+    <div class="sort-wrap">
+      <label for="articleSort" class="sort-label">Sort by</label>
+      <select id="articleSort" class="sort-select">
+        <option value="newest">🕒 Newest First</option>
+        <option value="oldest">⏳ Oldest First</option>
+        <option value="title-az">🔤 Title (A–Z)</option>
+        <option value="title-za">🔤 Title (Z–A)</option>
+        <option value="author-az">✍️ Author (A–Z)</option>
+      </select>
+    </div>
   </div>
 
   <div class="articles-grid" id="articlesGrid">
@@ -563,6 +607,13 @@
       <div class="form-group">
         <label>Category</label>
         <input type="text" id="articleCategory" placeholder="e.g. Constitutional Law, IPC, CPC, Family Law..." maxlength="50">
+      </div>
+      <div class="form-group">
+        <label>Heading Background Image (optional)</label>
+        <input type="url" id="articleImage" placeholder="Paste an image URL to show behind the article title..." oninput="previewArticleImage()">
+        <div id="articleImagePreviewWrap" style="display:none; margin-top:0.7rem;">
+          <img id="articleImagePreview" src="" alt="Preview" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1.5px solid rgba(10,22,40,0.12);">
+        </div>
       </div>
       <div class="form-group">
         <label>Article Content</label>
@@ -664,6 +715,32 @@
     const content = document.getElementById('articleContent').value;
     document.getElementById('previewPane').innerHTML = window.marked ? marked.parse(content) : content;
   }
+
+  function previewArticleImage() {
+    const url = document.getElementById('articleImage').value.trim();
+    const wrap = document.getElementById('articleImagePreviewWrap');
+    const img = document.getElementById('articleImagePreview');
+    if (url) {
+      img.src = url;
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function formatArticleDate(ts) {
+    if (!ts) return '';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    const day = d.getDate();
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${day} ${month} ${year} · ${hours}:${mins} ${ampm}`;
+  }
 </script>
 
 <script type="module">
@@ -721,9 +798,11 @@
     const btn = document.getElementById('submitBtn');
     btn.textContent = 'Submitting...'; btn.disabled = true;
 
+    const imageUrl = document.getElementById('articleImage').value.trim() || null;
+
     try {
       await addDoc(collection(db, 'pending'), {
-        title, category, content,
+        title, category, content, imageUrl,
         authorName: currentUser.displayName,
         authorPhoto: currentUser.photoURL,
         authorEmail: currentUser.email,
@@ -734,6 +813,8 @@
       document.getElementById('articleTitle').value = '';
       document.getElementById('articleCategory').value = '';
       document.getElementById('articleContent').value = '';
+      document.getElementById('articleImage').value = '';
+      document.getElementById('articleImagePreviewWrap').style.display = 'none';
       document.getElementById('successMsg').style.display = 'block';
     } catch (e) { alert('Error: ' + e.message); }
 
@@ -751,7 +832,7 @@
       allArticles.push({ id: doc.id, ...doc.data() });
     });
 
-    renderArticles(allArticles, false);
+    applyFiltersAndSort();
   }
 
   function renderArticles(list, isSearchResult) {
@@ -767,12 +848,15 @@
     grid.innerHTML = '';
     list.forEach(a => {
       const preview = a.content.substring(0, 160) + '...';
+      const dateStr = formatArticleDate(a.createdAt);
       const card = document.createElement('div');
       card.className = 'article-card';
       card.onclick = () => window.location.href = `article.html?id=${a.id}`;
       card.innerHTML = `
+        ${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.title}" class="card-image" onerror="this.style.display='none'">` : ''}
         <div class="card-category">${a.category}</div>
         <div class="card-title">${a.title}</div>
+        ${dateStr ? `<div class="card-date">🕒 ${dateStr}</div>` : ''}
         <div class="card-preview">${preview}</div>
         <div class="card-author">
           <img src="${a.authorPhoto}" alt="${a.authorName}">
@@ -784,18 +868,45 @@
     });
   }
 
-  document.getElementById('articleSearch').addEventListener('input', (e) => {
-    const term = e.target.value.trim().toLowerCase();
-    if (!term) {
-      renderArticles(allArticles, false);
-      return;
+  function sortArticles(list, mode) {
+    const sorted = list.slice();
+    const getTime = a => a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+    switch (mode) {
+      case 'oldest':
+        sorted.sort((a, b) => getTime(a) - getTime(b));
+        break;
+      case 'title-az':
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'title-za':
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case 'author-az':
+        sorted.sort((a, b) => a.authorName.localeCompare(b.authorName));
+        break;
+      case 'newest':
+      default:
+        sorted.sort((a, b) => getTime(b) - getTime(a));
     }
-    const filtered = allArticles.filter(a =>
-      a.title.toLowerCase().includes(term) ||
-      a.authorName.toLowerCase().includes(term)
-    );
-    renderArticles(filtered, true);
-  });
+    return sorted;
+  }
+
+  function applyFiltersAndSort() {
+    const term = document.getElementById('articleSearch').value.trim().toLowerCase();
+    const sortMode = document.getElementById('articleSort').value;
+
+    let list = term
+      ? allArticles.filter(a =>
+          a.title.toLowerCase().includes(term) ||
+          a.authorName.toLowerCase().includes(term))
+      : allArticles;
+
+    list = sortArticles(list, sortMode);
+    renderArticles(list, !!term);
+  }
+
+  document.getElementById('articleSearch').addEventListener('input', applyFiltersAndSort);
+  document.getElementById('articleSort').addEventListener('change', applyFiltersAndSort);
 
   loadArticles();
 </script>
