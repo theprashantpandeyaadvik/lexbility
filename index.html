@@ -639,13 +639,40 @@
     </div>
   </div>
 </section>
-<!-- ═══ CERTIFICATE COURSE CTA ════════════════════════════ -->
-<section style="background: var(--navy); padding: 50px 5%; text-align:center;">
-  <a href="courses.html" style="display:inline-flex; align-items:center; gap:10px; background: var(--gold); color: var(--navy); padding: 1.1rem 3rem; border-radius: 8px; font-weight:700; font-size:1.15rem; text-decoration:none; transition: all 0.25s; box-shadow: 0 8px 30px rgba(201,168,76,0.3);"
-     onmouseover="this.style.background='#e8c56a'; this.style.transform='translateY(-3px)';"
-     onmouseout="this.style.background='#C9A84C'; this.style.transform='translateY(0)';">
-    🎓 Explore Certificate Courses →
-  </a>
+<!-- ═══ CERTIFICATE COURSES ═══════════════════════════════ -->
+<section class="why-section">
+  <div class="section-label">Certificate Courses</div>
+  <div class="section-title">🎓 Specialize With a Certificate</div>
+  <p class="section-sub">Short, focused courses built for law students and young practitioners — pick a subject to go deep, or a skill to sharpen your practice.</p>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">⚖️</div>
+      <h3>Subject-Specialized Certificates</h3>
+      <p>Go deep into one area of law — Constitutional Law, Criminal Law (BNS/IPC), Family Law, Cyber Law, Corporate & Commercial Law — taught with real case references.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">✍️</div>
+      <h3>Legal Drafting Certificate</h3>
+      <p>Learn to draft petitions, contracts, notices, agreements and vakalatnamas the way they're actually used in practice — not just theory.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔍</div>
+      <h3>Legal Research Certificate</h3>
+      <p>Master case law research, citation, and judgment analysis — using tools like Indian Kanoon and SCC, the backbone skill for any legal career.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🗣️</div>
+      <h3>Courtroom & Advocacy Skills</h3>
+      <p>Build confidence in oral advocacy, client counselling, and moot-court style argumentation — skills law school often skips.</p>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:2.5rem;">
+    <a href="courses.html" style="display:inline-flex; align-items:center; gap:10px; background: var(--gold); color: var(--navy); padding: 1.1rem 3rem; border-radius: 8px; font-weight:700; font-size:1.15rem; text-decoration:none; transition: all 0.25s; box-shadow: 0 8px 30px rgba(201,168,76,0.3);"
+       onmouseover="this.style.background='#e8c56a'; this.style.transform='translateY(-3px)';"
+       onmouseout="this.style.background='#C9A84C'; this.style.transform='translateY(0)';">
+      🎓 Explore All Certificate Courses →
+    </a>
+  </div>
 </section>
 <!-- ═══ LATEST ARTICLES ═══════════════════════════════════ -->
 <section class="articles-section">
@@ -698,15 +725,11 @@
   const feed = document.getElementById('homeFeed');
 
   try {
-    const q = query(
-      collection(db, 'articles'),
-      where('status', '==', 'approved'),
-      orderBy('createdAt', 'desc'),
-      limit(3)
-    );
-    const snap = await getDocs(q);
-    const approved = [];
-    snap.forEach(d => approved.push({ id: d.id, ...d.data() }));
+    const snap = await getDocs(collection(db, 'articles'));
+    const articles = [];
+    snap.forEach(d => articles.push({ id: d.id, ...d.data() }));
+
+    const approved = articles.filter(a => a.status === 'approved').slice(0, 3);
 
     if (approved.length === 0) {
       feed.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);">No articles yet. <a href="articles.html" style="color:var(--gold);">Be the first →</a></div>';
