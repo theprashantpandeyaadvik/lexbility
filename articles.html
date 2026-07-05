@@ -377,6 +377,8 @@
     .card-author img { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--gold); }
     .card-author span { font-size: 0.82rem; color: var(--muted); }
     .card-author strong { color: var(--navy); }
+    .card-author-info { display: flex; flex-direction: column; }
+    .card-author-title { font-size: 0.72rem; color: var(--gold); font-weight: 600; margin-top: 1px; }
 
     .read-more {
       display: inline-flex; align-items: center; gap: 4px;
@@ -624,6 +626,10 @@
         <input type="text" id="articleCategory" placeholder="e.g. Constitutional Law, IPC, CPC, Family Law..." maxlength="50">
       </div>
       <div class="form-group">
+        <label>Your Title / Designation <span style="text-transform:none; font-weight:400;">(optional)</span></label>
+        <input type="text" id="articleAuthorTitle" placeholder="e.g. Advocate on Record, Law Student @ CLC DU, @your_insta_handle" maxlength="80">
+      </div>
+      <div class="form-group">
         <label>Article Content</label>
 
         <!-- Markdown Quick Guide -->
@@ -773,6 +779,7 @@
     if (!currentUser) return;
     const title = document.getElementById('articleTitle').value.trim();
     const category = document.getElementById('articleCategory').value.trim();
+    const authorTitle = document.getElementById('articleAuthorTitle').value.trim();
     const content = document.getElementById('articleContent').value.trim();
     if (!title || !category || !content) return alert('Please fill in all fields.');
     if (content.split(' ').length < 50) return alert('Please write at least 50 words.');
@@ -787,11 +794,13 @@
         authorPhoto: currentUser.photoURL,
         authorEmail: currentUser.email,
         authorUID: currentUser.uid,
+        authorTitle: authorTitle || '',
         status: 'pending',
         createdAt: serverTimestamp()
       });
       document.getElementById('articleTitle').value = '';
       document.getElementById('articleCategory').value = '';
+      document.getElementById('articleAuthorTitle').value = '';
       document.getElementById('articleContent').value = '';
       document.getElementById('successMsg').style.display = 'block';
     } catch (e) { alert('Error: ' + e.message); }
@@ -898,7 +907,10 @@
         <div class="card-preview">${preview}</div>
         <div class="card-author">
           <img src="${a.authorPhoto}" alt="${a.authorName}">
-          <span>By <strong>${a.authorName}</strong></span>
+          <div class="card-author-info">
+            <span>By <strong>${a.authorName}</strong></span>
+            ${a.authorTitle ? `<span class="card-author-title">${a.authorTitle}</span>` : ''}
+          </div>
           <span class="read-more">Read →</span>
         </div>
       `;

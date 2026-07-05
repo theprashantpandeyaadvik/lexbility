@@ -164,6 +164,9 @@
       font-family: 'Playfair Display', serif;
       color: var(--white); font-size: 1rem; font-weight: 700;
     }
+    .author-bar-info .author-designation {
+      color: var(--gold); font-size: 0.78rem; font-weight: 600; margin-top: 2px;
+    }
     .author-bar-info p {
       color: rgba(255,255,255,0.45); font-size: 0.8rem; margin-top: 2px;
     }
@@ -391,6 +394,7 @@
       <img id="authorPhoto" src="" alt="">
       <div class="author-bar-info">
   <h4 id="authorName"></h4>
+  <div class="author-designation" id="authorDesignation" style="display:none;"></div>
   <p id="authorDate"></p>
 </div>
     </div>
@@ -518,6 +522,10 @@ async function loadSidebar(currentId, category) {
       document.getElementById('articleTitle').textContent = a.title;
       document.getElementById('authorPhoto').src = a.authorPhoto;
       document.getElementById('authorName').textContent = a.authorName;
+      if (a.authorTitle && a.authorTitle.trim()) {
+        document.getElementById('authorDesignation').textContent = a.authorTitle;
+        document.getElementById('authorDesignation').style.display = 'block';
+      }
       document.getElementById('authorDate').textContent = formatArticleDate(a.createdAt);
       
       document.getElementById('articleContent').innerHTML = marked.parse(a.content);
