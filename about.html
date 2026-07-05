@@ -330,6 +330,64 @@
     .channel-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.15rem; }
     .channel-value { font-size: 0.9rem; font-weight: 600; color: var(--text); }
 
+    /* ── SOCIAL / FOLLOW US ── */
+    .social-block { margin-bottom: 3.2rem; max-width: 1100px; }
+    .social-block:last-child { margin-bottom: 0; }
+    .social-block-head {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 1.4rem;
+    }
+    .social-block-head h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      font-weight: 700; color: var(--navy);
+    }
+    .view-more-btn {
+      background: var(--navy); color: var(--gold) !important;
+      border: 1.5px solid var(--gold); padding: 0.55rem 1.3rem;
+      border-radius: 8px; text-decoration: none; font-size: 0.83rem;
+      font-weight: 700; white-space: nowrap; transition: all 0.2s;
+    }
+    .view-more-btn:hover { background: var(--gold); color: var(--navy) !important; }
+
+    .yt-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.4rem;
+    }
+    .yt-card {
+      background: var(--white); border: 1px solid rgba(10,22,40,0.08);
+      border-radius: 12px; overflow: hidden; text-decoration: none;
+      display: block; transition: all 0.2s;
+    }
+    .yt-card:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,0.12); transform: translateY(-3px); }
+    .yt-thumb-wrap { position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden; }
+    .yt-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .yt-play-icon {
+      position: absolute; inset: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 2.4rem; background: rgba(0,0,0,0.15);
+      transition: background 0.2s;
+    }
+    .yt-card:hover .yt-play-icon { background: rgba(0,0,0,0.4); }
+    .yt-card-body { padding: 1rem 1.1rem; }
+    .yt-card-title {
+      font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .yt-card-date { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
+
+    .insta-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.4rem;
+    }
+    .insta-embed-wrap {
+      border-radius: 12px; overflow: hidden; background: var(--white);
+      border: 1px solid rgba(10,22,40,0.08); min-height: 420px;
+    }
+    .social-loading, .social-empty {
+      grid-column: 1 / -1; text-align: center; color: var(--muted);
+      font-size: 0.9rem; padding: 2.5rem 1rem;
+    }
+    .social-empty a { color: var(--gold); font-weight: 600; }
+
     /* Simple contact form */
     .contact-form { display: flex; flex-direction: column; gap: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -622,6 +680,34 @@
 </section>
 
 <!-- CONTACT SECTION -->
+<section class="bg-grey">
+  <div class="section-label">Stay Connected</div>
+  <div class="section-title">📱 Follow Lexbility</div>
+  <div class="section-sub">Legal explainers, updates & behind-the-scenes — on YouTube and Instagram.</div>
+
+  <!-- YouTube -->
+  <div class="social-block">
+    <div class="social-block-head">
+      <h3>▶️ Latest on YouTube</h3>
+      <a href="https://www.youtube.com/@lexbility-x9v" target="_blank" class="view-more-btn">View More on YouTube →</a>
+    </div>
+    <div class="yt-grid" id="ytGrid">
+      <div class="social-loading">Videos load ho rahe hain...</div>
+    </div>
+  </div>
+
+  <!-- Instagram -->
+  <div class="social-block">
+    <div class="social-block-head">
+      <h3>📷 Latest Reels</h3>
+      <a href="https://www.instagram.com/lexbility" target="_blank" class="view-more-btn">View More on Instagram →</a>
+    </div>
+    <div class="insta-grid" id="instaGrid">
+      <div class="social-loading">Reels load ho rahi hain...</div>
+    </div>
+  </div>
+</section>
+
 <section>
   <div class="section-label">Get in Touch</div>
   <div class="section-title">📬 Contact & Support</div>
@@ -814,6 +900,117 @@
     el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
     observer.observe(el);
   });
+</script>
+
+<!-- ===== YOUTUBE + INSTAGRAM (SOCIAL) ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
+    authDomain: "lexbility-fda92.firebaseapp.com",
+    projectId: "lexbility-fda92",
+    storageBucket: "lexbility-fda92.firebasestorage.app",
+    messagingSenderId: "855790706525",
+    appId: "1:855790706525:web:509d8dc087f1c24a7f92b4",
+    measurementId: "G-C9R0GRJ464"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const YT_CHANNEL_ID = 'UCGfWXEfWGm_v7p-JPTOy6Nw'; // @Lexbility-x9v
+  const INSTA_PROFILE_URL = 'https://www.instagram.com/lexbility';
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  /* ---------- YOUTUBE: latest 3 via RSS feed (no API key needed) ---------- */
+  async function loadYouTubeVideos() {
+    const ytGrid = document.getElementById('ytGrid');
+    const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+
+    try {
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error('Feed fetch failed');
+      const text = await res.text();
+      const xml = new DOMParser().parseFromString(text, 'text/xml');
+      const entries = Array.from(xml.getElementsByTagName('entry')).slice(0, 3);
+      if (!entries.length) throw new Error('No videos found');
+
+      ytGrid.innerHTML = '';
+      entries.forEach(entry => {
+        const videoId = entry.getElementsByTagName('yt:videoId')[0]?.textContent
+                      || entry.getElementsByTagNameNS('*', 'videoId')[0]?.textContent;
+        const title = entry.getElementsByTagName('title')[0]?.textContent || 'Watch on YouTube';
+        const published = entry.getElementsByTagName('published')[0]?.textContent;
+        const dateStr = published ? new Date(published).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+        const a = document.createElement('a');
+        a.href = `https://www.youtube.com/watch?v=${videoId}`;
+        a.target = '_blank';
+        a.className = 'yt-card';
+        a.innerHTML = `
+          <div class="yt-thumb-wrap">
+            <img src="${thumb}" alt="${escapeHtml(title)}" loading="lazy">
+            <div class="yt-play-icon">▶️</div>
+          </div>
+          <div class="yt-card-body">
+            <div class="yt-card-title">${escapeHtml(title)}</div>
+            <div class="yt-card-date">${dateStr}</div>
+          </div>
+        `;
+        ytGrid.appendChild(a);
+      });
+    } catch (err) {
+      ytGrid.innerHTML = `<div class="social-empty">Videos abhi load nahi ho paaye. <a href="https://www.youtube.com/@lexbility-x9v" target="_blank">Channel par dekhein →</a></div>`;
+    }
+  }
+
+  /* ---------- INSTAGRAM: latest 6 reels via Firestore (added from Admin Panel) ---------- */
+  async function loadInstaReels() {
+    const grid = document.getElementById('instaGrid');
+    try {
+      const q = query(collection(db, 'instaReels'), orderBy('createdAt', 'desc'), limit(6));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        grid.innerHTML = `<div class="social-empty">Jald hi reels yahan dikhengi. <a href="${INSTA_PROFILE_URL}" target="_blank">Instagram par dekhein →</a></div>`;
+        return;
+      }
+
+      grid.innerHTML = '';
+      snapshot.forEach(docSnap => {
+        const r = docSnap.data();
+        if (!r.url) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'insta-embed-wrap';
+        wrap.innerHTML = `<blockquote class="instagram-media" data-instgrm-permalink="${escapeHtml(r.url)}" data-instgrm-version="14" style="margin:0; width:100%; min-width:0;"></blockquote>`;
+        grid.appendChild(wrap);
+      });
+
+      // Load (or re-run) the official Instagram embed script
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://www.instagram.com/embed.js';
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    } catch (err) {
+      grid.innerHTML = `<div class="social-empty">Reels abhi load nahi ho paayi. <a href="${INSTA_PROFILE_URL}" target="_blank">Instagram par dekhein →</a></div>`;
+    }
+  }
+
+  loadYouTubeVideos();
+  loadInstaReels();
 </script>
 
 </body>

@@ -455,6 +455,7 @@
     <button class="top-tab" onclick="switchMainTab('mcqs')">❓ MCQs</button>
     <button class="top-tab" onclick="switchMainTab('enrollments')">👥 Enrollments</button>
     <button class="top-tab" onclick="switchMainTab('recruitment')">💼 Recruitment Board</button>
+    <button class="top-tab" onclick="switchMainTab('social')">📱 Social</button>
   </div>
 
   <!-- ===== ARTICLES TAB ===== -->
@@ -620,12 +621,33 @@
     <div id="candidatesAdminList">Loading...</div>
   </div>
 
+  <!-- ===== SOCIAL TAB (Instagram Reels for About page) ===== -->
+  <div class="tab-panel" id="tab-social">
+    <div class="panel-heading">
+      <div class="section-label">Add New</div>
+      <h2>Instagram Reel</h2>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label>Instagram Reel Link</label>
+        <input type="text" id="instaReelUrl" placeholder="e.g. https://www.instagram.com/reel/XXXXXXXXXXX/">
+      </div>
+      <button id="addInstaReelBtn" onclick="addInstaReel()">Add Reel →</button>
+    </div>
+
+    <div class="panel-heading second">
+      <div class="section-label">Manage</div>
+      <h2>Instagram Reels — About Page (latest 6 auto-shown)</h2>
+    </div>
+    <div id="instaReelsAdminList">Loading...</div>
+  </div>
+
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDEvGKpkZLH9zfmy7oV1sJJxArAZ5Hjv7k",
@@ -667,6 +689,7 @@
     loadMcqs();
     loadRecruitmentsAdmin();
     loadCandidatesAdmin();
+    loadInstaReelsAdmin();
     addChapterBlock();
   });
 
@@ -1126,6 +1149,72 @@
     await deleteDoc(doc(db, 'candidates', id));
     alert('🗑️ Profile delete kar diya gaya.');
     loadCandidatesAdmin();
+  };
+
+  /* ===== SOCIAL: INSTAGRAM REELS (shown on about.html, latest 6) ===== */
+  window.addInstaReel = async () => {
+    const input = document.getElementById('instaReelUrl');
+    const url = input.value.trim();
+
+    if (!url) { alert('Reel ka link daalo pehle.'); return; }
+    if (!/^https?:\/\/(www\.)?instagram\.com\/(reel|p)\//i.test(url)) {
+      alert('Valid Instagram reel/post link daalo (e.g. https://www.instagram.com/reel/XXXXXXXXXXX/)');
+      return;
+    }
+
+    const btn = document.getElementById('addInstaReelBtn');
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+
+    try {
+      await addDoc(collection(db, 'instaReels'), {
+        url,
+        createdAt: serverTimestamp()
+      });
+      input.value = '';
+      alert('✅ Reel add ho gayi! About page par latest 6 reels mein dikhegi.');
+      loadInstaReelsAdmin();
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Add Reel →';
+    }
+  };
+
+  async function loadInstaReelsAdmin() {
+    const snapshot = await getDocs(collection(db, 'instaReels'));
+    const list = document.getElementById('instaReelsAdminList');
+
+    if (snapshot.empty) {
+      list.innerHTML = '<p class="empty-msg">Koi reel abhi tak add nahi ki gayi hai.</p>';
+      return;
+    }
+
+    let rows = [];
+    snapshot.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+    list.innerHTML = '';
+    rows.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        ${i < 6 ? '<span class="category-badge">🟢 Live on About page</span>' : '<span class="category-badge" style="background:rgba(107,122,153,0.12); color:var(--muted);">⚪ Not shown (only latest 6 shown)</span>'}
+        <p style="word-break:break-all; margin-top:0.6rem;"><a href="${r.url}" target="_blank">${r.url}</a></p>
+        <div class="btns">
+          <button class="rejectBtn" onclick="deleteInstaReel('${r.id}')">🗑️ Delete Reel</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  window.deleteInstaReel = async (id) => {
+    if (!confirm('Sure ho? Ye reel permanently delete ho jayegi.')) return;
+    await deleteDoc(doc(db, 'instaReels', id));
+    alert('🗑️ Reel delete kar di gayi.');
+    loadInstaReelsAdmin();
   };
 
   /* ===== ENROLLMENTS ===== */
