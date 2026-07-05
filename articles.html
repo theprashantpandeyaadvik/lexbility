@@ -458,24 +458,26 @@
       border-color: var(--navy);
     }
 
-    /* SORT TOGGLE */
+    /* SORT DROPDOWN */
     .sort-toggle-row {
-      display: flex; justify-content: flex-end;
+      display: flex; justify-content: flex-end; align-items: center; gap: 0.6rem;
       margin: -0.3rem 0 0.5rem;
     }
-    .sort-toggle-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: none;
+    .sort-toggle-row label {
+      font-size: 0.82rem; font-weight: 600; color: var(--muted);
+    }
+    #sortSelect {
+      background: var(--white);
       border: 1.5px solid rgba(10,22,40,0.12);
-      color: var(--muted);
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.82rem; font-weight: 600;
+      color: var(--text);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600;
       font-family: 'DM Sans', sans-serif;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.2s;
     }
-    .sort-toggle-btn:hover { border-color: var(--gold); color: var(--navy); }
+    #sortSelect:hover, #sortSelect:focus { border-color: var(--gold); outline: none; }
 
     /* COMPACT WRITE SECTION (now below articles) */
     .write-section-compact {
@@ -567,7 +569,12 @@
   </div>
 
   <div class="sort-toggle-row">
-    <button class="sort-toggle-btn" id="sortToggleBtn" onclick="toggleSortOrder()">🕐 Newest First</button>
+    <label for="sortSelect">Sort by:</label>
+    <select id="sortSelect" onchange="handleSortChange()">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="title">Title A-Z</option>
+    </select>
   </div>
 
   <div class="articles-grid" id="articlesGrid">
@@ -801,10 +808,8 @@
     return ts.toMillis ? ts.toMillis() : (ts.seconds ? ts.seconds * 1000 : 0);
   }
 
-  window.toggleSortOrder = () => {
-    currentSortOrder = currentSortOrder === 'newest' ? 'oldest' : 'newest';
-    document.getElementById('sortToggleBtn').textContent =
-      currentSortOrder === 'newest' ? '🕐 Newest First' : '🕒 Oldest First';
+  window.handleSortChange = () => {
+    currentSortOrder = document.getElementById('sortSelect').value;
     applyFilters();
   };
 
@@ -847,6 +852,9 @@
     }
 
     list = [...list].sort((a, b) => {
+      if (currentSortOrder === 'title') {
+        return a.title.localeCompare(b.title);
+      }
       const diff = getMillis(a.createdAt) - getMillis(b.createdAt);
       return currentSortOrder === 'newest' ? -diff : diff;
     });
