@@ -458,6 +458,25 @@
       border-color: var(--navy);
     }
 
+    /* SORT TOGGLE */
+    .sort-toggle-row {
+      display: flex; justify-content: flex-end;
+      margin: -0.3rem 0 0.5rem;
+    }
+    .sort-toggle-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none;
+      border: 1.5px solid rgba(10,22,40,0.12);
+      color: var(--muted);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sort-toggle-btn:hover { border-color: var(--gold); color: var(--navy); }
+
     /* COMPACT WRITE SECTION (now below articles) */
     .write-section-compact {
       background: var(--grey);
@@ -545,6 +564,10 @@
     <button class="lang-filter-btn" data-lang="hindi" onclick="setLangFilter('hindi')">हिन्दी Hindi</button>
     <button class="lang-filter-btn" data-lang="english" onclick="setLangFilter('english')">English</button>
     <button class="lang-filter-btn" data-lang="other" onclick="setLangFilter('other')">Other</button>
+  </div>
+
+  <div class="sort-toggle-row">
+    <button class="sort-toggle-btn" id="sortToggleBtn" onclick="toggleSortOrder()">🕐 Newest First</button>
   </div>
 
   <div class="articles-grid" id="articlesGrid">
@@ -771,6 +794,19 @@
 
   let allArticles = [];
   let currentLangFilter = 'all';
+  let currentSortOrder = 'newest'; // default: newest first
+
+  function getMillis(ts) {
+    if (!ts) return 0;
+    return ts.toMillis ? ts.toMillis() : (ts.seconds ? ts.seconds * 1000 : 0);
+  }
+
+  window.toggleSortOrder = () => {
+    currentSortOrder = currentSortOrder === 'newest' ? 'oldest' : 'newest';
+    document.getElementById('sortToggleBtn').textContent =
+      currentSortOrder === 'newest' ? '🕐 Newest First' : '🕒 Oldest First';
+    applyFilters();
+  };
 
   // Detect language from text using Unicode script ranges.
   // Hindi (Devanagari) vs English (Latin) vs Other (neither dominant, e.g. mixed/other scripts).
@@ -810,6 +846,11 @@
       );
     }
 
+    list = [...list].sort((a, b) => {
+      const diff = getMillis(a.createdAt) - getMillis(b.createdAt);
+      return currentSortOrder === 'newest' ? -diff : diff;
+    });
+
     renderArticles(list, isSearchResult || currentLangFilter !== 'all');
   }
 
@@ -824,7 +865,7 @@
       allArticles.push(a);
     });
 
-    renderArticles(allArticles, false);
+    applyFilters();
   }
 
   function renderArticles(list, isSearchResult) {
