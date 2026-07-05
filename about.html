@@ -692,7 +692,7 @@
       <a href="https://www.youtube.com/@lexbility-x9v" target="_blank" class="view-more-btn">View More on YouTube →</a>
     </div>
     <div class="yt-grid" id="ytGrid">
-      <div class="social-loading">Videos load ho rahe hain...</div>
+      <div class="social-loading">Loading videos...</div>
     </div>
   </div>
 
@@ -703,7 +703,7 @@
       <a href="https://www.instagram.com/lexbility" target="_blank" class="view-more-btn">View More on Instagram →</a>
     </div>
     <div class="insta-grid" id="instaGrid">
-      <div class="social-loading">Reels load ho rahi hain...</div>
+      <div class="social-loading">Loading reels...</div>
     </div>
   </div>
 </section>
@@ -969,7 +969,7 @@
         ytGrid.appendChild(a);
       });
     } catch (err) {
-      ytGrid.innerHTML = `<div class="social-empty">Videos abhi load nahi ho paaye. <a href="https://www.youtube.com/@lexbility-x9v" target="_blank">Channel par dekhein →</a></div>`;
+      ytGrid.innerHTML = `<div class="social-empty">Videos could not be loaded right now. <a href="https://www.youtube.com/@lexbility-x9v" target="_blank">Check the channel →</a></div>`;
     }
   }
 
@@ -981,7 +981,7 @@
       const snapshot = await getDocs(q);
 
       if (snapshot.empty) {
-        grid.innerHTML = `<div class="social-empty">Jald hi reels yahan dikhengi. <a href="${INSTA_PROFILE_URL}" target="_blank">Instagram par dekhein →</a></div>`;
+        grid.innerHTML = `<div class="social-empty">Reels will appear here soon. <a href="${INSTA_PROFILE_URL}" target="_blank">Check Instagram →</a></div>`;
         return;
       }
 
@@ -1005,7 +1005,7 @@
         document.body.appendChild(script);
       }
     } catch (err) {
-      grid.innerHTML = `<div class="social-empty">Reels abhi load nahi ho paayi. <a href="${INSTA_PROFILE_URL}" target="_blank">Instagram par dekhein →</a></div>`;
+      grid.innerHTML = `<div class="social-empty">Reels could not be loaded right now. <a href="${INSTA_PROFILE_URL}" target="_blank">Check Instagram →</a></div>`;
     }
   }
 

@@ -443,7 +443,7 @@
 </div>
 
 <div id="accessDenied">
-  ❌ Access Denied — Tumhara account admin nahi hai!
+  ❌ Access Denied — Your account is not an admin!
 </div>
 
 <div id="adminPanel">
@@ -712,7 +712,7 @@
     const list = document.getElementById('pendingList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi pending article nahi hai 🎉</p>';
+      list.innerHTML = '<p class="empty-msg">No pending articles 🎉</p>';
       return;
     }
 
@@ -752,9 +752,9 @@
   };
 
   window.reject = async (id) => {
-    if (!confirm('Sure ho? Ye article delete ho jayega.')) return;
+    if (!confirm('Are you sure? This article will be deleted.')) return;
     await deleteDoc(doc(db, 'pending', id));
-    alert('❌ Article reject kar diya.');
+    alert('❌ Article rejected.');
     loadPending();
   };
 
@@ -763,7 +763,7 @@
     const list = document.getElementById('publishedList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi published article nahi hai abhi.</p>';
+      list.innerHTML = '<p class="empty-msg">No published articles yet.</p>';
       return;
     }
 
@@ -789,9 +789,9 @@
   }
 
   window.deletePublished = async (id) => {
-    if (!confirm('Sure ho? Ye published article site se permanently delete ho jayega.')) return;
+    if (!confirm('Are you sure? This published article will be permanently deleted from the site.')) return;
     await deleteDoc(doc(db, 'articles', id));
-    alert('🗑️ Article delete kar diya gaya.');
+    alert('🗑️ Article deleted.');
     loadPublished();
   };
 
@@ -947,7 +947,7 @@
     const mcqSelect = document.getElementById('mcqCourseSelect');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi course abhi tak nahi bana hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No courses have been created yet.</p>';
       if (mcqSelect) mcqSelect.innerHTML = '<option value="">No courses yet — add a course first</option>';
       return;
     }
@@ -979,9 +979,9 @@
   }
 
   window.deleteCourse = async (id) => {
-    if (!confirm('Sure ho? Ye course site se permanently delete ho jayega.')) return;
+    if (!confirm('Are you sure? This course will be permanently deleted from the site.')) return;
     await deleteDoc(doc(db, 'courses', id));
-    alert('🗑️ Course delete kar diya gaya.');
+    alert('🗑️ Course deleted.');
     loadCourses();
   };
 
@@ -1031,7 +1031,7 @@
     const list = document.getElementById('mcqList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi question abhi tak add nahi hua hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No questions have been added yet.</p>';
       return;
     }
 
@@ -1069,9 +1069,9 @@
   }
 
   window.deleteMcq = async (id) => {
-    if (!confirm('Sure ho? Ye question permanently delete ho jayega.')) return;
+    if (!confirm('Are you sure? This question will be permanently deleted.')) return;
     await deleteDoc(doc(db, 'quizzes', id));
-    alert('🗑️ Question delete kar diya gaya.');
+    alert('🗑️ Question deleted.');
     loadMcqs();
   };
 
@@ -1081,7 +1081,7 @@
     const list = document.getElementById('recruitmentsAdminList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi recruitment abhi tak post nahi hui hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No recruitment listings have been posted yet.</p>';
       return;
     }
 
@@ -1107,9 +1107,9 @@
   }
 
   window.deleteRecruitment = async (id) => {
-    if (!confirm('Sure ho? Ye recruitment listing permanently delete ho jayegi.')) return;
+    if (!confirm('Are you sure? This recruitment listing will be permanently deleted.')) return;
     await deleteDoc(doc(db, 'recruitments', id));
-    alert('🗑️ Listing delete kar di gayi.');
+    alert('🗑️ Listing deleted.');
     loadRecruitmentsAdmin();
   };
 
@@ -1118,7 +1118,7 @@
     const list = document.getElementById('candidatesAdminList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi candidate profile abhi tak post nahi hua hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No candidate profiles have been posted yet.</p>';
       return;
     }
 
@@ -1145,9 +1145,9 @@
   }
 
   window.deleteCandidate = async (id) => {
-    if (!confirm('Sure ho? Ye candidate profile permanently delete ho jayega.')) return;
+    if (!confirm('Are you sure? This candidate profile will be permanently deleted.')) return;
     await deleteDoc(doc(db, 'candidates', id));
-    alert('🗑️ Profile delete kar diya gaya.');
+    alert('🗑️ Profile deleted.');
     loadCandidatesAdmin();
   };
 
@@ -1156,9 +1156,9 @@
     const input = document.getElementById('instaReelUrl');
     const url = input.value.trim();
 
-    if (!url) { alert('Reel ka link daalo pehle.'); return; }
+    if (!url) { alert('Please enter a reel link first.'); return; }
     if (!/^https?:\/\/(www\.)?instagram\.com\/(reel|p)\//i.test(url)) {
-      alert('Valid Instagram reel/post link daalo (e.g. https://www.instagram.com/reel/XXXXXXXXXXX/)');
+      alert('Please enter a valid Instagram reel/post link (e.g. https://www.instagram.com/reel/XXXXXXXXXXX/)');
       return;
     }
 
@@ -1172,7 +1172,7 @@
         createdAt: serverTimestamp()
       });
       input.value = '';
-      alert('✅ Reel add ho gayi! About page par latest 6 reels mein dikhegi.');
+      alert('✅ Reel added! It will show up among the latest 6 reels on the About page.');
       loadInstaReelsAdmin();
     } catch (err) {
       alert('Error: ' + err.message);
@@ -1187,7 +1187,7 @@
     const list = document.getElementById('instaReelsAdminList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Koi reel abhi tak add nahi ki gayi hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No reels have been added yet.</p>';
       return;
     }
 
@@ -1211,9 +1211,9 @@
   }
 
   window.deleteInstaReel = async (id) => {
-    if (!confirm('Sure ho? Ye reel permanently delete ho jayegi.')) return;
+    if (!confirm('Are you sure? This reel will be permanently deleted.')) return;
     await deleteDoc(doc(db, 'instaReels', id));
-    alert('🗑️ Reel delete kar di gayi.');
+    alert('🗑️ Reel deleted.');
     loadInstaReelsAdmin();
   };
 
@@ -1223,7 +1223,7 @@
     const list = document.getElementById('enrollmentsList');
 
     if (snapshot.empty) {
-      list.innerHTML = '<p class="empty-msg">Abhi tak koi enrollment nahi hua hai.</p>';
+      list.innerHTML = '<p class="empty-msg">No enrollments yet.</p>';
       return;
     }
 
